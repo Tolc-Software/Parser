@@ -1,5 +1,8 @@
+#include "IR/ir.hpp"
 #include <iostream>
 
 int main() {
-	std::cout << "Hello world" << '\n';
+	IR::Function f;
+	f.m_name = "hi";
+	std::cout << f.m_name << '\n';
 }

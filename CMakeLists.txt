@@ -27,11 +27,19 @@ endif()
 # Add custom scripts
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
+include(FetchContent)
+FetchContent_Declare(
+  IRSpecification
+  GIT_REPOSITORY git@github.com:srydell/IntermediateRepresentation.git
+  GIT_TAG master)
+
+FetchContent_MakeAvailable(IRSpecification)
+
 # Define project_warnings and project_options targets
 include(WarningsAndOptions)
 
 add_executable(Parser src/main.cpp)
-target_link_libraries(Parser PRIVATE project_warnings project_options)
+target_link_libraries(Parser PRIVATE IR project_warnings project_options)
 set_target_properties(Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS
                                         OFF CXX_STANDARD 17)
 
