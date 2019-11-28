@@ -43,7 +43,7 @@ setupLLVM()
 # Define project_warnings and project_options targets
 include(WarningsAndOptions)
 
-add_executable(Parser src/main.cpp)
+add_executable(Parser src/Parser.cpp)
 target_link_libraries(Parser PRIVATE project_warnings project_options)
 target_link_libraries(Parser PRIVATE IR::IR)
 target_link_libraries(Parser PRIVATE clangTooling clangBasic clangASTMatchers)
