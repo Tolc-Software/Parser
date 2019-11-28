@@ -1,6 +1,6 @@
 include_guard()
 
-function(getClangTargets)
+function(setupLLVM)
   if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Linux)
     include(FetchContent)
 
@@ -19,5 +19,10 @@ function(getClangTargets)
 
     set(Clang_ROOT ${llvm_download_SOURCE_DIR})
     find_package(Clang CONFIG PATHS ${Clang_ROOT} REQUIRED NO_DEFAULT_PATH)
+
+    # Export llvm_include_dir
+    set(llvm_include_dir
+        ${llvm_download_SOURCE_DIR}/include
+        PARENT_SCOPE)
   endif()
 endfunction()

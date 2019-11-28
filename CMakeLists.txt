@@ -36,14 +36,18 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(IRSpecification)
 
 # Download if necessary and get the clang libs
+# Defines llvm_include_dir variable
 include(LLVMUtilities)
-getClangTargets()
+setupLLVM()
 
 # Define project_warnings and project_options targets
 include(WarningsAndOptions)
 
 add_executable(Parser src/main.cpp)
-target_link_libraries(Parser PRIVATE IR::IR project_warnings project_options clangBasic)
+target_link_libraries(Parser PRIVATE project_warnings project_options)
+target_link_libraries(Parser PRIVATE IR::IR)
+target_link_libraries(Parser PRIVATE clangTooling clangBasic clangASTMatchers)
+target_include_directories(Parser PRIVATE ${llvm_include_dir})
 set_target_properties(Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS
                                         OFF CXX_STANDARD 17)
 
