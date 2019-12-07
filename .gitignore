@@ -10,6 +10,7 @@
 !.clang-format
 !.gitignore
 !CMakeLists.txt
+!todo.md
 
 # Directories
 !cmake
