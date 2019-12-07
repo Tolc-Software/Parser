@@ -9,20 +9,20 @@ project(
 # autocompletion
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Use ccache if available
-find_program(CCACHE ccache)
-if(CCACHE)
-  set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
-endif()
+# # Use ccache if available
+# find_program(CCACHE ccache)
+# if(CCACHE)
+#   set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
+# endif()
 
-# If no build type is provided explicitly, set it to Release
-if(NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
-  if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE
-        "Release"
-        CACHE STRING "" FORCE)
-  endif()
-endif()
+# # If no build type is provided explicitly, set it to Release
+# if(NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
+#   if(NOT CMAKE_BUILD_TYPE)
+#     set(CMAKE_BUILD_TYPE
+#         "Release"
+#         CACHE STRING "" FORCE)
+#   endif()
+# endif()
 
 # Add custom scripts
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -35,15 +35,20 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(IRSpecification)
 
-# Download if necessary and get the clang libs
-# Defines llvm_include_dir variable
 include(LLVMUtilities)
-setupLLVM()
+# Download if necessary and get the clang libs
+# Defines llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
+setupLLVM(NAME "LLVM_ENTRY")
+
+# Macro to get downloaded Clang and llvm packages
+getClangAndLLVM(PATH ${llvm_entry_SOURCE_DIR})
+# From the LLVM cmake module. Defines add_llvm_{executable,library}
+include(AddLLVM)
 
 # Define project_warnings and project_options targets
 include(WarningsAndOptions)
 
-add_executable(Parser src/Parser.cpp)
+add_llvm_executable(Parser src/Parser.cpp)
 target_link_libraries(Parser PRIVATE project_warnings project_options)
 target_link_libraries(Parser PRIVATE IR::IR)
 target_link_libraries(Parser PRIVATE clangTooling clangBasic clangASTMatchers)
