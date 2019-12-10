@@ -9,20 +9,11 @@ project(
 # autocompletion
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# # Use ccache if available
-# find_program(CCACHE ccache)
-# if(CCACHE)
-#   set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
-# endif()
-
-# # If no build type is provided explicitly, set it to Release
-# if(NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
-#   if(NOT CMAKE_BUILD_TYPE)
-#     set(CMAKE_BUILD_TYPE
-#         "Release"
-#         CACHE STRING "" FORCE)
-#   endif()
-# endif()
+# Use ccache if available
+find_program(CCACHE ccache)
+if(CCACHE)
+  set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
+endif()
 
 # Add custom scripts
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -44,15 +35,21 @@ setupLLVM(NAME "LLVM_ENTRY")
 getClangAndLLVM(PATH ${llvm_entry_SOURCE_DIR})
 # From the LLVM cmake module. Defines add_llvm_{executable,library}
 include(AddLLVM)
+include(AddClang)
 
 # Define project_warnings and project_options targets
 include(WarningsAndOptions)
 
+#add_clang_executable(Parser src/Parser.cpp)
 add_llvm_executable(Parser src/Parser.cpp)
+# Ignore warnings from clang/ as if they were system headers.
+# NOTE: This is only available on clang
+target_compile_options(Parser PRIVATE --system-header-prefix=clang/)
+
 target_link_libraries(Parser PRIVATE project_warnings project_options)
 target_link_libraries(Parser PRIVATE IR::IR)
 target_link_libraries(Parser PRIVATE clangTooling clangBasic clangASTMatchers)
-target_include_directories(Parser PRIVATE ${llvm_include_dir})
+target_include_directories(Parser PRIVATE ${llvm_entry_INCLUDE_DIR})
 set_target_properties(Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS
                                         OFF CXX_STANDARD 17)
 
