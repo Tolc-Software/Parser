@@ -41,7 +41,11 @@ include(AddClang)
 include(WarningsAndOptions)
 
 #add_clang_executable(Parser src/Parser.cpp)
-add_llvm_executable(Parser src/Parser.cpp src/Visitor/ParserVisitor.cpp)
+add_llvm_executable(Parser
+  src/Parser.cpp
+  src/Visitor/ParserVisitor.cpp
+  src/Consumer/ParserConsumer.cpp
+  src/Frontend/ParserFrontendAction.cpp)
 # Ignore warnings from clang/ as if they were system headers.
 # NOTE: This is only available on clang
 target_compile_options(Parser PRIVATE --system-header-prefix=clang/)
