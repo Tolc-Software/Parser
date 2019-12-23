@@ -4,6 +4,9 @@
 #include "clang/Frontend/FrontendAction.h"
 #include "clang/Tooling/Tooling.h"
 
+#include <iostream>
+#include <string>
+
 using namespace clang;
 
 class FindNamedClassVisitor
@@ -11,7 +14,45 @@ class FindNamedClassVisitor
 public:
 	explicit FindNamedClassVisitor(ASTContext* Context) : Context(Context) {}
 
+	bool VisitFunctionDecl(FunctionDecl* Declaration) {
+		for (auto& p : Declaration->parameters()) {
+			std::cout << "===== Start of variable =====" << '\n';
+			std::cout << "Name: " << std::string(p->getName()) << '\n';
+			std::cout << "All of the type: "
+			          << QualType::getAsString(p->getType().split(),
+			                                   PrintingPolicy {{}})
+			          << '\n';
+			LangOptions lops;
+			lops.CPlusPlus = true;
+			auto pp = PrintingPolicy(lops);
+			std::cout << "With custom policy: "
+			          << QualType::getAsString(p->getType().split(), pp)
+			          << '\n';
+			std::cout << "Qualifiers: "
+			          << p->getType().split().Quals.getAsString() << '\n';
+			std::cout << "Has const: " << p->getType().split().Quals.hasConst()
+			          << '\n';
+
+			p->getType().split().Ty->dump();
+			p->getType()->dump();
+			p->dump();
+			std::cout << "===== End of variable =====" << '\n';
+			std::cout << '\n';
+		}
+		std::cout << "I'm called with function: "
+		          << Declaration->getQualifiedNameAsString() << '\n';
+		return true;
+	}
+
+	bool VisitNamespaceDecl(NamespaceDecl* Declaration) {
+		std::cout << "I'm called with namespace: "
+		          << Declaration->getQualifiedNameAsString() << '\n';
+		return true;
+	}
+
 	bool VisitCXXRecordDecl(CXXRecordDecl* Declaration) {
+		std::cout << "I'm called with: "
+		          << Declaration->getQualifiedNameAsString() << '\n';
 		if (Declaration->getQualifiedNameAsString() == "n::m::C") {
 			FullSourceLoc FullLocation =
 			    Context->getFullLoc(Declaration->getBeginLoc());
@@ -49,9 +90,19 @@ public:
 	}
 };
 
-int main(int argc, char** argv) {
-	if (argc > 1) {
-		auto n = std::make_unique<FindNamedClassAction>();
-		clang::tooling::runToolOnCode(std::move(n), argv[1]);
-	}
+int main(int /*argc*/, char** /*argv*/) {
+	// if (argc > 1) {
+	// 	clang::tooling::runToolOnCode(new FindNamedClassAction(), argv[1]);
+	// }
+
+	// clang::tooling::runToolOnCode(
+	//     new FindNamedClassAction(),
+	//     "namespace n { namespace m { class C {}; } }");
+
+	clang::tooling::runToolOnCode(new FindNamedClassAction(),
+	                              R"(
+int FunctionName(const double d, int i) {
+	return d + 5;
+}
+		)");
 }
