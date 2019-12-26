@@ -1,6 +1,6 @@
 include_guard()
 
-function(setupLLVM)
+function(setup_llvm)
   # Define the supported set of keywords
   set(prefix ARG)
   set(noValues)
@@ -51,7 +51,7 @@ function(setupLLVM)
   set(${llvm_entry}_SOURCE_DIR ${${llvm_entry}_SOURCE_DIR} PARENT_SCOPE)
 endfunction()
 
-macro(getClangAndLLVM)
+macro(get_clang_and_llvm)
   # Define the supported set of keywords
   set(prefix ARG)
   set(noValues)

@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(
-  Parser
-  VERSION 0.1
-  LANGUAGES CXX)
+project(Parser VERSION 0.1 LANGUAGES CXX)
 
 # Export compile flags to compile_commands.json database. Useful for linters and
 # autocompletion
@@ -29,10 +26,10 @@ FetchContent_MakeAvailable(IRSpecification)
 include(LLVMUtilities)
 # Download if necessary and get the clang libs
 # Defines llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
-setupLLVM(NAME "LLVM_ENTRY")
+setup_llvm(NAME "LLVM_ENTRY")
 
 # Macro to get downloaded Clang and llvm packages
-getClangAndLLVM(PATH ${llvm_entry_SOURCE_DIR})
+get_clang_and_llvm(PATH ${llvm_entry_SOURCE_DIR})
 # From the LLVM cmake module. Defines add_llvm_{executable,library}
 include(AddLLVM)
 include(AddClang)
@@ -40,24 +37,32 @@ include(AddClang)
 # Define project_warnings and project_options targets
 include(WarningsAndOptions)
 
-#add_clang_executable(Parser src/Parser.cpp)
 add_llvm_executable(Parser
-  src/Parser.cpp
-  src/Visitor/ParserVisitor.cpp
-  src/Consumer/ParserConsumer.cpp
-  src/Frontend/ParserFrontendAction.cpp)
+                    src/Parser.cpp
+                    src/Visitor/ParserVisitor.cpp
+                    src/Consumer/ParserConsumer.cpp
+                    src/Frontend/ParserFrontendAction.cpp)
+
+target_link_libraries(Parser
+                      PRIVATE project_warnings
+                              project_options
+                              IR::IR
+                              clangTooling
+                              clangBasic
+                              clangASTMatchers)
+
 # Ignore warnings from clang/ as if they were system headers.
 # NOTE: This is only available on clang
-target_compile_options(Parser PRIVATE --system-header-prefix=clang/)
-
-target_link_libraries(Parser PRIVATE project_warnings project_options)
-target_link_libraries(Parser PRIVATE IR::IR)
-target_link_libraries(Parser PRIVATE clangTooling clangBasic clangASTMatchers)
-target_include_directories(Parser PRIVATE ${llvm_entry_INCLUDE_DIR})
+target_include_directories(Parser SYSTEM PRIVATE ${llvm_entry_INCLUDE_DIR})
 target_include_directories(Parser PRIVATE src)
 target_include_directories(Parser PUBLIC include)
-set_target_properties(Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS
-                                        OFF CXX_STANDARD 17)
+set_target_properties(Parser
+                      PROPERTIES CXX_STANDARD_REQUIRED
+                                 ON
+                                 CXX_EXTENSIONS
+                                 OFF
+                                 CXX_STANDARD
+                                 17)
 
 # Only build tests and benchmarks if building this project directly
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
