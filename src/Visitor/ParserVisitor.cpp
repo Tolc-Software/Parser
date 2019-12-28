@@ -1,24 +1,19 @@
 #include "Visitor/ParserVisitor.h"
 #include "clang/AST/RecursiveASTVisitor.h"
+#include "clang/AST/Type.h"
 
 #include <iostream>
 #include <string>
 
 namespace Visitor {
 
-bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* Declaration) {
-	for (auto& p : Declaration->parameters()) {
+bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
+	for (auto& p : functionDecl->parameters()) {
 		std::cout << "===== Start of variable =====" << '\n';
 		std::cout << "Name: " << std::string(p->getName()) << '\n';
 		std::cout << "All of the type: "
 		          << clang::QualType::getAsString(p->getType().split(),
 		                                          clang::PrintingPolicy {{}})
-		          << '\n';
-		clang::LangOptions lops;
-		lops.CPlusPlus = true;
-		auto pp = clang::PrintingPolicy(lops);
-		std::cout << "With custom policy: "
-		          << clang::QualType::getAsString(p->getType().split(), pp)
 		          << '\n';
 		std::cout << "Qualifiers: " << p->getType().split().Quals.getAsString()
 		          << '\n';
@@ -28,26 +23,30 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* Declaration) {
 		p->getType().split().Ty->dump();
 		p->getType()->dump();
 		p->dump();
+
+		clang::QualifierCollector qc;
+		auto withoutQs = qc.strip(p->getType());
+		withoutQs->dump();
 		std::cout << "===== End of variable =====" << '\n';
 		std::cout << '\n';
 	}
 	std::cout << "I'm called with function: "
-	          << Declaration->getQualifiedNameAsString() << '\n';
+	          << functionDecl->getQualifiedNameAsString() << '\n';
 	return true;
 }
 
-bool ParserVisitor::VisitNamespaceDecl(clang::NamespaceDecl* Declaration) {
+bool ParserVisitor::VisitNamespaceDecl(clang::NamespaceDecl* namespaceDecl) {
 	std::cout << "I'm called with namespace: "
-	          << Declaration->getQualifiedNameAsString() << '\n';
+	          << namespaceDecl->getQualifiedNameAsString() << '\n';
 	return true;
 }
 
-bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* Declaration) {
-	std::cout << "I'm called with: " << Declaration->getQualifiedNameAsString()
+bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
+	std::cout << "I'm called with: " << classDecl->getQualifiedNameAsString()
 	          << '\n';
-	if (Declaration->getQualifiedNameAsString() == "n::m::C") {
+	if (classDecl->getQualifiedNameAsString() == "n::m::C") {
 		clang::FullSourceLoc FullLocation =
-		    m_context->getFullLoc(Declaration->getBeginLoc());
+		    m_context->getFullLoc(classDecl->getBeginLoc());
 		if (FullLocation.isValid())
 			llvm::outs() << "Found declaration at "
 			             << FullLocation.getSpellingLineNumber() << ":"

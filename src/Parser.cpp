@@ -12,7 +12,7 @@ int main(int /*argc*/, char** /*argv*/) {
 
 	clang::tooling::runToolOnCode(new Frontend::ParserFrontendAction(),
 	                              R"(
-int FunctionName(const double d, int i) {
+int FunctionName(const double d, int i, char* c0, const char* c1) {
 	return d + 5;
 }
 		)");
