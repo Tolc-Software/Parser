@@ -69,7 +69,6 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   option(ENABLE_TESTING "Build the testing tree" OFF)
   if(ENABLE_TESTING)
     enable_testing()
-    include(Catch2Helpers)
     add_subdirectory(tests)
   endif()
 

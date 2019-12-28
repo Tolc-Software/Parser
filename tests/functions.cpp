@@ -9,5 +9,4 @@ int FunctionName(const double d, int i) {
 	return d + 5;
 }
 		)");
-	REQUIRE(1 != 1);
 }

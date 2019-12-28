@@ -7,9 +7,12 @@ FetchContent_Declare(Catch2
 
 FetchContent_MakeAvailable(Catch2)
 
-# To use create_catch2_test these are needed
+# These are needed to use create_catch2_test
 set(Catch2_FOUND TRUE)
 set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
+
+# Defines create_catch2_test
+include(Catch2Helpers)
 
 # Helper function
 function(setup_test test_target)
@@ -37,3 +40,4 @@ endfunction()
 # NOTE: This is only available on clang
 
 setup_test(functions)
+setup_test(namespaces)
