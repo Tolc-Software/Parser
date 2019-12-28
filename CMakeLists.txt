@@ -37,16 +37,16 @@ include(AddClang)
 # Define project_warnings and project_options targets
 include(WarningsAndOptions)
 
-add_llvm_executable(Parser
-                    src/Parser.cpp
-                    src/Visitor/ParserVisitor.cpp
-                    src/Consumer/ParserConsumer.cpp
-                    src/Frontend/ParserFrontendAction.cpp)
+add_llvm_library(Parser
+                 src/Parser.cpp
+                 src/Visitor/ParserVisitor.cpp
+                 src/Consumer/ParserConsumer.cpp
+                 src/Frontend/ParserFrontendAction.cpp)
 
 target_link_libraries(Parser
+                      PUBLIC IR::IR
                       PRIVATE project_warnings
                               project_options
-                              IR::IR
                               clangTooling
                               clangBasic
                               clangASTMatchers)
@@ -68,9 +68,9 @@ set_target_properties(Parser
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   option(ENABLE_TESTING "Build the testing tree" OFF)
   if(ENABLE_TESTING)
-    # enable_testing()
-    # add_subdirectory(tests)
-    # TODO: Add benchmarks
+    enable_testing()
+    include(Catch2Helpers)
+    add_subdirectory(tests)
   endif()
 
   option(ENABLE_BENCHMARKS "Build the benchmarks" OFF)
