@@ -38,18 +38,19 @@ include(AddClang)
 include(WarningsAndOptions)
 
 add_llvm_library(Parser
-                 src/Parser.cpp
-                 src/Visitor/ParserVisitor.cpp
                  src/Consumer/ParserConsumer.cpp
-                 src/Frontend/ParserFrontendAction.cpp)
+                 src/Frontend/ParserFrontendAction.cpp
+                 src/Visitor/VisitCXXRecordDecl.cpp
+                 src/Visitor/VisitFunctionDecl.cpp
+                 src/Visitor/VisitNamespaceDecl.cpp)
 
 target_link_libraries(Parser
-                      PUBLIC IR::IR
-                      PRIVATE project_warnings
-                              project_options
-                              clangTooling
+                      PUBLIC  IR::IR
+                      PRIVATE clangASTMatchers
                               clangBasic
-                              clangASTMatchers)
+                              clangTooling
+                              project_options
+                              project_warnings)
 
 # Ignore warnings from clang/ as if they were system headers.
 # NOTE: This is only available on clang

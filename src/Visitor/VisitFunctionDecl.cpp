@@ -1,5 +1,4 @@
 #include "Visitor/ParserVisitor.h"
-#include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/AST/Type.h"
 
 #include <iostream>
@@ -35,23 +34,4 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	return true;
 }
 
-bool ParserVisitor::VisitNamespaceDecl(clang::NamespaceDecl* namespaceDecl) {
-	std::cout << "I'm called with namespace: "
-	          << namespaceDecl->getQualifiedNameAsString() << '\n';
-	return true;
 }
-
-bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
-	std::cout << "I'm called with: " << classDecl->getQualifiedNameAsString()
-	          << '\n';
-	if (classDecl->getQualifiedNameAsString() == "n::m::C") {
-		clang::FullSourceLoc FullLocation =
-		    m_context->getFullLoc(classDecl->getBeginLoc());
-		if (FullLocation.isValid())
-			llvm::outs() << "Found declaration at "
-			             << FullLocation.getSpellingLineNumber() << ":"
-			             << FullLocation.getSpellingColumnNumber() << "\n";
-	}
-	return true;
-}
-}    // namespace Visitor
