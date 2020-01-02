@@ -42,7 +42,8 @@ add_llvm_library(Parser
                  src/Frontend/ParserFrontendAction.cpp
                  src/Visitor/VisitCXXRecordDecl.cpp
                  src/Visitor/VisitFunctionDecl.cpp
-                 src/Visitor/VisitNamespaceDecl.cpp)
+                 src/Visitor/VisitNamespaceDecl.cpp
+                 src/Parser/Parse.cpp)
 
 target_link_libraries(Parser
                       PUBLIC  IR::IR
