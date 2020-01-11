@@ -1,8 +1,6 @@
-#include "Frontend/ParserFrontendAction.h"
 #include "Helpers/IRData.h"
 #include "Parser/Parse.h"
 #include "catch2/catch.hpp"
-#include "clang/Tooling/Tooling.h"
 
 TEST_CASE("Simple function", "[functions]") {
 	auto namespaces = Parser::parseString(R"(

@@ -1,20 +1,22 @@
 #pragma once
 
-#include "Helpers/IRData.h"
+#include "IR/ir.hpp"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
+#include <vector>
 
 namespace Frontend {
 
 class ParserFrontendAction : public clang::ASTFrontendAction {
 public:
-	explicit ParserFrontendAction(Helpers::IRData& irData) : m_irData(irData) {}
+	explicit ParserFrontendAction(std::vector<IR::Namespace>& parsedNamespaces)
+	    : m_parsedNamespaces(parsedNamespaces) {}
 
 	std::unique_ptr<clang::ASTConsumer>
 	CreateASTConsumer(clang::CompilerInstance& Compiler,
 	                  llvm::StringRef /*InFile*/);
 
-	Helpers::IRData& m_irData;
+	std::vector<IR::Namespace>& m_parsedNamespaces;
 };
 
 }    // namespace Frontend

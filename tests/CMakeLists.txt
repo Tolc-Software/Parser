@@ -18,12 +18,14 @@ include(Catch2Helpers)
 function(setup_test test_target)
   # NOTE: Assumes the source of the target has the same name as the target dot
   # cpp
+
+  get_filename_component(project_dir ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
   create_catch2_test(TARGET
                      ${test_target}
                      SOURCES
                      ${test_target}.cpp
                      INCLUDE
-                     ../src
+                     ${project_dir}/src
                      LINK_LIBRARIES
                      project_warnings
                      project_options

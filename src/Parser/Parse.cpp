@@ -1,7 +1,6 @@
 #include "Parser/Parse.h"
 #include "Frontend/ParserFrontendAction.h"
-#include "Helpers/IRData.h"
-#include "IR/ir.hpp"
+#include "Helpers/namespaceBuilder.h"
 #include "clang/Tooling/Tooling.h"
 #include <string>
 #include <vector>
@@ -9,11 +8,11 @@
 namespace Parser {
 
 std::vector<IR::Namespace> parseString(const std::string& code) {
-	Helpers::IRData irData;
-	clang::tooling::runToolOnCode(new Frontend::ParserFrontendAction(irData),
+	std::vector<IR::Namespace> parsedIR;
+	clang::tooling::runToolOnCode(new Frontend::ParserFrontendAction(parsedIR),
 	                              code);
 
-	return irData.m_namespaces;
+	return parsedIR;
 }
 
 }    // namespace Parser

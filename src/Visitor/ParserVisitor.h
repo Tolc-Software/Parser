@@ -1,13 +1,19 @@
 #pragma once
 
 #include "Helpers/IRData.h"
+#include "IR/ir.hpp"
 #include "clang/AST/RecursiveASTVisitor.h"
 
 namespace Visitor {
 class ParserVisitor : public clang::RecursiveASTVisitor<ParserVisitor> {
 public:
-	explicit ParserVisitor(clang::ASTContext* context, Helpers::IRData& irData)
-	    : m_context(context), m_irData(irData) {}
+	explicit ParserVisitor(clang::ASTContext* context,
+	                       std::vector<IR::Namespace>& parsedNamespaces)
+	    : m_context(context), m_parsedNamespaces(parsedNamespaces) {}
+
+	// Will populate the m_parsedNamespaces
+	// since it is guaranteed that all visitors will have run by then
+	~ParserVisitor();
 
 	bool VisitFunctionDecl(clang::FunctionDecl* functionDecl);
 
@@ -17,6 +23,11 @@ public:
 
 private:
 	clang::ASTContext* m_context;
-	Helpers::IRData& m_irData;
+
+	// This is what the visitor functions need to fill
+	Helpers::IRData m_irData;
+
+	// This will get filled in the destructor of the visitor
+	std::vector<IR::Namespace>& m_parsedNamespaces;
 };
 }    // namespace Visitor

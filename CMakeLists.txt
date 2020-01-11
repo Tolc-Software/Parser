@@ -40,6 +40,8 @@ include(WarningsAndOptions)
 add_llvm_library(Parser
                  src/Consumer/ParserConsumer.cpp
                  src/Frontend/ParserFrontendAction.cpp
+                 src/Helpers/namespaceBuilder.cpp
+                 src/Visitor/ParserVisitor.cpp
                  src/Visitor/VisitCXXRecordDecl.cpp
                  src/Visitor/VisitFunctionDecl.cpp
                  src/Visitor/VisitNamespaceDecl.cpp
