@@ -1,4 +1,3 @@
-#include "Helpers/IRData.h"
 #include "Parser/Parse.h"
 #include "catch2/catch.hpp"
 
