@@ -41,6 +41,7 @@ add_llvm_library(Parser
                  src/Consumer/ParserConsumer.cpp
                  src/Frontend/ParserFrontendAction.cpp
                  src/Helpers/namespaceBuilder.cpp
+                 src/Helpers/namespaceHelpers.cpp
                  src/Visitor/ParserVisitor.cpp
                  src/Visitor/VisitCXXRecordDecl.cpp
                  src/Visitor/VisitFunctionDecl.cpp

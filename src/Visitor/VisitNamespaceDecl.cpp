@@ -9,13 +9,9 @@
 namespace Visitor {
 
 bool ParserVisitor::VisitNamespaceDecl(clang::NamespaceDecl* namespaceDecl) {
-	std::cout << "I'm called with qualified namespace: "
-	          << namespaceDecl->getQualifiedNameAsString() << '\n';
-	std::cout << "I'm called with namespace: "
-	          << namespaceDecl->getNameAsString() << '\n';
-
 	IR::Namespace ns;
-	ns.m_name = namespaceDecl->getNameAsString();
+	std::string name = namespaceDecl->getName();
+	ns.m_name = name;
 
 	// Export our parsed namespace
 	m_irData.m_namespaces.push_back(

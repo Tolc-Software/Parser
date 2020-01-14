@@ -1,5 +1,8 @@
+#include "Helpers/namespaceHelpers.h"
 #include "Parser/Parse.h"
 #include "catch2/catch.hpp"
+#include <algorithm>
+#include <iostream>
 
 TEST_CASE("Single namespace", "[namespaces]") {
 	auto namespaces = Parser::parseString("namespace Test {}");
@@ -40,3 +43,36 @@ namespace Test1 {}
 	}
 }
 
+TEST_CASE("Two nested namespaces", "[namespaces]") {
+	auto namespaces = Parser::parseString(R"(
+namespace ParentNamespace {
+	namespace ChildNamespace {}
+}
+		)");
+	SECTION("Parser finds two empty namespaces") {
+		REQUIRE(namespaces.size() == 2);
+		for (auto& ns : namespaces) {
+			CHECK(ns.m_constants.empty());
+			CHECK(ns.m_functions.empty());
+			CHECK(ns.m_structs.empty());
+		}
+
+		SECTION("Named correctly") {
+			for (auto name : {"ParentNamespace", "ChildNamespace"}) {
+				CAPTURE(name);
+				REQUIRE(std::any_of(
+				    namespaces.begin(),
+				    namespaces.end(),
+				    [name](auto const& ns) { return ns.m_name == name; }));
+			}
+		}
+
+		SECTION("Nested correctly") {
+			auto child = Helpers::findNamespace(namespaces, "ChildNamespace");
+
+			REQUIRE(child != namespaces.end());
+
+			CHECK(child->m_parent == "ParentNamespace");
+		}
+	}
+}
