@@ -2,7 +2,21 @@
 #include "Parser/Parse.h"
 #include "catch2/catch.hpp"
 #include <algorithm>
-#include <iostream>
+#include <string_view>
+
+namespace {
+void requireNamespaceHasParent(std::vector<IR::Namespace>& namespaces,
+                               std::string const& child,
+                               std::string const& parent) {
+	CAPTURE(child);
+	CAPTURE(parent);
+	auto childNS = Helpers::findNamespace(namespaces, child);
+
+	REQUIRE(childNS != namespaces.end());
+
+	CHECK(childNS->m_parent == parent);
+}
+}    // namespace
 
 TEST_CASE("Single namespace", "[namespaces]") {
 	auto namespaces = Parser::parseString("namespace Test {}");
@@ -68,11 +82,44 @@ namespace ParentNamespace {
 		}
 
 		SECTION("Nested correctly") {
-			auto child = Helpers::findNamespace(namespaces, "ChildNamespace");
+			requireNamespaceHasParent(
+			    namespaces, "ChildNamespace", "ParentNamespace");
+		}
+	}
+}
 
-			REQUIRE(child != namespaces.end());
+TEST_CASE("Three nested namespaces", "[namespaces]") {
+	auto namespaces = Parser::parseString(R"(
+namespace ParentNamespace {
+	namespace ChildNamespace {
+		namespace ChildChildNamespace {}
+	}
+}
+		)");
+	SECTION("Parser finds three empty namespaces") {
+		REQUIRE(namespaces.size() == 3);
+		for (auto& ns : namespaces) {
+			CHECK(ns.m_constants.empty());
+			CHECK(ns.m_functions.empty());
+			CHECK(ns.m_structs.empty());
+		}
 
-			CHECK(child->m_parent == "ParentNamespace");
+		SECTION("Named correctly") {
+			for (auto name :
+			     {"ParentNamespace", "ChildNamespace", "ChildChildNamespace"}) {
+				CAPTURE(name);
+				REQUIRE(std::any_of(
+				    namespaces.begin(),
+				    namespaces.end(),
+				    [name](auto const& ns) { return ns.m_name == name; }));
+			}
+		}
+
+		SECTION("Nested correctly") {
+			requireNamespaceHasParent(
+			    namespaces, "ChildNamespace", "ParentNamespace");
+			requireNamespaceHasParent(
+			    namespaces, "ChildChildNamespace", "ChildNamespace");
 		}
 	}
 }

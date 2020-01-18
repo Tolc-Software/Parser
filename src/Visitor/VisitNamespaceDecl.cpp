@@ -1,3 +1,4 @@
+#include "Helpers/namespaceBuilder.h"
 #include "IR/ir.hpp"
 #include "Visitor/ParserVisitor.h"
 #include "clang/AST/DeclBase.h"
@@ -15,7 +16,7 @@ bool ParserVisitor::VisitNamespaceDecl(clang::NamespaceDecl* namespaceDecl) {
 
 	// Export our parsed namespace
 	m_irData.m_namespaces.push_back(
-	    std::make_pair(namespaceDecl->getParent(), ns));
+	    std::make_pair(Helpers::getParentNamespaceName(namespaceDecl), ns));
 
 	// Continue the AST search
 	return true;
