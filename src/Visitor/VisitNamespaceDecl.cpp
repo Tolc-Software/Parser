@@ -11,8 +11,7 @@ namespace Visitor {
 
 bool ParserVisitor::VisitNamespaceDecl(clang::NamespaceDecl* namespaceDecl) {
 	IR::Namespace ns;
-	std::string name = namespaceDecl->getName();
-	ns.m_name = name;
+	ns.m_name = namespaceDecl->getName();
 
 	// Export our parsed namespace
 	m_irData.m_namespaces.push_back(

@@ -5,16 +5,12 @@
 #include <string_view>
 
 namespace {
-void requireNamespaceHasParent(std::vector<IR::Namespace>& namespaces,
-                               std::string const& child,
-                               std::string const& parent) {
-	CAPTURE(child);
-	CAPTURE(parent);
-	auto childNS = Helpers::findNamespace(namespaces, child);
+void checkEmpty(IR::Namespace& ns) {
+	CAPTURE(ns.m_name);
 
-	REQUIRE(childNS != namespaces.end());
-
-	CHECK(childNS->m_parent == parent);
+	CHECK(ns.m_constants.empty());
+	CHECK(ns.m_functions.empty());
+	CHECK(ns.m_structs.empty());
 }
 }    // namespace
 
@@ -24,9 +20,7 @@ TEST_CASE("Single namespace", "[namespaces]") {
 		REQUIRE(namespaces.size() == 1);
 		auto& testNs = namespaces[0];
 
-		CHECK(testNs.m_constants.empty());
-		CHECK(testNs.m_functions.empty());
-		CHECK(testNs.m_structs.empty());
+		checkEmpty(testNs);
 
 		REQUIRE(testNs.m_name == "Test");
 	}
@@ -40,9 +34,7 @@ namespace Test1 {}
 	SECTION("Parser finds two empty namespaces") {
 		REQUIRE(namespaces.size() == 2);
 		for (auto& ns : namespaces) {
-			CHECK(ns.m_constants.empty());
-			CHECK(ns.m_functions.empty());
-			CHECK(ns.m_structs.empty());
+			checkEmpty(ns);
 		}
 
 		SECTION("Named correctly") {
@@ -63,27 +55,23 @@ namespace ParentNamespace {
 	namespace ChildNamespace {}
 }
 		)");
-	SECTION("Parser finds two empty namespaces") {
-		REQUIRE(namespaces.size() == 2);
-		for (auto& ns : namespaces) {
-			CHECK(ns.m_constants.empty());
-			CHECK(ns.m_functions.empty());
-			CHECK(ns.m_structs.empty());
-		}
+	SECTION("Parser finds the empty root namespace") {
+		REQUIRE(namespaces.size() == 1);
+		auto& ns = namespaces.back();
+		checkEmpty(ns);
+
+		// It has one child
+		REQUIRE(ns.m_children.size() == 1);
+		auto& child = ns.m_children.back();
+		checkEmpty(ns);
 
 		SECTION("Named correctly") {
-			for (auto name : {"ParentNamespace", "ChildNamespace"}) {
-				CAPTURE(name);
-				REQUIRE(std::any_of(
-				    namespaces.begin(),
-				    namespaces.end(),
-				    [name](auto const& ns) { return ns.m_name == name; }));
-			}
+			CHECK(ns.m_name == "ParentNamespace");
+			CHECK(child.m_name == "ChildNamespace");
 		}
 
 		SECTION("Nested correctly") {
-			requireNamespaceHasParent(
-			    namespaces, "ChildNamespace", "ParentNamespace");
+			CHECK(child.m_parent == "ParentNamespace");
 		}
 	}
 }
@@ -92,34 +80,32 @@ TEST_CASE("Three nested namespaces", "[namespaces]") {
 	auto namespaces = Parser::parseString(R"(
 namespace ParentNamespace {
 	namespace ChildNamespace {
-		namespace ChildChildNamespace {}
+		namespace GrandchildNamespace {}
 	}
 }
 		)");
-	SECTION("Parser finds three empty namespaces") {
-		REQUIRE(namespaces.size() == 3);
-		for (auto& ns : namespaces) {
-			CHECK(ns.m_constants.empty());
-			CHECK(ns.m_functions.empty());
-			CHECK(ns.m_structs.empty());
-		}
+	SECTION("Parser finds the three empty namespaces") {
+		REQUIRE(namespaces.size() == 1);
+		auto& root = namespaces.back();
+		checkEmpty(root);
+
+		REQUIRE(root.m_children.size() == 1);
+		auto& child = root.m_children.back();
+		checkEmpty(child);
+
+		REQUIRE(child.m_children.size() == 1);
+		auto& grandchild = child.m_children.back();
+		checkEmpty(grandchild);
 
 		SECTION("Named correctly") {
-			for (auto name :
-			     {"ParentNamespace", "ChildNamespace", "ChildChildNamespace"}) {
-				CAPTURE(name);
-				REQUIRE(std::any_of(
-				    namespaces.begin(),
-				    namespaces.end(),
-				    [name](auto const& ns) { return ns.m_name == name; }));
-			}
+			CHECK(root.m_name == "ParentNamespace");
+			CHECK(child.m_name == "ChildNamespace");
+			CHECK(grandchild.m_name == "GrandchildNamespace");
 		}
 
 		SECTION("Nested correctly") {
-			requireNamespaceHasParent(
-			    namespaces, "ChildNamespace", "ParentNamespace");
-			requireNamespaceHasParent(
-			    namespaces, "ChildChildNamespace", "ChildNamespace");
+			CHECK(child.m_parent == "ParentNamespace");
+			CHECK(grandchild.m_parent == "ChildNamespace");
 		}
 	}
 }

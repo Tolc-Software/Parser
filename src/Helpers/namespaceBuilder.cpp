@@ -10,19 +10,20 @@
 #include <string_view>
 #include <vector>
 
-namespace {
-
-IR::Namespace const* getIRNamespace(std::vector<IR::Namespace>& namespaces,
-                                    std::string_view ns) {
-	if (!ns.empty()) {
-		auto foundNs = Helpers::findNamespace(namespaces, ns);
-		if (foundNs != namespaces.end()) {
-			return &(*foundNs);
-		}
-	}
-	return nullptr;
-}
-}    // namespace
+// namespace {
+// void printNS(IR::Namespace const& ns) {
+// 	std::cout << ns.m_name << '\n';
+// 	std::cout << " - Parent: '" << ns.m_parent << "'" << '\n';
+// 	std::cout << " - Children:" << '\n';
+// 	for (auto& child : ns.m_children) {
+// 		std::cout << "    '" << child.m_name << "'" << '\n';
+// 	}
+// 	std::cout << "---------------" << '\n';
+// 	for (auto& child : ns.m_children) {
+// 		printNS(child);
+// 	}
+// }
+// }    // namespace
 
 namespace Helpers {
 
@@ -40,17 +41,26 @@ std::vector<IR::Namespace> buildNamespaceStructure(
 	// Output
 	std::vector<IR::Namespace> builtNamespaces;
 
-	for (auto& [parent, ns] : namespaces) {
-		builtNamespaces.push_back(ns);
+	// {name, namespace}
+	std::unordered_map<std::string, IR::Namespace> lookup;
+
+	// Build parent structure and lookup table
+	for (auto& [parentName, ns] : namespaces) {
+		lookup[ns.m_name] = ns;
+		lookup[ns.m_name].m_parent = parentName;
 	}
 
-	for (auto& [parentName, ns] : namespaces) {
-		if (auto parentNs = getIRNamespace(builtNamespaces, parentName)) {
-			if (auto builtNs =
-			        Helpers::findNamespace(builtNamespaces, ns.m_name);
-			    builtNs != builtNamespaces.end()) {
-				builtNs->m_parent = parentNs->m_name;
-			}
+	// Build child structure
+	for (auto& [name, ns] : lookup) {
+		if (auto parent = lookup.find(ns.m_parent); parent != lookup.end()) {
+			parent->second.m_children.push_back(ns);
+		}
+	}
+
+	// Save the root nodes
+	for (auto [nsName, ns] : lookup) {
+		if (ns.m_parent.empty()) {
+			builtNamespaces.push_back(ns);
 		}
 	}
 
