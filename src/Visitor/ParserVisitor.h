@@ -8,7 +8,7 @@ namespace Visitor {
 class ParserVisitor : public clang::RecursiveASTVisitor<ParserVisitor> {
 public:
 	explicit ParserVisitor(clang::ASTContext* context,
-	                       std::vector<IR::Namespace>& parsedNamespaces)
+	                       IR::Namespace& parsedNamespaces)
 	    : m_context(context), m_parsedNamespaces(parsedNamespaces) {}
 
 	// Will populate the m_parsedNamespaces
@@ -28,6 +28,6 @@ private:
 	Helpers::IRData m_irData;
 
 	// This will get filled in the destructor of the visitor
-	std::vector<IR::Namespace>& m_parsedNamespaces;
+	IR::Namespace& m_parsedNamespaces;
 };
 }    // namespace Visitor

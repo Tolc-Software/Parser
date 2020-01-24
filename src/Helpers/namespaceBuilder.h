@@ -12,9 +12,9 @@ namespace Helpers {
 std::string getParentNamespaceName(clang::NamespaceDecl const* namespaceDecl);
 
 /**
-  * Check if parent of input is a namespace, if so, return its name
-  * Otherwise return ""
+  * Build the structure between namespaces (parent - children)
+  * and return the root namespace (always the global namespace)
   */
-std::vector<IR::Namespace> buildNamespaceStructure(
+IR::Namespace buildNamespaceStructure(
     std::vector<std::pair<std::string, IR::Namespace>> const& namespaces);
 }    // namespace Helpers

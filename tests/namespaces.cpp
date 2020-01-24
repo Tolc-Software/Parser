@@ -15,10 +15,10 @@ void checkEmpty(IR::Namespace& ns) {
 }    // namespace
 
 TEST_CASE("Single namespace", "[namespaces]") {
-	auto namespaces = Parser::parseString("namespace Test {}");
+	auto globalNS = Parser::parseString("namespace Test {}");
 	SECTION("Parser finds an empty namespace named Test") {
-		REQUIRE(namespaces.size() == 1);
-		auto& testNs = namespaces[0];
+		REQUIRE(globalNS.m_children.size() == 1);
+		auto& testNs = globalNS.m_children[0];
 
 		checkEmpty(testNs);
 
@@ -27,11 +27,12 @@ TEST_CASE("Single namespace", "[namespaces]") {
 }
 
 TEST_CASE("Two namespaces", "[namespaces]") {
-	auto namespaces = Parser::parseString(R"(
+	auto globalNS = Parser::parseString(R"(
 namespace Test0 {}
 namespace Test1 {}
 		)");
 	SECTION("Parser finds two empty namespaces") {
+		auto& namespaces = globalNS.m_children;
 		REQUIRE(namespaces.size() == 2);
 		for (auto& ns : namespaces) {
 			checkEmpty(ns);
@@ -50,12 +51,13 @@ namespace Test1 {}
 }
 
 TEST_CASE("Two nested namespaces", "[namespaces]") {
-	auto namespaces = Parser::parseString(R"(
+	auto globalNS = Parser::parseString(R"(
 namespace ParentNamespace {
 	namespace ChildNamespace {}
 }
 		)");
 	SECTION("Parser finds the empty root namespace") {
+		auto& namespaces = globalNS.m_children;
 		REQUIRE(namespaces.size() == 1);
 		auto& ns = namespaces.back();
 		checkEmpty(ns);
@@ -77,14 +79,15 @@ namespace ParentNamespace {
 }
 
 TEST_CASE("Three nested namespaces", "[namespaces]") {
-	auto namespaces = Parser::parseString(R"(
+	auto globalNS = Parser::parseString(R"(
 namespace ParentNamespace {
 	namespace ChildNamespace {
 		namespace GrandchildNamespace {}
 	}
 }
 		)");
-	SECTION("Parser finds the three empty namespaces") {
+	SECTION("Parser finds the empty root namespace") {
+		auto& namespaces = globalNS.m_children;
 		REQUIRE(namespaces.size() == 1);
 		auto& root = namespaces.back();
 		checkEmpty(root);
@@ -106,6 +109,42 @@ namespace ParentNamespace {
 		SECTION("Nested correctly") {
 			CHECK(child.m_parent == "ParentNamespace");
 			CHECK(grandchild.m_parent == "ChildNamespace");
+		}
+	}
+}
+
+TEST_CASE("Same name but different qualified name", "[namespaces]") {
+	auto globalNS = Parser::parseString(R"(
+namespace A {
+	namespace B {}
+}
+namespace B {}
+		)");
+	SECTION("Parser finds the two empty root namespaces") {
+		auto& namespaces = globalNS.m_children;
+		REQUIRE(namespaces.size() == 2);
+		auto& a = namespaces[0];
+		checkEmpty(a);
+		auto& b = namespaces[1];
+		checkEmpty(b);
+		if (b.m_name == "A") {
+			std::swap(a, b);
+		}
+
+		CHECK(a.m_children.size() == 1);
+		CHECK(b.m_children.size() == 1);
+		// auto& aB = a.m_children.back();
+		// checkEmpty(aB);
+
+		SECTION("Named correctly") {
+			CHECK(a.m_name == "A");
+			CHECK(b.m_name == "B");
+			// CHECK(aB.m_name == "B");
+		}
+
+		SECTION("Nested correctly") {
+			// CHECK(aB.m_parent == "A");
+			CHECK(b.m_parent.empty());
 		}
 	}
 }

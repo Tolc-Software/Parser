@@ -9,7 +9,7 @@ namespace Parser {
 *
 * @param: const std::string& code
 *
-* @return: std::vector<IR::Namespace>
+* @return: IR::Namespace
 */
-std::vector<IR::Namespace> parseString(const std::string& code);
+IR::Namespace parseString(const std::string& code);
 }

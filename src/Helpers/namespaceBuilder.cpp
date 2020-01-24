@@ -10,20 +10,31 @@
 #include <string_view>
 #include <vector>
 
-// namespace {
-// void printNS(IR::Namespace const& ns) {
-// 	std::cout << ns.m_name << '\n';
-// 	std::cout << " - Parent: '" << ns.m_parent << "'" << '\n';
-// 	std::cout << " - Children:" << '\n';
-// 	for (auto& child : ns.m_children) {
-// 		std::cout << "    '" << child.m_name << "'" << '\n';
-// 	}
-// 	std::cout << "---------------" << '\n';
-// 	for (auto& child : ns.m_children) {
-// 		printNS(child);
-// 	}
-// }
-// }    // namespace
+namespace {
+
+void printNSInternal(IR::Namespace const& ns, int depth) {
+	std::string indentation;
+	for (int i = 0; i < depth; ++i) {
+		indentation += "    ";
+	}
+	std::cout << indentation << ns.m_name << '\n';
+	std::cout << indentation << " - Parent: '" << ns.m_parent << "'" << '\n';
+	std::cout << indentation << " - Children:" << '\n';
+	for (auto& child : ns.m_children) {
+		std::cout << indentation << "    '" << child.m_name << "'" << '\n';
+	}
+	for (auto& child : ns.m_children) {
+		std::cout << indentation << "    "
+		          << "|" << '\n';
+		printNSInternal(child, depth + 1);
+	}
+	std::cout << "---------------" << '\n';
+}
+void printNS(IR::Namespace const& ns) {
+	// Start the recursion
+	printNSInternal(ns, 0);
+}
+}    // namespace
 
 namespace Helpers {
 
@@ -36,7 +47,7 @@ std::string getParentNamespaceName(clang::NamespaceDecl const* namespaceDecl) {
 	return "";
 }
 
-std::vector<IR::Namespace> buildNamespaceStructure(
+IR::Namespace buildNamespaceStructure(
     std::vector<std::pair<std::string, IR::Namespace>> const& namespaces) {
 	// Output
 	std::vector<IR::Namespace> builtNamespaces;
@@ -44,26 +55,35 @@ std::vector<IR::Namespace> buildNamespaceStructure(
 	// {name, namespace}
 	std::unordered_map<std::string, IR::Namespace> lookup;
 
+	std::cout << "================================" << '\n' << '\n';
+	std::cout << "Starting" << '\n';
 	// Build parent structure and lookup table
 	for (auto& [parentName, ns] : namespaces) {
 		lookup[ns.m_name] = ns;
 		lookup[ns.m_name].m_parent = parentName;
 	}
+	lookup[""] = IR::Namespace();
 
 	// Build child structure
 	for (auto& [name, ns] : lookup) {
-		if (auto parent = lookup.find(ns.m_parent); parent != lookup.end()) {
-			parent->second.m_children.push_back(ns);
+		// The global namespace is not a child :)
+		if (!name.empty()) {
+			std::cout << "On namespace: " << name << '\n';
+			if (auto parent = lookup.find(ns.m_parent);
+			    parent != lookup.end()) {
+				std::cout << "Adding [parent, child]: [" << parent->first
+				          << ", " << name << "]" << '\n';
+				parent->second.m_children.push_back(ns);
+			}
 		}
 	}
 
-	// Save the root nodes
-	for (auto [nsName, ns] : lookup) {
-		if (ns.m_parent.empty()) {
-			builtNamespaces.push_back(ns);
-		}
+	std::cout << "Ending at:" << '\n';
+	for (auto& [name, ns] : lookup) {
+		printNS(ns);
 	}
 
-	return builtNamespaces;
+	// Return the root node
+	return lookup[""];
 }
 }    // namespace Helpers

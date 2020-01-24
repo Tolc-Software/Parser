@@ -9,7 +9,7 @@ namespace Consumer {
 class ParserConsumer : public clang::ASTConsumer {
 public:
 	explicit ParserConsumer(clang::ASTContext* context,
-	                        std::vector<IR::Namespace>& parsedNamespaces)
+	                        IR::Namespace& parsedNamespaces)
 	    : m_visitor(context, parsedNamespaces) {}
 
 	virtual void HandleTranslationUnit(clang::ASTContext& context);

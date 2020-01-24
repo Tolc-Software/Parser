@@ -5,9 +5,8 @@
 namespace Visitor {
 ParserVisitor::~ParserVisitor() {
 	// Build empty namespaces and their relations
-	for (auto& ns : Helpers::buildNamespaceStructure(m_irData.m_namespaces)) {
-		m_parsedNamespaces.push_back(ns);
-	}
+	m_parsedNamespaces =
+	    Helpers::buildNamespaceStructure(m_irData.m_namespaces);
 }
 
 }    // namespace Visitor

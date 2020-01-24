@@ -1,13 +1,16 @@
 #include "Parser/Parse.h"
 #include "Frontend/ParserFrontendAction.h"
 #include "clang/Tooling/Tooling.h"
+#include <iostream>
 #include <string>
-#include <vector>
 
 namespace Parser {
 
-std::vector<IR::Namespace> parseString(const std::string& code) {
-	std::vector<IR::Namespace> parsedIR;
+IR::Namespace parseString(const std::string& code) {
+	std::cout << "====================" << '\n';
+	std::cout << "Parsing code:" << '\n';
+	std::cout << code << '\n';
+	IR::Namespace parsedIR;
 	clang::tooling::runToolOnCode(new Frontend::ParserFrontendAction(parsedIR),
 	                              code.c_str());
 
