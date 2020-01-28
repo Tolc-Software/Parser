@@ -6,6 +6,8 @@
 #include "llvm/Support/Casting.h"
 #include <algorithm>
 #include <iostream>
+#include <map>
+#include <queue>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -28,11 +30,25 @@ void printNSInternal(IR::Namespace const& ns, int depth) {
 		          << "|" << '\n';
 		printNSInternal(child, depth + 1);
 	}
-	std::cout << "---------------" << '\n';
 }
 void printNS(IR::Namespace const& ns) {
 	// Start the recursion
 	printNSInternal(ns, 0);
+	std::cout << "---------------" << '\n';
+}
+
+std::vector<IR::Namespace>
+createChildren(std::multimap<std::string, std::string> const& parentToChildren,
+               std::string const& parent) {
+	std::vector<IR::Namespace> children;
+	auto [start, end] = parentToChildren.equal_range(parent);
+	for (auto it = start; it != end; it++) {
+		IR::Namespace child;
+		child.m_parent = it->first;
+		child.m_name = it->second;
+		children.emplace_back(child);
+	}
+	return children;
 }
 }    // namespace
 
@@ -52,38 +68,34 @@ IR::Namespace buildNamespaceStructure(
 	// Output
 	std::vector<IR::Namespace> builtNamespaces;
 
-	// {name, namespace}
-	std::unordered_map<std::string, IR::Namespace> lookup;
+	// {parentName, namespaceName}
+	std::multimap<std::string, std::string> parentLookup;
 
 	std::cout << "================================" << '\n' << '\n';
-	std::cout << "Starting" << '\n';
-	// Build parent structure and lookup table
+	// Build parent structure and lookup tables
 	for (auto& [parentName, ns] : namespaces) {
-		lookup[ns.m_name] = ns;
-		lookup[ns.m_name].m_parent = parentName;
+		parentLookup.insert({parentName, ns.m_name});
 	}
-	lookup[""] = IR::Namespace();
+	auto rootNS = IR::Namespace();
+	rootNS.m_name = "";
 
-	// Build child structure
-	for (auto& [name, ns] : lookup) {
-		// The global namespace is not a child :)
-		if (!name.empty()) {
-			std::cout << "On namespace: " << name << '\n';
-			if (auto parent = lookup.find(ns.m_parent);
-			    parent != lookup.end()) {
-				std::cout << "Adding [parent, child]: [" << parent->first
-				          << ", " << name << "]" << '\n';
-				parent->second.m_children.push_back(ns);
-			}
+	// Build child structure from top and down
+	std::queue<std::reference_wrapper<IR::Namespace>> namespacesToProcess;
+	namespacesToProcess.push(rootNS);
+	while (!namespacesToProcess.empty()) {
+		auto& currentNS = namespacesToProcess.back().get();
+		namespacesToProcess.pop();
+
+		// Create the children
+		for (auto child : createChildren(parentLookup, currentNS.m_name)) {
+			auto& childNS = currentNS.m_children.emplace_back(child);
+			namespacesToProcess.push(childNS);
 		}
 	}
-
-	std::cout << "Ending at:" << '\n';
-	for (auto& [name, ns] : lookup) {
-		printNS(ns);
-	}
+	std::cout << "End result:" << '\n';
+	printNS(rootNS);
 
 	// Return the root node
-	return lookup[""];
+	return rootNS;
 }
 }    // namespace Helpers
