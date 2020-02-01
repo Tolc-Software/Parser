@@ -11,6 +11,10 @@
 
 namespace {
 
+/*
+ * Get the child to parent corresponding to childName.
+ * If it doesn't exist, create it and return the new child
+ */
 IR::Namespace* createOrGetChild(IR::Namespace* parent,
                                 std::string_view childName) {
 	auto& children = parent->m_children;
@@ -29,6 +33,9 @@ IR::Namespace* createOrGetChild(IR::Namespace* parent,
 	return &children.emplace_back(childNS);
 }
 
+/*
+ * Add the fully qualified namespace defined by the deque to the root or global namespace
+ */
 void addNamespaceToRoot(IR::Namespace& rootNS, std::deque<std::string> ns) {
 	auto* currentNs = &rootNS;
 	while (!ns.empty()) {
@@ -41,41 +48,9 @@ void addNamespaceToRoot(IR::Namespace& rootNS, std::deque<std::string> ns) {
 		ns.pop_front();
 	}
 }
-
-void printNSInternal(IR::Namespace const& ns, int depth) {
-	std::string indentation;
-	for (int i = 0; i < depth; ++i) {
-		indentation += "    ";
-	}
-	std::cout << indentation << ns.m_name << '\n';
-	std::cout << indentation << " - Parent: '" << ns.m_parent << "'" << '\n';
-	std::cout << indentation << " - Children:" << '\n';
-	for (auto& child : ns.m_children) {
-		std::cout << indentation << "    '" << child.m_name << "'" << '\n';
-	}
-	for (auto& child : ns.m_children) {
-		std::cout << indentation << "    "
-		          << "|" << '\n';
-		printNSInternal(child, depth + 1);
-	}
-}
-void printNS(IR::Namespace const& ns) {
-	// Start the recursion
-	printNSInternal(ns, 0);
-	std::cout << "---------------" << '\n';
-}
 }    // namespace
 
 namespace Helpers {
-
-// std::string getParentNamespaceName(clang::NamespaceDecl const* namespaceDecl) {
-// 	auto parentDecl = namespaceDecl->getParent();
-// 	if (parentDecl->isNamespace() && !parentDecl->isStdNamespace()) {
-// 		auto parentNS = static_cast<clang::NamespaceDecl const*>(parentDecl);
-// 		return parentNS->getName();
-// 	}
-// 	return "";
-// }
 
 IR::Namespace
 buildNamespaceStructure(std::vector<std::string> const& namespaces) {
@@ -95,7 +70,6 @@ buildNamespaceStructure(std::vector<std::string> const& namespaces) {
 	    fqNamespaces.end(),
 	    [](auto const& d0, auto const& d1) { return d0.size() < d1.size(); });
 
-	std::cout << "================================" << '\n' << '\n';
 	// Create the global namespace
 	auto rootNS = IR::Namespace();
 	rootNS.m_name = "";
@@ -104,11 +78,6 @@ buildNamespaceStructure(std::vector<std::string> const& namespaces) {
 	for (auto& ns : fqNamespaces) {
 		addNamespaceToRoot(rootNS, ns);
 	}
-
-	// Build child structure from top and down
-
-	std::cout << "End result:" << '\n';
-	printNS(rootNS);
 
 	// Return the root node
 	return rootNS;
