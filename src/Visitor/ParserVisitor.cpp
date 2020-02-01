@@ -1,12 +1,17 @@
 #include "Visitor/ParserVisitor.h"
-#include "Helpers/namespaceBuilder.h"
-#include <iostream>
+#include "Helpers/Builders/namespaceBuilder.h"
+#include "Helpers/Builders/structBuilder.h"
+#include "Helpers/IRData.h"
+#include "IR/ir.hpp"
 
 namespace Visitor {
 ParserVisitor::~ParserVisitor() {
 	// Build empty namespaces and their relations
 	m_parsedNamespaces =
-	    Helpers::buildNamespaceStructure(m_irData.m_namespaces);
+	    Helpers::Builders::buildNamespaceStructure(m_irData.m_namespaces);
+
+	// Add the structs/classes to the namespaces
+	Helpers::Builders::buildStructs(m_irData.m_structs, m_parsedNamespaces);
 }
 
 }    // namespace Visitor

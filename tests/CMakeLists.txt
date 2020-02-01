@@ -16,4 +16,5 @@ include(SetupTest)
 
 setup_test(TEST_NAME functions SOURCE functions.cpp)
 setup_test(TEST_NAME namespaces SOURCE namespaces.cpp)
+setup_test(TEST_NAME classes SOURCE classes.cpp)
 setup_test(TEST_NAME split SOURCE Helpers/Utils/split.cpp)

@@ -40,14 +40,15 @@ include(WarningsAndOptions)
 add_llvm_library(Parser
                  src/Consumer/ParserConsumer.cpp
                  src/Frontend/ParserFrontendAction.cpp
-                 src/Helpers/namespaceBuilder.cpp
-                 src/Helpers/namespaceHelpers.cpp
+                 src/Helpers/Builders/namespaceBuilder.cpp
+                 src/Helpers/Builders/structBuilder.cpp
                  src/Helpers/Utils/split.cpp
+                 src/Helpers/namespaceHelpers.cpp
+                 src/Parser/Parse.cpp
                  src/Visitor/ParserVisitor.cpp
                  src/Visitor/VisitCXXRecordDecl.cpp
                  src/Visitor/VisitFunctionDecl.cpp
-                 src/Visitor/VisitNamespaceDecl.cpp
-                 src/Parser/Parse.cpp)
+                 src/Visitor/VisitNamespaceDecl.cpp)
 
 target_link_libraries(Parser
                       PUBLIC  IR::IR

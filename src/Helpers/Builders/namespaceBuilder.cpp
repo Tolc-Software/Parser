@@ -1,4 +1,4 @@
-#include "Helpers/namespaceBuilder.h"
+#include "Helpers/Builders/namespaceBuilder.h"
 #include "Helpers/Utils/split.h"
 #include "Helpers/namespaceHelpers.h"
 #include "IR/ir.hpp"
@@ -50,7 +50,7 @@ void addNamespaceToRoot(IR::Namespace& rootNS, std::deque<std::string> ns) {
 }
 }    // namespace
 
-namespace Helpers {
+namespace Helpers::Builders {
 
 IR::Namespace
 buildNamespaceStructure(std::vector<std::string> const& namespaces) {
@@ -82,4 +82,4 @@ buildNamespaceStructure(std::vector<std::string> const& namespaces) {
 	// Return the root node
 	return rootNS;
 }
-}    // namespace Helpers
+}    // namespace Helpers::Builders

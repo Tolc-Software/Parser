@@ -78,6 +78,26 @@ namespace ParentNamespace {
 	}
 }
 
+TEST_CASE("Two namespaces with the same name and level are the same",
+          "[namespaces]") {
+	auto globalNS = Parser::parseString(R"(
+namespace Name {
+}
+namespace Name {
+}
+		)");
+	SECTION("Parser correctly merges the namespace") {
+		auto& namespaces = globalNS.m_children;
+		REQUIRE(namespaces.size() == 1);
+		auto& ns = namespaces.back();
+		checkEmpty(ns);
+
+		SECTION("Named correctly") {
+			CHECK(ns.m_name == "Name");
+		}
+	}
+}
+
 TEST_CASE("Three nested namespaces", "[namespaces]") {
 	auto globalNS = Parser::parseString(R"(
 namespace ParentNamespace {
