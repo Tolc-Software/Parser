@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IR/ir.hpp"
-#include "clang/AST/DeclBase.h"
 #include <deque>
 #include <string>
 #include <vector>
@@ -48,7 +47,7 @@ struct IRData {
 	// Ex: ParentNS::ChildNS::GrandChildNS
 	std::vector<std::string> m_namespaces;
 	std::vector<Struct> m_structs;
-	std::vector<std::pair<clang::DeclContext const*, IR::Function>> m_functions;
+	// std::vector<std::pair<clang::DeclContext const*, IR::Function>> m_functions;
 };
 }    // namespace Helpers
 
