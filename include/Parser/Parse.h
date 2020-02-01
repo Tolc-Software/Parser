@@ -7,9 +7,9 @@ namespace Parser {
 /**
 * @brief: Parse the input as C++ code and return the intermediate representation.
 *
-* @param: const std::string& code
+* @param: std::string const& code
 *
 * @return: IR::Namespace
 */
-IR::Namespace parseString(const std::string& code);
+IR::Namespace parseString(std::string const& code);
 }

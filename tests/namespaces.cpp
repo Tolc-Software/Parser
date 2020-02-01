@@ -123,28 +123,31 @@ namespace B {}
 	SECTION("Parser finds the two empty root namespaces") {
 		auto& namespaces = globalNS.m_children;
 		REQUIRE(namespaces.size() == 2);
-		auto& a = namespaces[0];
-		checkEmpty(a);
-		auto& b = namespaces[1];
-		checkEmpty(b);
-		if (b.m_name == "A") {
-			std::swap(a, b);
-		}
+		checkEmpty(namespaces[0]);
+		checkEmpty(namespaces[1]);
+		auto a = std::find_if(namespaces.begin(),
+		                      namespaces.end(),
+		                      [](auto const& ns) { return ns.m_name == "A"; });
+		REQUIRE(a != namespaces.end());
+		auto b = std::find_if(namespaces.begin(),
+		                      namespaces.end(),
+		                      [](auto const& ns) { return ns.m_name == "B"; });
+		REQUIRE(a != namespaces.end());
 
-		CHECK(a.m_children.size() == 1);
-		CHECK(b.m_children.size() == 1);
-		// auto& aB = a.m_children.back();
-		// checkEmpty(aB);
+		CHECK(a->m_children.size() == 1);
+		CHECK(b->m_children.size() == 0);
+		auto& aB = a->m_children.back();
+		checkEmpty(aB);
 
 		SECTION("Named correctly") {
-			CHECK(a.m_name == "A");
-			CHECK(b.m_name == "B");
-			// CHECK(aB.m_name == "B");
+			CHECK(a->m_name == "A");
+			CHECK(b->m_name == "B");
+			CHECK(aB.m_name == "B");
 		}
 
 		SECTION("Nested correctly") {
-			// CHECK(aB.m_parent == "A");
-			CHECK(b.m_parent.empty());
+			CHECK(aB.m_parent == "A");
+			CHECK(b->m_parent.empty());
 		}
 	}
 }

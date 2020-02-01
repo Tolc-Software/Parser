@@ -12,34 +12,8 @@ set(Catch2_FOUND TRUE)
 set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
 
 # Defines create_catch2_test
-include(Catch2Helpers)
+include(SetupTest)
 
-# Helper function
-function(setup_test test_target)
-  # NOTE: Assumes the source of the target has the same name as the target dot
-  # cpp
-
-  get_filename_component(project_dir ${CMAKE_CURRENT_LIST_DIR} DIRECTORY)
-  create_catch2_test(TARGET
-                     ${test_target}
-                     SOURCES
-                     ${test_target}.cpp
-                     INCLUDE
-                     ${project_dir}/src
-                     LINK_LIBRARIES
-                     project_warnings
-                     project_options
-                     clangTooling
-                     clangBasic
-                     clangASTMatchers
-                     Parser)
-  target_include_directories(${test_target} SYSTEM
-                             PRIVATE ${llvm_entry_INCLUDE_DIR})
-  add_test(NAME ${test_target} COMMAND ${test_target})
-endfunction()
-
-# Ignore warnings from clang/ as if they were system headers.
-# NOTE: This is only available on clang
-
-setup_test(functions)
-setup_test(namespaces)
+setup_test(TEST_NAME functions SOURCE functions.cpp)
+setup_test(TEST_NAME namespaces SOURCE namespaces.cpp)
+setup_test(TEST_NAME split SOURCE Helpers/Utils/split.cpp)

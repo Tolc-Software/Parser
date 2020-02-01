@@ -6,7 +6,7 @@
 
 namespace Parser {
 
-IR::Namespace parseString(const std::string& code) {
+IR::Namespace parseString(std::string const& code) {
 	std::cout << "====================" << '\n';
 	std::cout << "Parsing code:" << '\n';
 	std::cout << code << '\n';

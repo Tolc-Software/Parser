@@ -19,8 +19,9 @@ namespace Helpers {
   *       if 'something' is in the global scope
   */
 struct IRData {
-	// {parent namespace name, namespace}
-	std::vector<std::pair<std::string, IR::Namespace>> m_namespaces;
+	// {Fully qualified namespace name}
+	// Ex: ParentNS::ChildNS::GrandChildNS
+	std::vector<std::string> m_namespaces;
 	std::vector<std::pair<clang::DeclContext const*, IR::Function>> m_functions;
 };
 }
