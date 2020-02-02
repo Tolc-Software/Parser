@@ -16,6 +16,7 @@ namespace Helpers {
 enum class Type {
 	Namespace,
 	Struct,
+	Function,
 	Unknown,
 };
 
@@ -26,6 +27,18 @@ struct Struct {
 	// Fully qualified name
 	// Ex:
 	//     Ns::cl => {(Ns, Type::Namespace), (cl, Type::Struct)}
+	std::deque<std::pair<std::string, Type>> m_name;
+	// The variables within the struct/class
+	std::vector<IR::Variable> m_variables;
+};
+
+/**
+  * Representation of a function that can be used to create the IR::Function
+  */
+struct Function {
+	// Fully qualified name
+	// Ex:
+	//     Ns::cl::fun => {(Ns, Type::Namespace), (cl, Type::Struct), (cl, Type::Function)}
 	std::deque<std::pair<std::string, Type>> m_name;
 	// The variables within the struct/class
 	std::vector<IR::Variable> m_variables;
@@ -47,7 +60,7 @@ struct IRData {
 	// Ex: ParentNS::ChildNS::GrandChildNS
 	std::vector<std::string> m_namespaces;
 	std::vector<Struct> m_structs;
-	// std::vector<std::pair<clang::DeclContext const*, IR::Function>> m_functions;
+	std::vector<Function> m_functions;
 };
 }    // namespace Helpers
 

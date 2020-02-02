@@ -9,7 +9,7 @@
 namespace Helpers {
 
 /**
-* @brief: Go Through the path directed by path and return the last node
+* @brief: Go through the path directed by path and return the last node.
 *
 * @param: std::deque<std::pair<std::string, Helpers::Type>> path,
 *         IR::Namespace& globalNamespace
