@@ -18,3 +18,25 @@ TEST_CASE("Split works for splitting namespaces", "[split]") {
 	auto deque = Helpers::Utils::split("Helpers::Utils::split", "::");
 	checkSplitHasValues(deque, {"Helpers", "Utils", "split"});
 }
+
+TEST_CASE("Split works for some edge cases", "[split]") {
+	{
+		auto deque = Helpers::Utils::split("split", "::");
+		checkSplitHasValues(deque, {"split"});
+	}
+
+	{
+		auto deque = Helpers::Utils::split("", "|");
+		checkSplitHasValues(deque, {""});
+	}
+
+	{
+		auto deque = Helpers::Utils::split("|", "|");
+		checkSplitHasValues(deque, {"", ""});
+	}
+
+	{
+		auto deque = Helpers::Utils::split("split|split", "|");
+		checkSplitHasValues(deque, {"split", "split"});
+	}
+}

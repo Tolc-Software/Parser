@@ -7,6 +7,9 @@
 namespace Visitor {
 
 bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
+	std::cout << "I'm called with function: "
+	          << functionDecl->getQualifiedNameAsString() << '\n';
+
 	for (auto& p : functionDecl->parameters()) {
 		std::cout << "===== Start of variable =====" << '\n';
 		std::cout << "Name: " << std::string(p->getName()) << '\n';
@@ -29,8 +32,7 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		std::cout << "===== End of variable =====" << '\n';
 		std::cout << '\n';
 	}
-	std::cout << "I'm called with function: "
-	          << functionDecl->getQualifiedNameAsString() << '\n';
+	// Continue the AST search
 	return true;
 }
 
