@@ -1,6 +1,5 @@
 #include "Helpers/walkIRStructure.h"
 #include "Helpers/IRData.h"
-#include "Helpers/namespaceHelpers.h"
 #include <IR/ir.hpp>
 #include <algorithm>
 #include <variant>

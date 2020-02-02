@@ -1,6 +1,5 @@
 #include "Helpers/Builders/namespaceBuilder.h"
 #include "Helpers/Utils/split.h"
-#include "Helpers/namespaceHelpers.h"
 #include "IR/ir.hpp"
 #include <algorithm>
 #include <deque>

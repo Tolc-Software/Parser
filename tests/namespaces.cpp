@@ -1,7 +1,6 @@
-#include "Helpers/namespaceHelpers.h"
 #include "Parser/Parse.h"
-#include "catch2/catch.hpp"
 #include <algorithm>
+#include <catch2/catch.hpp>
 #include <string_view>
 
 namespace {
