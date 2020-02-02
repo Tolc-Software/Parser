@@ -43,6 +43,7 @@ add_llvm_library(Parser
                  src/Helpers/Builders/commonBuilder.cpp
                  src/Helpers/Builders/namespaceBuilder.cpp
                  src/Helpers/Builders/structBuilder.cpp
+                 src/Helpers/walkIRStructure.cpp
                  src/Helpers/Utils/split.cpp
                  src/Helpers/namespaceHelpers.cpp
                  src/Parser/Parse.cpp
