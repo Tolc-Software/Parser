@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Helpers/IRData.h"
 #include "IR/ir.hpp"
+#include "IRProxy/IRData.h"
 #include "clang/AST/RecursiveASTVisitor.h"
 
 namespace Visitor {
@@ -25,7 +25,7 @@ private:
 	clang::ASTContext* m_context;
 
 	// This is what the visitor functions need to fill
-	Helpers::IRData m_irData;
+	IRProxy::IRData m_irData;
 
 	// This will get filled in the destructor of the visitor
 	IR::Namespace& m_parsedNamespaces;

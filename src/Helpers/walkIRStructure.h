@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Helpers/IRData.h"
+#include "IRProxy/IRData.h"
 #include <IR/ir.hpp>
 #include <deque>
 #include <string>
@@ -17,7 +17,7 @@ namespace Helpers {
 * @return: std::variant<IR::Namespace*, IR::Struct*>
 */
 std::variant<IR::Namespace*, IR::Struct*>
-walkPathThroughStructure(std::deque<std::pair<std::string, Helpers::Type>> path,
+walkPathThroughStructure(std::deque<std::pair<std::string, IRProxy::Type>> path,
                          IR::Namespace& globalNamespace);
 
 }    // namespace Helpers

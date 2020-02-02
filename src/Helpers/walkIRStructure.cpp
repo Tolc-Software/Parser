@@ -1,5 +1,5 @@
 #include "Helpers/walkIRStructure.h"
-#include "Helpers/IRData.h"
+#include "IRProxy/IRData.h"
 #include <IR/ir.hpp>
 #include <algorithm>
 #include <variant>
@@ -54,14 +54,14 @@ gotoNamespace(std::variant<IR::Namespace*, IR::Struct*> const& current,
 namespace Helpers {
 
 std::variant<IR::Namespace*, IR::Struct*>
-walkPathThroughStructure(std::deque<std::pair<std::string, Helpers::Type>> path,
+walkPathThroughStructure(std::deque<std::pair<std::string, IRProxy::Type>> path,
                          IR::Namespace& globalNamespace) {
 	// Represents the current node in the globalNamespace
 	std::variant<IR::Namespace*, IR::Struct*> current = &globalNamespace;
 	while (!path.empty()) {
 		auto [name, type] = path.front();
 		path.pop_front();
-		using Helpers::Type;
+		using IRProxy::Type;
 		switch (type) {
 			case Type::Namespace:
 				if (auto next = gotoNamespace(current, name)) {

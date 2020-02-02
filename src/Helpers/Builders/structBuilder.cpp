@@ -25,7 +25,7 @@ IR::Struct createStruct(std::string_view name) {
 	return newStruct;
 }
 
-void addStruct(Helpers::Struct& s, IR::Namespace& globalNamespace) {
+void addStruct(IRProxy::Struct& s, IR::Namespace& globalNamespace) {
 	// Take out the already created path
 	auto& path = s.m_name;
 	auto [name, t] = path.back();
@@ -42,7 +42,7 @@ void addStruct(Helpers::Struct& s, IR::Namespace& globalNamespace) {
 
 namespace Helpers::Builders {
 
-void buildStructs(std::vector<Helpers::Struct>& structs,
+void buildStructs(std::vector<IRProxy::Struct>& structs,
                   IR::Namespace& globalNamespace) {
 	for (auto& s : structs) {
 		addStruct(s, globalNamespace);

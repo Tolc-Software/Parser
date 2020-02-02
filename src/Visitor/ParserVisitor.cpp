@@ -1,8 +1,6 @@
 #include "Visitor/ParserVisitor.h"
 #include "Helpers/Builders/namespaceBuilder.h"
 #include "Helpers/Builders/structBuilder.h"
-#include "Helpers/IRData.h"
-#include "IR/ir.hpp"
 
 namespace Visitor {
 ParserVisitor::~ParserVisitor() {

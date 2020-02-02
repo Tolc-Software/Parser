@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Helpers/IRData.h"
+#include "IRProxy/IRData.h"
 #include "clang/AST/Type.h"
 #include <deque>
 #include <string>
@@ -14,9 +14,9 @@ namespace Helpers::Builders {
 * @param: clang::DeclContext const* parent,
 *         std::deque<std::string> names
 *
-* @return: std::deque<std::pair<std::string, Helpers::Type>>
+* @return: std::deque<std::pair<std::string, IRProxy::Type>>
 */
-std::deque<std::pair<std::string, Helpers::Type>>
+std::deque<std::pair<std::string, IRProxy::Type>>
 buildParentStructure(clang::DeclContext const* parent,
                      std::deque<std::string> names);
 

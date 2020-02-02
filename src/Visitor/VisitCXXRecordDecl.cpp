@@ -1,6 +1,6 @@
 #include "Helpers/Builders/commonBuilder.h"
-#include "Helpers/IRData.h"
 #include "Helpers/Utils/split.h"
+#include "IRProxy/IRData.h"
 #include "Visitor/ParserVisitor.h"
 #include "clang/AST/Type.h"
 
@@ -22,10 +22,10 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 	auto structure = Helpers::Builders::buildParentStructure(
 	    classDecl->getParent(), splitNames);
 	// Push the struct back in
-	structure.push_back({nameOfRecord, Helpers::Type::Struct});
+	structure.push_back({nameOfRecord, IRProxy::Type::Struct});
 
 	// Build the final parsedStruct
-	Helpers::Struct parsedStruct;
+	IRProxy::Struct parsedStruct;
 	parsedStruct.m_name = structure;
 
 	m_irData.m_structs.push_back(parsedStruct);

@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace Helpers {
+namespace IRProxy {
 
 /**
   * Used to distinguish a part name in a fully qualified name
@@ -62,5 +62,5 @@ struct IRData {
 	std::vector<Struct> m_structs;
 	std::vector<Function> m_functions;
 };
-}    // namespace Helpers
+}    // namespace IRProxy
 
