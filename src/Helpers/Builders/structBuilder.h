@@ -1,4 +1,5 @@
 #pragma once
+
 #include "IR/ir.hpp"
 #include "IRProxy/IRData.h"
 #include <vector>
