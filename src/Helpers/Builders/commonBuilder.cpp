@@ -1,16 +1,31 @@
 #include "Helpers/Builders/commonBuilder.h"
 #include "IRProxy/IRData.h"
-#include "clang/AST/DeclBase.h"
+#include <IR/ir.hpp>
+#include <clang/AST/DeclBase.h>
 #include <deque>
+#include <iostream>
+#include <optional>
 #include <string>
+#include <string_view>
 
 namespace Helpers::Builders {
 
-IRProxy::Type getType(clang::DeclContext const* decl) {
-	if (decl->isRecord()) {
-		return IRProxy::Type::Struct;
-	} else if (decl->isNamespace()) {
+std::optional<IR::Type> getType(std::string_view type) {
+	std::cout << "getType called with type: " << type << '\n';
+	std::cout << (type == "void") << '\n';
+	if (type == "void") {
+		return IR::Type::Void;
+	}
+	return {};
+}
+
+IRProxy::Type getProxyDecl(clang::DeclContext const* decl) {
+	if (decl->isNamespace()) {
 		return IRProxy::Type::Namespace;
+	} else if (decl->isRecord()) {
+		return IRProxy::Type::Struct;
+	} else if (decl->isFunctionOrMethod()) {
+		return IRProxy::Type::Function;
 	}
 	return IRProxy::Type::Unknown;
 }
@@ -20,12 +35,8 @@ buildParentStructure(clang::DeclContext const* parent,
                      std::deque<std::string> names) {
 	std::deque<std::pair<std::string, IRProxy::Type>> structure;
 	while (parent && !names.empty()) {
-		structure.push_back({names.back(), getType(parent)});
+		structure.push_back({names.back(), getProxyDecl(parent)});
 		parent = parent->getParent();
-		// Make sure we don't crash
-		if (names.empty()) {
-			break;
-		}
 		names.pop_back();
 	}
 	return structure;

@@ -40,8 +40,10 @@ struct Function {
 	// Ex:
 	//     Ns::cl::fun => {(Ns, Type::Namespace), (cl, Type::Struct), (cl, Type::Function)}
 	std::deque<std::pair<std::string, Type>> m_name;
-	// The variables within the struct/class
-	std::vector<IR::Variable> m_variables;
+	// The arguments to the function
+	std::vector<IR::Variable> m_arguments;
+
+	IR::Type m_returnType;
 };
 
 /**

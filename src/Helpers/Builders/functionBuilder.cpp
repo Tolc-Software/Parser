@@ -19,9 +19,11 @@ void addFunctionToVariant(std::variant<IR::Namespace*, IR::Struct*> const& v,
 	}
 }
 
-IR::Function createFunction(std::string_view name) {
+IR::Function createFunction(std::string_view name, IRProxy::Function& proxyF) {
 	IR::Function f;
 	f.m_name = name;
+	f.m_returnType = proxyF.m_returnType;
+	f.m_arguments = proxyF.m_arguments;
 	return f;
 }
 
@@ -36,7 +38,7 @@ void addFunction(IRProxy::Function& f, IR::Namespace& globalNamespace) {
 	    Helpers::walkPathThroughStructure(path, globalNamespace);
 
 	// Create and add the function
-	addFunctionToVariant(parentOfNewFunction, createFunction(name));
+	addFunctionToVariant(parentOfNewFunction, createFunction(name, f));
 }
 }    // namespace
 

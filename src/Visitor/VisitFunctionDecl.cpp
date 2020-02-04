@@ -25,6 +25,12 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 
 	IRProxy::Function parsedFunc;
 	parsedFunc.m_name = structure;
+
+	if (auto returnType = Helpers::Builders::getType(
+	        functionDecl->getReturnType().getAsString())) {
+		parsedFunc.m_returnType = returnType.value();
+	}
+
 	m_irData.m_functions.push_back(parsedFunc);
 
 	for (auto& p : functionDecl->parameters()) {
