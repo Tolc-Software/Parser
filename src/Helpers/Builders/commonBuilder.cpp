@@ -11,9 +11,19 @@
 namespace Helpers::Builders {
 
 std::optional<IR::Type> getType(std::string_view type) {
-	std::cout << "getType called with type: " << type << '\n';
-	std::cout << (type == "void") << '\n';
-	if (type == "void") {
+	if (type == "char") {
+		return IR::Type::Char;
+	} else if (type == "double") {
+		return IR::Type::Double;
+	} else if (type == "float") {
+		return IR::Type::Float;
+	} else if (type == "int") {
+		return IR::Type::Int;
+	} else if (type == "long") {
+		return IR::Type::Long;
+	} else if (type == "string") {
+		return IR::Type::String;
+	} else if (type == "void") {
 		return IR::Type::Void;
 	}
 	return {};
