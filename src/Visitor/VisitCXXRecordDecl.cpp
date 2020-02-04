@@ -10,6 +10,11 @@
 namespace Visitor {
 
 bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
+	if (isInSystemHeader(classDecl)) {
+		// Continue the AST search
+		return true;
+	}
+
 	std::cout << "I'm called with: " << classDecl->getQualifiedNameAsString()
 	          << '\n';
 	auto splitNames =

@@ -3,6 +3,7 @@
 #include "catch2/catch.hpp"
 
 namespace {
+
 std::vector<IR::Type> getTypes() {
 	using IR::Type;
 	return {
@@ -11,7 +12,7 @@ std::vector<IR::Type> getTypes() {
 	    Type::Float,
 	    Type::Int,
 	    Type::Long,
-	    // Type::String, Not testing yet
+	    // Type::String, Not testing strings yet
 	    Type::Void,
 	};
 }
@@ -29,6 +30,16 @@ std::string getTypeAsString(IR::Type type) {
 		case Type::Void: s = "void"; break;
 	}
 	return s;
+}
+
+std::string getIncludesIfNeeded(IR::Type type) {
+	std::string include = "";
+	using IR::Type;
+	switch (type) {
+		case Type::String: include = "#include <string>\n"; break;
+		default: break;
+	}
+	return include;
 }
 
 std::string getValidReturnForType(IR::Type type) {
@@ -61,22 +72,23 @@ void fun() {}
 }
 
 TEST_CASE("Function with different returns", "[functions]") {
-	for (auto type : getTypes()) {
-		auto stringType = getTypeAsString(type);
-		std::string code = stringType + " fun() { return " +
-		                   getValidReturnForType(type) + "; }";
+	for (auto irType : getTypes()) {    //{IR::Type::String}) {
+		auto type = getTypeAsString(irType);
+		std::string code = getIncludesIfNeeded(irType) + type +
+		                   " fun() { return " + getValidReturnForType(irType) +
+		                   "; }";
 		auto globalNS = Parser::parseString(code);
 		// Print on error
 		CAPTURE(code);
-		CAPTURE(stringType);
+		CAPTURE(type);
 
 		SECTION("Parser finds the function") {
 			REQUIRE(globalNS.m_functions.size() == 1);
 			auto fun = globalNS.m_functions[0];
 			CHECK(fun.m_name == "fun");
 			CHECK(fun.m_arguments.size() == 0);
-			SECTION("With correct return type") {
-				CHECK(fun.m_returnType == type);
+			SECTION("with correct return type") {
+				CHECK(fun.m_returnType == irType);
 			}
 		}
 	}

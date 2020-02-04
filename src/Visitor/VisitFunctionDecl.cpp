@@ -9,6 +9,11 @@
 namespace Visitor {
 
 bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
+	if (isInSystemHeader(functionDecl)) {
+		// Continue the AST search
+		return true;
+	}
+
 	std::cout << "I'm called with function: "
 	          << functionDecl->getQualifiedNameAsString() << '\n';
 	auto splitNames =
@@ -55,6 +60,7 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		std::cout << "===== End of variable =====" << '\n';
 		std::cout << '\n';
 	}
+
 	// Continue the AST search
 	return true;
 }

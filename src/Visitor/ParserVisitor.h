@@ -29,5 +29,10 @@ private:
 
 	// This will get filled in the destructor of the visitor
 	IR::Namespace& m_parsedNamespaces;
+
+	bool isInSystemHeader(clang::Decl* decl) {
+		return m_context->getSourceManager().isInSystemHeader(
+		    decl->getLocation());
+	}
 };
 }    // namespace Visitor
