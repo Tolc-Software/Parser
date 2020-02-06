@@ -1,4 +1,4 @@
-#include "Helpers/Builders/structBuilder.h"
+#include "Builders/structBuilder.h"
 #include "Helpers/walkIRStructure.h"
 #include "IR/ir.hpp"
 #include <algorithm>
@@ -40,7 +40,7 @@ void addStruct(IRProxy::Struct& s, IR::Namespace& globalNamespace) {
 }
 }    // namespace
 
-namespace Helpers::Builders {
+namespace Builders {
 
 void buildStructs(std::vector<IRProxy::Struct>& structs,
                   IR::Namespace& globalNamespace) {
@@ -49,4 +49,4 @@ void buildStructs(std::vector<IRProxy::Struct>& structs,
 	}
 }
 
-}    // namespace Helpers::Builders
+}    // namespace Builders

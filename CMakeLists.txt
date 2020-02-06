@@ -40,10 +40,10 @@ include(WarningsAndOptions)
 add_llvm_library(Parser
                  src/Consumer/ParserConsumer.cpp
                  src/Frontend/ParserFrontendAction.cpp
-                 src/Helpers/Builders/commonBuilder.cpp
-                 src/Helpers/Builders/functionBuilder.cpp
-                 src/Helpers/Builders/namespaceBuilder.cpp
-                 src/Helpers/Builders/structBuilder.cpp
+                 src/Builders/commonBuilder.cpp
+                 src/Builders/functionBuilder.cpp
+                 src/Builders/namespaceBuilder.cpp
+                 src/Builders/structBuilder.cpp
                  src/Helpers/walkIRStructure.cpp
                  src/Helpers/Utils/split.cpp
                  src/Parser/Parse.cpp

@@ -1,4 +1,4 @@
-#include "Helpers/Builders/commonBuilder.h"
+#include "Builders/commonBuilder.h"
 #include "IRProxy/IRData.h"
 #include <IR/ir.hpp>
 #include <clang/AST/DeclBase.h>
@@ -8,7 +8,7 @@
 #include <string>
 #include <string_view>
 
-namespace Helpers::Builders {
+namespace Builders {
 
 std::optional<IR::Type> getType(std::string_view type) {
 	if (type == "char") {
@@ -52,5 +52,5 @@ buildParentStructure(clang::DeclContext const* parent,
 	return structure;
 }
 
-}    // namespace Helpers::Builders
+}    // namespace Builders
 

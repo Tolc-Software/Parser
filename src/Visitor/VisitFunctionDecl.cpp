@@ -1,4 +1,4 @@
-#include "Helpers/Builders/commonBuilder.h"
+#include "Builders/commonBuilder.h"
 #include "Helpers/Utils/split.h"
 #include "Visitor/ParserVisitor.h"
 #include "clang/AST/Type.h"
@@ -23,16 +23,16 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	// We know this is a record
 	auto nameOfFunction = splitNames.back();
 	splitNames.pop_back();
-	auto structure = Helpers::Builders::buildParentStructure(
-	    functionDecl->getParent(), splitNames);
+	auto structure =
+	    Builders::buildParentStructure(functionDecl->getParent(), splitNames);
 	// Push the function back in
 	structure.push_back({nameOfFunction, IRProxy::Type::Function});
 
 	IRProxy::Function parsedFunc;
 	parsedFunc.m_name = structure;
 
-	if (auto returnType = Helpers::Builders::getType(
-	        functionDecl->getReturnType().getAsString())) {
+	if (auto returnType =
+	        Builders::getType(functionDecl->getReturnType().getAsString())) {
 		parsedFunc.m_returnType = returnType.value();
 	}
 

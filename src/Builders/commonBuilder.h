@@ -7,7 +7,7 @@
 #include <string>
 #include <string_view>
 
-namespace Helpers::Builders {
+namespace Builders {
 
 /**
 * @brief: Create a deque combining the type and the names of each DeclContext
@@ -32,4 +32,4 @@ buildParentStructure(clang::DeclContext const* parent,
 * @return: std::optional<IR::Type>
 */
 std::optional<IR::Type> getType(std::string_view type);
-}    // namespace Helpers::Builders
+}    // namespace Builders
