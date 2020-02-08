@@ -3,6 +3,23 @@
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
 
+TEST_CASE("Function with argument", "[functions]") {
+	auto globalNS = Parser::parseString(R"(
+void fun(int i) {}
+		)");
+	SECTION("Parser finds the function") {
+		REQUIRE(globalNS.m_functions.size() == 1);
+		auto fun = globalNS.m_functions[0];
+		CHECK(fun.m_name == "fun");
+		CHECK(fun.m_returnType == IR::Type::Void);
+
+		REQUIRE(fun.m_arguments.size() == 1);
+		auto& arg = fun.m_arguments.back();
+		CHECK(arg.m_name == "i");
+		CHECK(arg.m_type == IR::Type::Int);
+	}
+}
+
 TEST_CASE("Simple function", "[functions]") {
 	auto globalNS = Parser::parseString(R"(
 void fun() {}

@@ -36,9 +36,13 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		parsedFunc.m_returnType = returnType.value();
 	}
 
-	m_irData.m_functions.push_back(parsedFunc);
-
 	for (auto& p : functionDecl->parameters()) {
+		IR::Variable arg;
+		arg.m_name = p->getName();
+		if (auto argType = Builders::getType(p->getType().getAsString())) {
+			arg.m_type = argType.value();
+		}
+		parsedFunc.m_arguments.push_back(arg);
 		std::cout << "===== Start of variable =====" << '\n';
 		std::cout << "Name: " << std::string(p->getName()) << '\n';
 		std::cout << "All of the type: "
@@ -60,6 +64,8 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		std::cout << "===== End of variable =====" << '\n';
 		std::cout << '\n';
 	}
+
+	m_irData.m_functions.push_back(parsedFunc);
 
 	// Continue the AST search
 	return true;
