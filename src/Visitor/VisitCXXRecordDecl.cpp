@@ -15,23 +15,10 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 		return true;
 	}
 
-	std::cout << "I'm called with: " << classDecl->getQualifiedNameAsString()
-	          << '\n';
-	auto splitNames =
-	    Helpers::Utils::split(classDecl->getQualifiedNameAsString(), "::");
-
-	// Only interested in the structure from here on up
-	// We know this is a record
-	auto nameOfRecord = splitNames.back();
-	splitNames.pop_back();
-	auto structure =
-	    Builders::buildParentStructure(classDecl->getParent(), splitNames);
-	// Push the struct back in
-	structure.push_back({nameOfRecord, IRProxy::Type::Struct});
-
 	// Build the final parsedStruct
 	IRProxy::Struct parsedStruct;
-	parsedStruct.m_name = structure;
+	parsedStruct.m_name =
+	    Builders::buildStructure(classDecl, IRProxy::Type::Struct);
 
 	m_irData.m_structs.push_back(parsedStruct);
 	// Continue the AST search

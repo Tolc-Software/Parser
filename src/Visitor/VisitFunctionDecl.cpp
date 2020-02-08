@@ -14,20 +14,9 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		return true;
 	}
 
-	auto splitNames =
-	    Helpers::Utils::split(functionDecl->getQualifiedNameAsString(), "::");
-
-	// Only interested in the structure from here on up
-	// We know this is a function
-	auto nameOfFunction = splitNames.back();
-	splitNames.pop_back();
-	auto structure =
-	    Builders::buildParentStructure(functionDecl->getParent(), splitNames);
-	// Push the function back in
-	structure.push_back({nameOfFunction, IRProxy::Type::Function});
-
 	IRProxy::Function parsedFunc;
-	parsedFunc.m_name = structure;
+	parsedFunc.m_name =
+	    Builders::buildStructure(functionDecl, IRProxy::Type::Function);
 
 	if (auto returnType = Builders::getType(
 	        functionDecl->getReturnType().getUnqualifiedType().getAsString())) {

@@ -1,4 +1,5 @@
 #include "Builders/commonBuilder.h"
+#include "Helpers/Utils/split.h"
 #include "IRProxy/IRData.h"
 #include <IR/ir.hpp>
 #include <clang/AST/DeclBase.h>
