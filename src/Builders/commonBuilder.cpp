@@ -52,5 +52,13 @@ buildParentStructure(clang::DeclContext const* parent,
 	return structure;
 }
 
+std::vector<IR::Qualifier> getQualifiers(clang::QualType const& type) {
+	std::vector<IR::Qualifier> quals;
+	auto qs = type.split().Quals;
+	if (qs.hasConst()) {
+		quals.push_back(IR::Qualifier::Const);
+	}
+	return quals;
+}
 }    // namespace Builders
 

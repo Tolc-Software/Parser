@@ -32,4 +32,15 @@ buildParentStructure(clang::DeclContext const* parent,
 * @return: std::optional<IR::Type>
 */
 std::optional<IR::Type> getType(std::string_view type);
+
+/**
+* @brief: Tries to create an IR::Qualifier (Const, ...) of the input
+*         If there are no qualifiers or if it fails it returns an empty vector
+*         NOTE: Assumes the qualifiers are removed (const, ...)
+*
+* @param: clang::QualType type
+*
+* @return: std::vector<IR::Qualifier>
+*/
+std::vector<IR::Qualifier> getQualifiers(clang::QualType const& type);
 }    // namespace Builders
