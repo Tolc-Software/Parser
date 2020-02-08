@@ -8,7 +8,7 @@ function(setup_test)
   set(prefix ARG)
   set(noValues)
   set(singleValues TEST_NAME SOURCE)
-  set(multiValues)
+  set(multiValues LIBRARIES)
   # Process the arguments passed in
   # can be used e.g. via ARG_TARGET
   cmake_parse_arguments(${prefix} "${noValues}" "${singleValues}"
@@ -28,7 +28,8 @@ function(setup_test)
     clangTooling
     clangBasic
     clangASTMatchers
-    Parser)
+    Parser
+    ${ARG_LIBRARIES})
   target_include_directories(${ARG_TEST_NAME} SYSTEM
                              PRIVATE ${llvm_entry_INCLUDE_DIR})
   add_test(NAME ${ARG_TEST_NAME} COMMAND ${ARG_TEST_NAME})

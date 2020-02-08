@@ -20,7 +20,7 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	    Helpers::Utils::split(functionDecl->getQualifiedNameAsString(), "::");
 
 	// Only interested in the structure from here on up
-	// We know this is a record
+	// We know this is a function
 	auto nameOfFunction = splitNames.back();
 	splitNames.pop_back();
 	auto structure =

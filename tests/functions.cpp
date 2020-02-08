@@ -1,62 +1,7 @@
-#include "IR/ir.hpp"
 #include "Parser/Parse.h"
-#include "catch2/catch.hpp"
-
-namespace {
-
-std::vector<IR::Type> getTypes() {
-	using IR::Type;
-	return {
-	    Type::Char,
-	    Type::Double,
-	    Type::Float,
-	    Type::Int,
-	    Type::Long,
-	    // Type::String, Not testing strings yet
-	    Type::Void,
-	};
-}
-
-std::string getTypeAsString(IR::Type type) {
-	std::string s = "";
-	using IR::Type;
-	switch (type) {
-		case Type::Char: s = "char"; break;
-		case Type::Double: s = "double"; break;
-		case Type::Float: s = "float"; break;
-		case Type::Int: s = "int"; break;
-		case Type::Long: s = "long"; break;
-		case Type::String: s = "std::string"; break;
-		case Type::Void: s = "void"; break;
-	}
-	return s;
-}
-
-std::string getIncludesIfNeeded(IR::Type type) {
-	std::string include = "";
-	using IR::Type;
-	switch (type) {
-		case Type::String: include = "#include <string>\n"; break;
-		default: break;
-	}
-	return include;
-}
-
-std::string getValidReturnForType(IR::Type type) {
-	std::string validReturn = "";
-	using IR::Type;
-	switch (type) {
-		case Type::Char: validReturn = "'c'"; break;
-		case Type::Double: validReturn = "1.0"; break;
-		case Type::Float: validReturn = "1.0"; break;
-		case Type::Int: validReturn = "1"; break;
-		case Type::Long: validReturn = "1"; break;
-		case Type::String: validReturn = "\"HelloWorld\""; break;
-		case Type::Void: validReturn = ""; break;
-	}
-	return validReturn;
-}
-}
+#include "TestUtil/types.h"
+#include <IR/ir.hpp>
+#include <catch2/catch.hpp>
 
 TEST_CASE("Simple function", "[functions]") {
 	auto globalNS = Parser::parseString(R"(
@@ -71,24 +16,27 @@ void fun() {}
 	}
 }
 
-TEST_CASE("Function with different returns", "[functions]") {
-	for (auto irType : getTypes()) {    //{IR::Type::String}) {
-		auto type = getTypeAsString(irType);
-		std::string code = getIncludesIfNeeded(irType) + type +
-		                   " fun() { return " + getValidReturnForType(irType) +
-		                   "; }";
-		auto globalNS = Parser::parseString(code);
-		// Print on error
-		CAPTURE(code);
-		CAPTURE(type);
+TEST_CASE("Function with different returns without includes", "[functions]") {
+	for (auto irType : TestUtil::getTypes()) {    //{IR::Type::String}) {
+		// Remove the ones who require an include
+		if (auto include = TestUtil::getIncludesIfNeeded(irType);
+		    include.empty()) {
+			auto type = TestUtil::getTypeAsString(irType);
+			std::string code = include + type + " fun() { return " +
+			                   TestUtil::getValidReturnForType(irType) + "; }";
+			auto globalNS = Parser::parseString(code);
+			// Print on error
+			CAPTURE(code);
+			CAPTURE(type);
 
-		SECTION("Parser finds the function") {
-			REQUIRE(globalNS.m_functions.size() == 1);
-			auto fun = globalNS.m_functions[0];
-			CHECK(fun.m_name == "fun");
-			CHECK(fun.m_arguments.size() == 0);
-			SECTION("with correct return type") {
-				CHECK(fun.m_returnType == irType);
+			SECTION("Parser finds the function") {
+				REQUIRE(globalNS.m_functions.size() == 1);
+				auto fun = globalNS.m_functions[0];
+				CHECK(fun.m_name == "fun");
+				CHECK(fun.m_arguments.size() == 0);
+				SECTION("with correct return type") {
+					CHECK(fun.m_returnType == irType);
+				}
 			}
 		}
 	}
