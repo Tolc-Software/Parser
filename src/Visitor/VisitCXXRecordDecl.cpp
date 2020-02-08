@@ -2,8 +2,6 @@
 #include "IRProxy/IRData.h"
 #include "Visitor/ParserVisitor.h"
 
-#include <string>
-
 namespace Visitor {
 
 bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {

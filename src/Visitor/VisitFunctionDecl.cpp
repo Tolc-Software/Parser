@@ -1,8 +1,5 @@
 #include "Builders/commonBuilder.h"
 #include "Visitor/ParserVisitor.h"
-#include "clang/AST/Type.h"
-
-#include <string>
 
 namespace Visitor {
 
