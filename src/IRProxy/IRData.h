@@ -61,7 +61,8 @@ struct IRData {
 	// Ex: ParentNS::ChildNS::GrandChildNS
 	std::vector<std::string> m_namespaces;
 	std::vector<Struct> m_structs;
-	std::vector<Function> m_functions;
+	std::vector<std::pair<std::optional<IR::AccessModifier>, Function>>
+	    m_functions;
 };
 }    // namespace IRProxy
 

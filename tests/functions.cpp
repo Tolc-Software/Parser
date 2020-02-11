@@ -13,6 +13,24 @@ void compare(IR::Type returnType, IR::BaseType compareType) {
 }
 }    // namespace
 
+TEST_CASE("Function within class with modifier", "[functions]") {
+	auto globalNS = Parser::parseString(R"(
+class MyClass {
+private:
+void fun();
+};
+		)");
+	SECTION("Parser finds the function") {
+		REQUIRE(globalNS.m_functions.size() == 0);
+		REQUIRE(globalNS.m_structs.size() == 1);
+		auto myClass = globalNS.m_structs[0];
+		REQUIRE(myClass.m_functions.size() == 1);
+		auto& [access, fun] = myClass.m_functions.back();
+		CHECK(fun.m_name == "fun");
+		CHECK(access == IR::AccessModifier::Private);
+	}
+}
+
 TEST_CASE("Function within namespace", "[functions]") {
 	auto globalNS = Parser::parseString(R"(
 namespace NS {
@@ -41,7 +59,7 @@ void fun();
 		REQUIRE(globalNS.m_structs.size() == 1);
 		auto myClass = globalNS.m_structs[0];
 		REQUIRE(myClass.m_functions.size() == 1);
-		auto& fun = myClass.m_functions.back();
+		auto& [access, fun] = myClass.m_functions.back();
 		CHECK(fun.m_name == "fun");
 		CHECK(fun.m_arguments.size() == 0);
 	}
@@ -61,7 +79,7 @@ void fun() {}
 }
 
 TEST_CASE("Function with different returns without includes", "[functions]") {
-	for (auto irType : TestUtil::getTypes()) {    //{IR::Type::String}) {
+	for (auto irType : TestUtil::getTypes()) {
 		// Remove the ones who require an include
 		if (auto include = TestUtil::getIncludesIfNeeded(irType);
 		    include.empty()) {

@@ -1,4 +1,5 @@
 #include "Builders/commonBuilder.h"
+#include "Builders/functionBuilder.h"
 #include "Visitor/ParserVisitor.h"
 
 namespace Visitor {
@@ -32,7 +33,8 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		parsedFunc.m_arguments.push_back(arg);
 	}
 
-	m_irData.m_functions.push_back(parsedFunc);
+	m_irData.m_functions.push_back(
+	    {Builders::convertToIRAccess(functionDecl->getAccess()), parsedFunc});
 
 	// Continue the AST search
 	return true;
