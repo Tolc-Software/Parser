@@ -27,7 +27,7 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		}
 		// TODO: Handle unsupported qualifiers
 		//       (has qualifiers but this function returns none)
-		arg.m_qualifiers = Builders::getQualifiers(p->getType());
+		arg.m_type.m_qualifiers = Builders::getQualifiers(p->getType());
 
 		parsedFunc.m_arguments.push_back(arg);
 	}

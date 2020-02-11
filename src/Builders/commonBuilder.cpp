@@ -7,24 +7,50 @@
 #include <string>
 #include <string_view>
 
+namespace {
+std::optional<IR::BaseType> getBaseType(std::string_view type) {
+	using IR::BaseType;
+	if (type == "char") {
+		return BaseType::Char;
+	} else if (type == "double") {
+		return BaseType::Double;
+	} else if (type == "float") {
+		return BaseType::Float;
+	} else if (type == "int") {
+		return BaseType::Int;
+	} else if (type == "long") {
+		return BaseType::Long;
+	} else if (type == "string") {
+		return BaseType::String;
+	} else if (type == "void") {
+		return BaseType::Void;
+	}
+	return {};
+}
+
+IR::Type buildTypeFromBase(IR::BaseType valueType,
+                           std::optional<IR::BaseType> keyType = std::nullopt) {
+	IR::Type::Value v;
+	v.m_valueType = valueType;
+	v.m_keyType = keyType;
+
+	IR::Type type;
+	type.m_type = v;
+	return type;
+}
+
+}    // namespace
+
 namespace Builders {
 
 std::optional<IR::Type> getType(std::string_view type) {
-	if (type == "char") {
-		return IR::Type::Char;
-	} else if (type == "double") {
-		return IR::Type::Double;
-	} else if (type == "float") {
-		return IR::Type::Float;
-	} else if (type == "int") {
-		return IR::Type::Int;
-	} else if (type == "long") {
-		return IR::Type::Long;
-	} else if (type == "string") {
-		return IR::Type::String;
-	} else if (type == "void") {
-		return IR::Type::Void;
+	if (auto baseType = getBaseType(type)) {
+		return buildTypeFromBase(baseType.value());
 	}
+	// TODO: Support containers
+	// else if (auto containerType = getContainerType(type)) {
+	// return buildTypeFromContainer(containerType.value());
+	// }
 	return {};
 }
 

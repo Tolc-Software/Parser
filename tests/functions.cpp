@@ -3,6 +3,15 @@
 #include "TestUtil/types.h"
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
+#include <variant>
+
+namespace {
+void compare(IR::Type returnType, IR::BaseType compareType) {
+	auto valueType = std::get_if<IR::Type::Value>(&returnType.m_type);
+	REQUIRE(valueType);
+	CHECK(valueType->m_valueType == compareType);
+}
+}    // namespace
 
 TEST_CASE("Function with const argument", "[functions]") {
 	auto globalNS = Parser::parseString(R"(
@@ -14,8 +23,8 @@ void fun(int const i) {}
 		SECTION("finds the const argument") {
 			REQUIRE(fun.m_arguments.size() == 1);
 			auto& arg = fun.m_arguments.back();
-			REQUIRE(arg.m_qualifiers.size() == 1);
-			auto& qual = arg.m_qualifiers.back();
+			REQUIRE(arg.m_type.m_qualifiers.size() == 1);
+			auto& qual = arg.m_type.m_qualifiers.back();
 			CHECK(qual == IR::Qualifier::Const);
 		}
 	}
@@ -30,7 +39,7 @@ void fun() {}
 		auto fun = globalNS.m_functions[0];
 		CHECK(fun.m_name == "fun");
 		CHECK(fun.m_arguments.size() == 0);
-		CHECK(fun.m_returnType == IR::Type::Void);
+		compare(fun.m_returnType, IR::BaseType::Void);
 	}
 }
 
@@ -53,7 +62,7 @@ TEST_CASE("Function with different returns without includes", "[functions]") {
 				CHECK(fun.m_name == "fun");
 				CHECK(fun.m_arguments.size() == 0);
 				SECTION("with correct return type") {
-					CHECK(fun.m_returnType == irType);
+					compare(fun.m_returnType, irType);
 				}
 			}
 		}
@@ -80,12 +89,14 @@ TEST_CASE("Function with arguments not requiring includes", "[functions]") {
 				REQUIRE(globalNS.m_functions.size() == 1);
 				auto fun = globalNS.m_functions[0];
 				CHECK(fun.m_name == "fun");
-				CHECK(fun.m_returnType == IR::Type::Void);
+				compare(fun.m_returnType, IR::BaseType::Void);
+
 				SECTION("with correct argument") {
+
 					REQUIRE(fun.m_arguments.size() == 1);
 					auto& arg = fun.m_arguments.back();
 					CHECK(arg.m_name == "myArg");
-					CHECK(arg.m_type == irType);
+					compare(arg.m_type, irType);
 				}
 			}
 		}
@@ -99,13 +110,13 @@ void fun(int i, double d, char c);
 	REQUIRE(globalNS.m_functions.size() == 1);
 	auto& fun = globalNS.m_functions.back();
 	REQUIRE(fun.m_arguments.size() == 3);
-	for (auto [argName, type] : {std::make_pair("i", IR::Type::Int),
-	                             std::make_pair("d", IR::Type::Double),
-	                             std::make_pair("c", IR::Type::Char)}) {
+	for (auto [argName, type] : {std::make_pair("i", IR::BaseType::Int),
+	                             std::make_pair("d", IR::BaseType::Double),
+	                             std::make_pair("c", IR::BaseType::Char)}) {
 		auto maybeArg = TestUtil::findWithName(argName, fun.m_arguments);
 		REQUIRE(maybeArg.has_value());
-		auto i = maybeArg.value();
-		CHECK(i.m_type == type);
+		auto arg = maybeArg.value();
+		compare(arg.m_type, type);
 	}
 }
 

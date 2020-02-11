@@ -37,13 +37,13 @@ buildStructure(ClangDecl const* clangDecl, IRProxy::Type baseType) {
 	auto splitNames =
 	    Helpers::Utils::split(clangDecl->getQualifiedNameAsString(), "::");
 
-	auto nameOfFunction = splitNames.back();
+	auto nameOfDecl = splitNames.back();
 	splitNames.pop_back();
 	// Build from where we don't know the declstructure
 	auto structure =
 	    Builders::buildParentStructure(clangDecl->getParent(), splitNames);
 	// Push the base back in
-	structure.push_back({nameOfFunction, baseType});
+	structure.push_back({nameOfDecl, baseType});
 	return structure;
 }
 
