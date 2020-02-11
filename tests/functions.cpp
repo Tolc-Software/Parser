@@ -13,20 +13,37 @@ void compare(IR::Type returnType, IR::BaseType compareType) {
 }
 }    // namespace
 
-TEST_CASE("Function with const argument", "[functions]") {
+TEST_CASE("Function within namespace", "[functions]") {
 	auto globalNS = Parser::parseString(R"(
-void fun(int const i) {}
+namespace NS {
+void fun();
+}
 		)");
 	SECTION("Parser finds the function") {
-		REQUIRE(globalNS.m_functions.size() == 1);
-		auto fun = globalNS.m_functions[0];
-		SECTION("finds the const argument") {
-			REQUIRE(fun.m_arguments.size() == 1);
-			auto& arg = fun.m_arguments.back();
-			REQUIRE(arg.m_type.m_qualifiers.size() == 1);
-			auto& qual = arg.m_type.m_qualifiers.back();
-			CHECK(qual == IR::Qualifier::Const);
-		}
+		REQUIRE(globalNS.m_functions.size() == 0);
+		REQUIRE(globalNS.m_children.size() == 1);
+		auto NS = globalNS.m_children[0];
+		REQUIRE(NS.m_functions.size() == 1);
+		auto& fun = NS.m_functions.back();
+		CHECK(fun.m_name == "fun");
+		CHECK(fun.m_arguments.size() == 0);
+	}
+}
+
+TEST_CASE("Function within class", "[functions]") {
+	auto globalNS = Parser::parseString(R"(
+class MyClass {
+void fun();
+};
+		)");
+	SECTION("Parser finds the function") {
+		REQUIRE(globalNS.m_functions.size() == 0);
+		REQUIRE(globalNS.m_structs.size() == 1);
+		auto myClass = globalNS.m_structs[0];
+		REQUIRE(myClass.m_functions.size() == 1);
+		auto& fun = myClass.m_functions.back();
+		CHECK(fun.m_name == "fun");
+		CHECK(fun.m_arguments.size() == 0);
 	}
 }
 
@@ -117,6 +134,23 @@ void fun(int i, double d, char c);
 		REQUIRE(maybeArg.has_value());
 		auto arg = maybeArg.value();
 		compare(arg.m_type, type);
+	}
+}
+
+TEST_CASE("Function with const argument", "[functions]") {
+	auto globalNS = Parser::parseString(R"(
+void fun(int const i) {}
+		)");
+	SECTION("Parser finds the function") {
+		REQUIRE(globalNS.m_functions.size() == 1);
+		auto fun = globalNS.m_functions[0];
+		SECTION("finds the const argument") {
+			REQUIRE(fun.m_arguments.size() == 1);
+			auto& arg = fun.m_arguments.back();
+			REQUIRE(arg.m_type.m_qualifiers.size() == 1);
+			auto& qual = arg.m_type.m_qualifiers.back();
+			CHECK(qual == IR::Qualifier::Const);
+		}
 	}
 }
 
