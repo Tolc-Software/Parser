@@ -40,7 +40,7 @@ IR::Namespace*
 gotoNamespace(std::variant<IR::Namespace*, IR::Struct*> const& current,
               std::string const& name) {
 	if (auto ns = std::get_if<IR::Namespace*>(&current)) {
-		auto& children = (*ns)->m_children;
+		auto& children = (*ns)->m_namespaces;
 		if (auto it = findWithName(children, name); it != children.end()) {
 			return &(*it);
 		}

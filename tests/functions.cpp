@@ -21,8 +21,8 @@ void fun();
 		)");
 	SECTION("Parser finds the function") {
 		REQUIRE(globalNS.m_functions.size() == 0);
-		REQUIRE(globalNS.m_children.size() == 1);
-		auto NS = globalNS.m_children[0];
+		REQUIRE(globalNS.m_namespaces.size() == 1);
+		auto NS = globalNS.m_namespaces[0];
 		REQUIRE(NS.m_functions.size() == 1);
 		auto& fun = NS.m_functions.back();
 		CHECK(fun.m_name == "fun");

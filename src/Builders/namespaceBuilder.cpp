@@ -15,7 +15,7 @@ namespace {
  */
 IR::Namespace* createOrGetChild(IR::Namespace* parent,
                                 std::string_view childName) {
-	auto& children = parent->m_children;
+	auto& children = parent->m_namespaces;
 	// Check if the child exists
 	if (auto child = std::find_if(children.begin(),
 	                              children.end(),

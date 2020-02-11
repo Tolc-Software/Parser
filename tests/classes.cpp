@@ -26,8 +26,8 @@ namespace NS {
 }
 		)");
 	SECTION("Parser finds an empty namespace named Simple") {
-		REQUIRE(globalNS.m_children.size() == 1);
-		auto& ns = globalNS.m_children[0];
+		REQUIRE(globalNS.m_namespaces.size() == 1);
+		auto& ns = globalNS.m_namespaces[0];
 		CHECK(ns.m_name == "NS");
 		REQUIRE(ns.m_structs.size() == 1);
 		auto& simple = ns.m_structs[0];
