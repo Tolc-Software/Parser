@@ -17,7 +17,6 @@ enum class Structure {
 	Namespace,
 	Struct,
 	Function,
-	Unknown,
 };
 
 /**
