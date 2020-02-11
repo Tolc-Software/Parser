@@ -10,10 +10,10 @@ namespace IRProxy {
 /**
   * Used to distinguish a part name in a fully qualified name
   * Ex:
-  *     NamespaceName::ClassName -> {(NamespaceName, Type::Namespace)
-  *                                  (ClassName, Type::Struct)}
+  *     NamespaceName::ClassName -> {(NamespaceName, Structure::Namespace)
+  *                                  (ClassName, Structure::Struct)}
   */
-enum class Type {
+enum class Structure {
 	Namespace,
 	Struct,
 	Function,
@@ -26,8 +26,8 @@ enum class Type {
 struct Struct {
 	// Fully qualified name
 	// Ex:
-	//     Ns::cl => {(Ns, Type::Namespace), (cl, Type::Struct)}
-	std::deque<std::pair<std::string, Type>> m_name;
+	//     Ns::cl => {(Ns, Structure::Namespace), (cl, Structure::Struct)}
+	std::deque<std::pair<std::string, Structure>> m_name;
 	// The variables within the struct/class
 	std::vector<IR::Variable> m_variables;
 };
@@ -38,8 +38,8 @@ struct Struct {
 struct Function {
 	// Fully qualified name
 	// Ex:
-	//     Ns::cl::fun => {(Ns, Type::Namespace), (cl, Type::Struct), (cl, Type::Function)}
-	std::deque<std::pair<std::string, Type>> m_name;
+	//     Ns::cl::fun => {(Ns, Structure::Namespace), (cl, Structure::Struct), (cl, Structure::Function)}
+	std::deque<std::pair<std::string, Structure>> m_name;
 	// The arguments to the function
 	std::vector<IR::Variable> m_arguments;
 

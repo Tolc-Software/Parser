@@ -54,21 +54,21 @@ std::optional<IR::Type> getType(std::string_view type) {
 	return {};
 }
 
-IRProxy::Type getProxyDecl(clang::DeclContext const* decl) {
+IRProxy::Structure getProxyDecl(clang::DeclContext const* decl) {
 	if (decl->isNamespace()) {
-		return IRProxy::Type::Namespace;
+		return IRProxy::Structure::Namespace;
 	} else if (decl->isRecord()) {
-		return IRProxy::Type::Struct;
+		return IRProxy::Structure::Struct;
 	} else if (decl->isFunctionOrMethod()) {
-		return IRProxy::Type::Function;
+		return IRProxy::Structure::Function;
 	}
-	return IRProxy::Type::Unknown;
+	return IRProxy::Structure::Unknown;
 }
 
-std::deque<std::pair<std::string, IRProxy::Type>>
+std::deque<std::pair<std::string, IRProxy::Structure>>
 buildParentStructure(clang::DeclContext const* parent,
                      std::deque<std::string> names) {
-	std::deque<std::pair<std::string, IRProxy::Type>> structure;
+	std::deque<std::pair<std::string, IRProxy::Structure>> structure;
 	while (parent && !names.empty()) {
 		structure.push_back({names.back(), getProxyDecl(parent)});
 		parent = parent->getParent();

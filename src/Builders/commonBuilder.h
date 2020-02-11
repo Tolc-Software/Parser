@@ -17,9 +17,9 @@ namespace Builders {
 * @param: clang::DeclContext const* parent,
 *         std::deque<std::string> names
 *
-* @return: std::deque<std::pair<std::string, IRProxy::Type>>
+* @return: std::deque<std::pair<std::string, IRProxy::Structure>>
 */
-std::deque<std::pair<std::string, IRProxy::Type>>
+std::deque<std::pair<std::string, IRProxy::Structure>>
 buildParentStructure(clang::DeclContext const* parent,
                      std::deque<std::string> names);
 
@@ -27,13 +27,13 @@ buildParentStructure(clang::DeclContext const* parent,
 * @brief: Create a deque combining the type and the names of each DeclContext
 *
 * @param: ClangDecl const* clangDecl,
-*         IRProxy::Type baseType - The type of the ClangDecl
+*         IRProxy::Structure baseType - The type of the ClangDecl
 *
-* @return: std::deque<std::pair<std::string, IRProxy::Type>>
+* @return: std::deque<std::pair<std::string, IRProxy::Structure>>
 */
 template <typename ClangDecl>
-std::deque<std::pair<std::string, IRProxy::Type>>
-buildStructure(ClangDecl const* clangDecl, IRProxy::Type baseType) {
+std::deque<std::pair<std::string, IRProxy::Structure>>
+buildStructure(ClangDecl const* clangDecl, IRProxy::Structure baseType) {
 	auto splitNames =
 	    Helpers::Utils::split(clangDecl->getQualifiedNameAsString(), "::");
 

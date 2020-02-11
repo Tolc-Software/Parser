@@ -11,13 +11,13 @@ namespace Helpers {
 /**
 * @brief: Go through the path directed by path and return the last node.
 *
-* @param: std::deque<std::pair<std::string, Helpers::Type>> path,
+* @param: std::deque<std::pair<std::string, IRProxy::Structure>> path,
 *         IR::Namespace& globalNamespace
 *
 * @return: std::variant<IR::Namespace*, IR::Struct*>
 */
-std::variant<IR::Namespace*, IR::Struct*>
-walkPathThroughStructure(std::deque<std::pair<std::string, IRProxy::Type>> path,
-                         IR::Namespace& globalNamespace);
+std::variant<IR::Namespace*, IR::Struct*> walkPathThroughStructure(
+    std::deque<std::pair<std::string, IRProxy::Structure>> path,
+    IR::Namespace& globalNamespace);
 
 }    // namespace Helpers

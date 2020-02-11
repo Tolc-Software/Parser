@@ -13,7 +13,7 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 	// Build the final parsedStruct
 	IRProxy::Struct parsedStruct;
 	parsedStruct.m_name =
-	    Builders::buildStructure(classDecl, IRProxy::Type::Struct);
+	    Builders::buildStructure(classDecl, IRProxy::Structure::Struct);
 
 	m_irData.m_structs.push_back(parsedStruct);
 	// Continue the AST search
