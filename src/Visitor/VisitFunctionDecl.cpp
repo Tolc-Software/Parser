@@ -22,13 +22,18 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	for (auto& p : functionDecl->parameters()) {
 		IR::Variable arg;
 		arg.m_name = p->getName();
-		if (auto argType = Builders::getType(
-		        p->getType().getUnqualifiedType().getAsString())) {
+
+		auto type = Builders::getTypeWithPointersRemoved(p->getType());
+
+		if (auto argType =
+		        Builders::getType(type.getUnqualifiedType().getAsString())) {
 			arg.m_type = argType.value();
 		}
 		// TODO: Handle unsupported qualifiers
 		//       (has qualifiers but this function returns none)
-		arg.m_type.m_qualifiers = Builders::getQualifiers(p->getType());
+		arg.m_type.m_qualifiers = Builders::getQualifiers(type);
+
+		arg.m_type.m_numPointers = Builders::getNumberOfPointers(p->getType());
 
 		parsedFunc.m_arguments.push_back(arg);
 	}

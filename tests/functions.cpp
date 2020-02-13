@@ -184,13 +184,37 @@ void fun(int const i) {}
 	}
 }
 
-// TEST_CASE("Pointer argument", "[functions]") {
-// 	auto globalNS = Parser::parseString(R"(
-// char fun(char* c) {
-// 	return *c;
-// }
-// 		)");
-// }
+TEST_CASE("Function with pointer argument", "[functions]") {
+	auto globalNS = Parser::parseString(R"(
+void fun(int* i);
+		)");
+	SECTION("Parser finds the function") {
+		REQUIRE(globalNS.m_functions.size() == 1);
+		auto fun = globalNS.m_functions[0];
+		SECTION("finds the pointer argument") {
+			REQUIRE(fun.m_arguments.size() == 1);
+			auto& arg = fun.m_arguments.back();
+			REQUIRE(arg.m_type.m_numPointers == 1);
+		}
+	}
+}
+
+TEST_CASE("Function with const pointer argument", "[functions]") {
+	auto globalNS = Parser::parseString(R"(
+void fun(int const* i);
+		)");
+	SECTION("Parser finds the function") {
+		REQUIRE(globalNS.m_functions.size() == 1);
+		auto fun = globalNS.m_functions[0];
+		SECTION("finds the const pointer argument") {
+			REQUIRE(fun.m_arguments.size() == 1);
+			auto& arg = fun.m_arguments.back();
+			REQUIRE(arg.m_type.m_numPointers == 1);
+			REQUIRE(arg.m_type.m_qualifiers.size() == 1);
+			REQUIRE(arg.m_type.m_qualifiers[0] == IR::Qualifier::Const);
+		}
+	}
+}
 
 // TEST_CASE("Pointer argument with const", "[functions]") {
 // 	auto globalNS = Parser::parseString(R"(

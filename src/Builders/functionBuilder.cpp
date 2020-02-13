@@ -2,6 +2,7 @@
 #include "Helpers/walkIRStructure.h"
 #include "IR/ir.hpp"
 #include <algorithm>
+#include <clang/AST/Type.h>
 #include <clang/Basic/Specifiers.h>
 #include <deque>
 #include <string>
@@ -57,6 +58,22 @@ void buildFunctions(
 	for (auto [modifier, f] : functions) {
 		addFunction(modifier, f, globalNamespace);
 	}
+}
+
+clang::QualType getTypeWithPointersRemoved(clang::QualType type) {
+	while (type->isAnyPointerType()) {
+		type = type->getPointeeType();
+	}
+	return type;
+}
+
+int getNumberOfPointers(clang::QualType type) {
+	int numPointers = 0;
+	while (type->isAnyPointerType()) {
+		numPointers++;
+		type = type->getPointeeType();
+	}
+	return numPointers;
 }
 
 std::optional<IR::AccessModifier>
