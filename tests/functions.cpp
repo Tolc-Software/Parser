@@ -1,33 +1,25 @@
 #include "Parser/Parse.h"
+#include "TestUtil/compare.h"
 #include "TestUtil/finders.h"
 #include "TestUtil/types.h"
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
 #include <variant>
 
-namespace {
-void compare(IR::Type returnType, IR::BaseType compareType) {
-	auto valueType = std::get_if<IR::Type::Value>(&returnType.m_type);
-	REQUIRE(valueType);
-	CHECK(valueType->m_valueType == compareType);
-}
-}    // namespace
-
 TEST_CASE("Function within class with modifier", "[functions]") {
-	auto globalNS = Parser::parseString(R"(
-class MyClass {
-private:
-void fun();
-};
-		)");
-	SECTION("Parser finds the function") {
-		REQUIRE(globalNS.m_functions.size() == 0);
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto myClass = globalNS.m_structs[0];
-		REQUIRE(myClass.m_functions.size() == 1);
-		auto& [access, fun] = myClass.m_functions.back();
-		CHECK(fun.m_name == "fun");
-		CHECK(access == IR::AccessModifier::Private);
+	for (auto accessModifier : TestUtil::getAccessModifiers()) {
+		auto globalNS = Parser::parseString(
+		    "class MyClass { " + TestUtil::getAsString(accessModifier) +
+		    ": void fun(); };");
+		SECTION("Parser finds the function") {
+			REQUIRE(globalNS.m_functions.size() == 0);
+			REQUIRE(globalNS.m_structs.size() == 1);
+			auto myClass = globalNS.m_structs[0];
+			REQUIRE(myClass.m_functions.size() == 1);
+			auto& [access, fun] = myClass.m_functions.back();
+			CHECK(fun.m_name == "fun");
+			CHECK(access == accessModifier);
+		}
 	}
 }
 
@@ -74,7 +66,7 @@ void fun() {}
 		auto fun = globalNS.m_functions[0];
 		CHECK(fun.m_name == "fun");
 		CHECK(fun.m_arguments.size() == 0);
-		compare(fun.m_returnType, IR::BaseType::Void);
+		TestUtil::compare(fun.m_returnType, IR::BaseType::Void);
 	}
 }
 
@@ -83,7 +75,7 @@ TEST_CASE("Function with different returns without includes", "[functions]") {
 		// Remove the ones who require an include
 		if (auto include = TestUtil::getIncludesIfNeeded(irType);
 		    include.empty()) {
-			auto type = TestUtil::getTypeAsString(irType);
+			auto type = TestUtil::getAsString(irType);
 			std::string code = include + type + " fun() { return " +
 			                   TestUtil::getValidReturnForType(irType) + "; }";
 			auto globalNS = Parser::parseString(code);
@@ -97,7 +89,7 @@ TEST_CASE("Function with different returns without includes", "[functions]") {
 				CHECK(fun.m_name == "fun");
 				CHECK(fun.m_arguments.size() == 0);
 				SECTION("with correct return type") {
-					compare(fun.m_returnType, irType);
+					TestUtil::compare(fun.m_returnType, irType);
 				}
 			}
 		}
@@ -109,7 +101,7 @@ TEST_CASE("Function with arguments not requiring includes", "[functions]") {
 		// Remove the ones who require an include
 		if (auto include = TestUtil::getIncludesIfNeeded(irType);
 		    include.empty()) {
-			auto type = TestUtil::getTypeAsString(irType);
+			auto type = TestUtil::getAsString(irType);
 			if (type == "void") {
 				// Named variables cannot have type void
 				continue;
@@ -124,14 +116,14 @@ TEST_CASE("Function with arguments not requiring includes", "[functions]") {
 				REQUIRE(globalNS.m_functions.size() == 1);
 				auto fun = globalNS.m_functions[0];
 				CHECK(fun.m_name == "fun");
-				compare(fun.m_returnType, IR::BaseType::Void);
+				TestUtil::compare(fun.m_returnType, IR::BaseType::Void);
 
 				SECTION("with correct argument") {
 
 					REQUIRE(fun.m_arguments.size() == 1);
 					auto& arg = fun.m_arguments.back();
 					CHECK(arg.m_name == "myArg");
-					compare(arg.m_type, irType);
+					TestUtil::compare(arg.m_type, irType);
 				}
 			}
 		}
@@ -151,7 +143,7 @@ void fun(int i, double d, char c);
 		auto maybeArg = TestUtil::findWithName(argName, fun.m_arguments);
 		REQUIRE(maybeArg.has_value());
 		auto arg = maybeArg.value();
-		compare(arg.m_type, type);
+		TestUtil::compare(arg.m_type, type);
 	}
 }
 

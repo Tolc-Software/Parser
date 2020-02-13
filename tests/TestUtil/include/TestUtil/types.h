@@ -5,6 +5,15 @@
 
 namespace TestUtil {
 
+std::vector<IR::AccessModifier> getAccessModifiers() {
+	using IR::AccessModifier;
+	return {
+	    AccessModifier::Public,
+	    AccessModifier::Private,
+	    AccessModifier::Protected,
+	};
+}
+
 std::vector<IR::BaseType> getTypes() {
 	using IR::BaseType;
 	return {
@@ -18,19 +27,28 @@ std::vector<IR::BaseType> getTypes() {
 	};
 }
 
-std::string getTypeAsString(IR::BaseType type) {
-	std::string s = "";
+std::string getAsString(IR::AccessModifier am) {
+	using IR::AccessModifier;
+	switch (am) {
+		case AccessModifier::Public: return "public"; break;
+		case AccessModifier::Private: return "private"; break;
+		case AccessModifier::Protected: return "protected"; break;
+	}
+	return "";
+}
+
+std::string getAsString(IR::BaseType type) {
 	using IR::BaseType;
 	switch (type) {
-		case BaseType::Char: s = "char"; break;
-		case BaseType::Double: s = "double"; break;
-		case BaseType::Float: s = "float"; break;
-		case BaseType::Int: s = "int"; break;
-		case BaseType::Long: s = "long"; break;
-		case BaseType::String: s = "std::string"; break;
-		case BaseType::Void: s = "void"; break;
+		case BaseType::Char: return "char"; break;
+		case BaseType::Double: return "double"; break;
+		case BaseType::Float: return "float"; break;
+		case BaseType::Int: return "int"; break;
+		case BaseType::Long: return "long"; break;
+		case BaseType::String: return "std::string"; break;
+		case BaseType::Void: return "void"; break;
 	}
-	return s;
+	return "";
 }
 
 std::string getIncludesIfNeeded(IR::BaseType type) {
