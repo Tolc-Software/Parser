@@ -16,16 +16,6 @@ void buildFunctions(
     IR::Namespace& globalNamespace);
 
 /**
-  * Go through and remove the pointers of the type
-  */
-clang::QualType getTypeWithPointersRemoved(clang::QualType type);
-
-/**
-  * Count the number of pointers on QualType (int** -> 2, ...)
-  */
-int getNumberOfPointers(clang::QualType type);
-
-/**
   * Convert the clang::AccessSpecifier to IR::AccessModifier and add them to the structure
   */
 std::optional<IR::AccessModifier>

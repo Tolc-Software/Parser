@@ -60,22 +60,6 @@ void buildFunctions(
 	}
 }
 
-clang::QualType getTypeWithPointersRemoved(clang::QualType type) {
-	while (type->isAnyPointerType()) {
-		type = type->getPointeeType();
-	}
-	return type;
-}
-
-int getNumberOfPointers(clang::QualType type) {
-	int numPointers = 0;
-	while (type->isAnyPointerType()) {
-		numPointers++;
-		type = type->getPointeeType();
-	}
-	return numPointers;
-}
-
 std::optional<IR::AccessModifier>
 convertToIRAccess(clang::AccessSpecifier access) {
 	switch (access) {

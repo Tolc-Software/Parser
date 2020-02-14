@@ -1,5 +1,6 @@
 #include "Builders/commonBuilder.h"
 #include "Builders/functionBuilder.h"
+#include "Builders/typeBuilder.h"
 #include "Visitor/ParserVisitor.h"
 
 namespace Visitor {
@@ -14,28 +15,18 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	parsedFunc.m_name =
 	    Builders::buildStructure(functionDecl, IRProxy::Structure::Function);
 
-	if (auto returnType = Builders::getType(
-	        functionDecl->getReturnType().getUnqualifiedType().getAsString())) {
+	if (auto returnType = Builders::buildType(functionDecl->getReturnType())) {
 		parsedFunc.m_returnType = returnType.value();
 	}
 
 	for (auto& p : functionDecl->parameters()) {
-		IR::Variable arg;
-		arg.m_name = p->getName();
-
-		auto type = Builders::getTypeWithPointersRemoved(p->getType());
-
-		if (auto argType =
-		        Builders::getType(type.getUnqualifiedType().getAsString())) {
+		// TODO: Handle unsupported types
+		if (auto argType = Builders::buildType(p->getType())) {
+			IR::Variable arg;
+			arg.m_name = p->getName();
 			arg.m_type = argType.value();
+			parsedFunc.m_arguments.push_back(arg);
 		}
-		// TODO: Handle unsupported qualifiers
-		//       (has qualifiers but this function returns none)
-		arg.m_type.m_qualifiers = Builders::getQualifiers(type);
-
-		arg.m_type.m_numPointers = Builders::getNumberOfPointers(p->getType());
-
-		parsedFunc.m_arguments.push_back(arg);
 	}
 
 	m_irData.m_functions.push_back(
