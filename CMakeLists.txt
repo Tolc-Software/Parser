@@ -39,11 +39,12 @@ include(WarningsAndOptions)
 
 add_llvm_library(Parser
                  src/Consumer/ParserConsumer.cpp
-                 src/Frontend/ParserFrontendAction.cpp
                  src/Builders/commonBuilder.cpp
                  src/Builders/functionBuilder.cpp
                  src/Builders/namespaceBuilder.cpp
                  src/Builders/structBuilder.cpp
+                 src/Builders/typeBuilder.cpp
+                 src/Frontend/ParserFrontendAction.cpp
                  src/Helpers/walkIRStructure.cpp
                  src/Helpers/Utils/split.cpp
                  src/Parser/Parse.cpp
