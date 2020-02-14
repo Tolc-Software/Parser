@@ -76,17 +76,11 @@ int getNumberOfPointers(clang::QualType type) {
 }
 
 /**
-* Tries to create an IR::Qualifier (Const, ...) of the input
-* If there are no qualifiers or if it fails it returns an empty vector
-* NOTE: Assumes the qualifiers are removed (const, ...)
+* Checks if type is const
 */
-std::vector<IR::Qualifier> getQualifiers(clang::QualType const& type) {
-	std::vector<IR::Qualifier> quals;
+bool isConst(clang::QualType const& type) {
 	auto qs = type.split().Quals;
-	if (qs.hasConst()) {
-		quals.push_back(IR::Qualifier::Const);
-	}
-	return quals;
+	return qs.hasConst();
 }
 
 }    // namespace
@@ -103,9 +97,7 @@ std::optional<IR::Type> buildType(clang::QualType type) {
 		irType.m_numPointers = numPointers;
 
 		// TODO: Handle unsupported qualifiers
-		//       (has qualifiers but this function returns none)
-		auto qualifiers = getQualifiers(type);
-		irType.m_qualifiers = qualifiers;
+		irType.m_isConst = isConst(type);
 		return irType;
 	}
 

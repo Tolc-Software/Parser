@@ -177,9 +177,7 @@ void fun(int const i) {}
 		SECTION("finds the const argument") {
 			REQUIRE(fun.m_arguments.size() == 1);
 			auto& arg = fun.m_arguments.back();
-			REQUIRE(arg.m_type.m_qualifiers.size() == 1);
-			auto& qual = arg.m_type.m_qualifiers.back();
-			CHECK(qual == IR::Qualifier::Const);
+			REQUIRE(arg.m_type.m_isConst);
 		}
 	}
 }
@@ -210,8 +208,7 @@ void fun(int const* i);
 			REQUIRE(fun.m_arguments.size() == 1);
 			auto& arg = fun.m_arguments.back();
 			REQUIRE(arg.m_type.m_numPointers == 1);
-			REQUIRE(arg.m_type.m_qualifiers.size() == 1);
-			REQUIRE(arg.m_type.m_qualifiers[0] == IR::Qualifier::Const);
+			REQUIRE(arg.m_type.m_isConst);
 		}
 	}
 }
@@ -230,8 +227,7 @@ char const* fun();
 			CHECK(!returnChar->m_keyType.has_value());
 			CHECK(returnChar->m_valueType == IR::BaseType::Char);
 			CHECK(fun.m_returnType.m_numPointers == 1);
-			REQUIRE(fun.m_returnType.m_qualifiers.size() == 1);
-			CHECK(fun.m_returnType.m_qualifiers[0] == IR::Qualifier::Const);
+			REQUIRE(fun.m_returnType.m_isConst);
 		}
 	}
 }
