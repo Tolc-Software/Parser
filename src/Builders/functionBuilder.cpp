@@ -31,8 +31,7 @@ IR::Function createFunction(std::string_view name,
 	return f;
 }
 
-void addFunction(std::optional<IR::AccessModifier> modifier,
-                 IRProxy::Function const& f,
+void addFunction(IRProxy::Function const& f,
                  IR::Namespace& globalNamespace) {
 	// Take out the already created path
 	auto path = f.m_name;
@@ -45,18 +44,17 @@ void addFunction(std::optional<IR::AccessModifier> modifier,
 
 	// Create and add the function
 	addFunctionToVariant(
-	    modifier, parentOfNewFunction, createFunction(name, f));
+	    f.m_modifier, parentOfNewFunction, createFunction(name, f));
 }
 }    // namespace
 
 namespace Builders {
 
 void buildFunctions(
-    const std::vector<std::pair<std::optional<IR::AccessModifier>,
-                                IRProxy::Function>>& functions,
+    const std::vector<IRProxy::Function>& functions,
     IR::Namespace& globalNamespace) {
-	for (auto [modifier, f] : functions) {
-		addFunction(modifier, f, globalNamespace);
+	for (auto const& f : functions) {
+		addFunction(f, globalNamespace);
 	}
 }
 

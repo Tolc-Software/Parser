@@ -11,8 +11,7 @@ namespace Builders {
   * Convert the IRProxy::Function to IR::Function and add them to the structure
   */
 void buildFunctions(
-    const std::vector<std::pair<std::optional<IR::AccessModifier>,
-                                IRProxy::Function>>& functions,
+    const std::vector<IRProxy::Function>& functions,
     IR::Namespace& globalNamespace);
 
 /**

@@ -42,6 +42,9 @@ struct Function {
 	// The arguments to the function
 	std::vector<IR::Variable> m_arguments;
 
+	// public, private, protected
+	std::optional<IR::AccessModifier> m_modifier;
+
 	IR::Type m_returnType;
 };
 
@@ -61,8 +64,7 @@ struct IRData {
 	// Ex: ParentNS::ChildNS::GrandChildNS
 	std::vector<std::string> m_namespaces;
 	std::vector<Struct> m_structs;
-	std::vector<std::pair<std::optional<IR::AccessModifier>, Function>>
-	    m_functions;
+	std::vector<Function> m_functions;
 };
 }    // namespace IRProxy
 

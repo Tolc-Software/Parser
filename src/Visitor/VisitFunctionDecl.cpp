@@ -29,8 +29,10 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		}
 	}
 
-	m_irData.m_functions.push_back(
-	    {Builders::convertToIRAccess(functionDecl->getAccess()), parsedFunc});
+	// Check for access modifiers (public, private, ...)
+	parsedFunc.m_modifier = Builders::convertToIRAccess(functionDecl->getAccess());
+
+	m_irData.m_functions.push_back(parsedFunc);
 
 	// Continue the AST search
 	return true;
