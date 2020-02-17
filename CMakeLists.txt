@@ -50,11 +50,12 @@ add_llvm_library(Parser
                  src/Parser/Parse.cpp
                  src/Visitor/ParserVisitor.cpp
                  src/Visitor/VisitCXXRecordDecl.cpp
+                 src/Visitor/VisitFieldDecl.cpp
                  src/Visitor/VisitFunctionDecl.cpp
                  src/Visitor/VisitNamespaceDecl.cpp)
 
 target_link_libraries(Parser
-                      PUBLIC  IR::IR
+                      PUBLIC IR::IR
                       PRIVATE clangASTMatchers
                               clangBasic
                               clangTooling

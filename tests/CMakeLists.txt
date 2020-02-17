@@ -18,7 +18,31 @@ set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
 # Defines create_catch2_test
 include(SetupTest)
 
-setup_test(TEST_NAME functions SOURCE functions.cpp LIBRARIES TestUtil)
-setup_test(TEST_NAME namespaces SOURCE namespaces.cpp LIBRARIES TestUtil)
-setup_test(TEST_NAME classes SOURCE classes.cpp LIBRARIES TestUtil)
-setup_test(TEST_NAME split SOURCE Helpers/Utils/split.cpp)
+setup_test(TEST_NAME
+           functions
+           SOURCE
+           functions.cpp
+           LIBRARIES
+           TestUtil)
+setup_test(TEST_NAME
+           fields
+           SOURCE
+           fields.cpp
+           LIBRARIES
+           TestUtil)
+setup_test(TEST_NAME
+           namespaces
+           SOURCE
+           namespaces.cpp
+           LIBRARIES
+           TestUtil)
+setup_test(TEST_NAME
+           classes
+           SOURCE
+           classes.cpp
+           LIBRARIES
+           TestUtil)
+setup_test(TEST_NAME
+           split
+           SOURCE
+           Helpers/Utils/split.cpp)

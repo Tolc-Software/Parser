@@ -9,6 +9,9 @@ ParserVisitor::~ParserVisitor() {
 	m_parsedNamespaces =
 	    Builders::buildNamespaceStructure(m_irData.m_namespaces);
 
+	// Add the collected member variables to the structs
+	Builders::addMemberVariables(m_irData.m_structs, m_irData.m_memberVariables);
+
 	// Add the structs/classes to the namespaces
 	Builders::buildStructs(m_irData.m_structs, m_parsedNamespaces);
 

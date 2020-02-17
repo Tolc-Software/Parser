@@ -11,6 +11,12 @@
 namespace Builders {
 
 /**
+  * Convert the clang::AccessSpecifier to IR::AccessModifier and add them to the structure
+  */
+std::optional<IR::AccessModifier>
+convertToIRAccess(clang::AccessSpecifier access);
+
+/**
 * @brief: Create a deque combining the type and the names of each DeclContext
 *         NOTE: Assumes the last in the names deque is the name of the first parent
 *

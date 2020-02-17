@@ -4,6 +4,7 @@
 #include <deque>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 namespace IRProxy {
 
@@ -49,6 +50,17 @@ struct Function {
 };
 
 /**
+  * Representation of a variable within a struct/class
+  */
+struct MemberVariable {
+	IR::Variable m_variable;
+
+	// public, private, protected
+	IR::AccessModifier m_modifier;
+};
+
+
+/**
   * Contains partially parsed code to IR on the form
   *     m_something = vector<[parent context, IR::something]>
   *
@@ -65,6 +77,9 @@ struct IRData {
 	std::vector<std::string> m_namespaces;
 	std::vector<Struct> m_structs;
 	std::vector<Function> m_functions;
+
+	// {Fully qualified name of the owning class: variable}
+	std::unordered_map<std::string, std::vector<MemberVariable>> m_memberVariables;
 };
 }    // namespace IRProxy
 

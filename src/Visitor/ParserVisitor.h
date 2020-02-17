@@ -21,6 +21,8 @@ public:
 
 	bool VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl);
 
+	bool VisitFieldDecl(clang::FieldDecl* fieldDecl);
+
 private:
 	clang::ASTContext* m_context;
 

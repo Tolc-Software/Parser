@@ -14,10 +14,4 @@ void buildFunctions(
     const std::vector<IRProxy::Function>& functions,
     IR::Namespace& globalNamespace);
 
-/**
-  * Convert the clang::AccessSpecifier to IR::AccessModifier and add them to the structure
-  */
-std::optional<IR::AccessModifier>
-convertToIRAccess(clang::AccessSpecifier access);
-
 }    // namespace Builders
