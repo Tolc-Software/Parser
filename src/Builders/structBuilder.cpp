@@ -75,7 +75,7 @@ void addMemberVariables(std::vector<IRProxy::Struct>& structs,
 	for (auto& s : structs) {
 		if (auto variables = getVariables(s, memberVariables)) {
 			for (auto& variable : variables.value()) {
-				s.m_variables.push_back(variable.m_variable);
+				s.m_variables.push_back({variable.m_modifier, variable.m_variable});
 			}
 		}
 	}

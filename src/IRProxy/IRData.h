@@ -29,7 +29,7 @@ struct Struct {
 	//     Ns::cl => {(Ns, Structure::Namespace), (cl, Structure::Struct)}
 	std::deque<std::pair<std::string, Structure>> m_name;
 	// The variables within the struct/class
-	std::vector<IR::Variable> m_variables;
+	std::vector<std::pair<IR::AccessModifier, IR::Variable>> m_variables;
 };
 
 /**

@@ -18,11 +18,10 @@ TEST_CASE("Member variable works with default modifier", "[fields]") {
 			REQUIRE(globalNS.m_structs.size() == 1);
 			auto structure = globalNS.m_structs[0];
 			REQUIRE(structure.m_memberVariables.size() == 1);
-			// auto& [access, fun] = structure.m_memberVariables.back();
-			auto& var = structure.m_memberVariables.back();
+			auto& [access, var] = structure.m_memberVariables.back();
 			CHECK(var.m_name == "m_var");
 			TestUtil::compare(var.m_type, IR::BaseType::Int);
-			// CHECK(access == accessModifier);
+			CHECK(access == accessModifier);
 		}
 	}
 }
