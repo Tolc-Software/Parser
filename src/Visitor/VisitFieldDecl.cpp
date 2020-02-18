@@ -12,11 +12,9 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 	}
 
 	IRProxy::MemberVariable proxyVariable;
-	IR::Variable variable;
-	auto splitNames =
-	    Helpers::Utils::split(fieldDecl->getQualifiedNameAsString(), "::");
 
-	variable.m_name = splitNames.back();
+	IR::Variable variable;
+	variable.m_name = fieldDecl->getName();
 	// TODO: Handle type not being converted
 	if (auto type = Builders::buildType(fieldDecl->getType())) {
 		variable.m_type = type.value();
