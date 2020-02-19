@@ -7,7 +7,6 @@ namespace {
 void checkEmpty(IR::Namespace& ns) {
 	CAPTURE(ns.m_name);
 
-	CHECK(ns.m_constants.empty());
 	CHECK(ns.m_functions.empty());
 	CHECK(ns.m_structs.empty());
 }
