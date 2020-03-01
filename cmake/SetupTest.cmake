@@ -32,5 +32,8 @@ function(setup_test)
     ${ARG_LIBRARIES})
   target_include_directories(${ARG_TEST_NAME} SYSTEM
                              PRIVATE ${llvm_entry_INCLUDE_DIR})
+
+  target_code_coverage(${ARG_TEST_NAME} AUTO ALL)
+
   add_test(NAME ${ARG_TEST_NAME} COMMAND ${ARG_TEST_NAME})
 endfunction()
