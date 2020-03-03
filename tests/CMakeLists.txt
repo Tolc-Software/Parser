@@ -15,8 +15,15 @@ target_include_directories(TestUtil INTERFACE TestUtil/include)
 set(Catch2_FOUND TRUE)
 set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
 
+include(CodeCoverage)
+
 # Defines create_catch2_test
 include(SetupTest)
+
+# Use coverage of parser
+target_code_coverage(Parser)
+
+add_code_coverage_all_targets()
 
 setup_test(TEST_NAME
            functions

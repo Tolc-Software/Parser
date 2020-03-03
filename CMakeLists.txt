@@ -15,17 +15,6 @@ endif()
 # Add custom scripts
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-include(CodeCoverage)
-
-# add_code_coverage() # Adds instrumentation to all targets
-add_code_coverage_all_targets()
-#
-# add_library(theLib lib.cpp)
-#
-# add_executable(theExe main.cpp)
-# target_link_libraries(theExe PRIVATE theLib)
-# target_code_coverage(theExe) # As an executable target, adds the 'ccov-theExe' target (instrumentation already added via global anyways) for generating code coverage reports.
-
 include(FetchContent)
 FetchContent_Declare(
   IRSpecification
@@ -64,8 +53,6 @@ add_llvm_library(Parser
                  src/Visitor/VisitFieldDecl.cpp
                  src/Visitor/VisitFunctionDecl.cpp
                  src/Visitor/VisitNamespaceDecl.cpp)
-
-target_code_coverage(Parser)
 
 target_link_libraries(Parser
                       PUBLIC IR::IR
