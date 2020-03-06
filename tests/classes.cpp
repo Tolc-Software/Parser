@@ -1,6 +1,24 @@
 #include "Parser/Parse.h"
 #include <catch2/catch.hpp>
 
+TEST_CASE("A class with a constructor", "[classes]") {
+	auto globalNS = Parser::parseString(R"(
+class Simple {
+public:
+	Simple();
+};
+		)");
+	SECTION("Parser finds an empty namespace named Simple") {
+		REQUIRE(globalNS.m_structs.size() == 1);
+		auto& simple = globalNS.m_structs[0];
+		REQUIRE(simple.m_name == "Simple");
+		REQUIRE(simple.m_functions.size() == 1);
+		auto [access, constructor] = simple.m_functions.back();
+		REQUIRE(constructor.m_name == "Simple");
+		REQUIRE(access == IR::AccessModifier::Public);
+	}
+}
+
 TEST_CASE("Finds a global class", "[classes]") {
 	auto globalNS = Parser::parseString("class Simple {}; ");
 	SECTION("Parser finds an empty class named Simple") {
