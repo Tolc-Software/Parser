@@ -15,18 +15,34 @@ FetchContent_Declare(
 
 # Downloads and makes the parser library available
 FetchContent_MakeAvailable(Parser)
-```
 
-## Usage ##
-
-Link against it in your `CMakeLists.txt` as follows:
-
-```cmake
+# Link it to your target
 target_link_libraries(your_target PRIVATE Parser)
 ```
 
 And you should get all the necessary components of the library.
 
+
+## Usage ##
+
+`Parser` only exposes one header file, `Parser/Parse.h`, which can be used as:
+
+```cpp
+#include <Parser/Parse.h>
+#include <iostream>
+
+int main() {
+    // Get a IR::Namespace representing the global namespace
+    auto globalNamespace = parseString(R"(
+int f() {
+    return 5;
+}
+    )");
+
+    // Will return "f"
+    std::cout << globalNamespace.m_functions[0].m_name << '\n';
+}
+```
 
 ## Architecture ##
 
