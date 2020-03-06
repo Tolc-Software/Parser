@@ -15,6 +15,7 @@
 
 # Directories
 !cmake
+!docs
 !include
 !src
 !tests
