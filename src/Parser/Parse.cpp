@@ -6,7 +6,9 @@
 
 namespace {
 std::vector<std::string> getIncludes() {
-	return {"-I/usr/lib/clang/9.0.1/include/"};
+	// return {"-I/usr/lib/clang/9.0.1/include/"};
+	return {
+	    "-I/home/simon/external/code/cpp/Parser/build/_deps/llvm_entry-src/lib/clang/9.0.0/include"};
 }
 }    // namespace
 
