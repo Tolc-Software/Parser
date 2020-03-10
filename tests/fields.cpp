@@ -6,6 +6,23 @@
 #include <catch2/catch.hpp>
 #include <variant>
 
+TEST_CASE("Simple string member variable", "[fields]") {
+	auto globalNS = Parser::parseString(R"(
+#include <string>
+class MyClass {
+	std::string s;
+};
+		)");
+	SECTION("Parser finds the variable") {
+		REQUIRE(globalNS.m_structs.size() == 1);
+		auto myClass = globalNS.m_structs[0];
+		REQUIRE(myClass.m_memberVariables.size() == 1);
+		auto& [access, variable] = myClass.m_memberVariables.back();
+		CHECK(variable.m_name == "s");
+		// TestUtil::compare(variable.m_type, IR::BaseType::Int);
+	}
+}
+
 TEST_CASE("Member variable works with default modifier", "[fields]") {
 	using IR::AccessModifier;
 	for (auto [accessModifier, structure] :
