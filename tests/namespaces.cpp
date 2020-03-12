@@ -1,4 +1,4 @@
-#include "Parser/Parse.h"
+#include "TestUtil/parse.h"
 #include <algorithm>
 #include <catch2/catch.hpp>
 #include <string_view>
@@ -13,7 +13,7 @@ void checkEmpty(IR::Namespace& ns) {
 }    // namespace
 
 TEST_CASE("Single namespace", "[namespaces]") {
-	auto globalNS = Parser::parseString("namespace Test {}");
+	auto globalNS = TestUtil::parseString("namespace Test {}");
 	SECTION("Parser finds an empty namespace named Test") {
 		REQUIRE(globalNS.m_namespaces.size() == 1);
 		auto& testNs = globalNS.m_namespaces[0];
@@ -25,7 +25,7 @@ TEST_CASE("Single namespace", "[namespaces]") {
 }
 
 TEST_CASE("Two namespaces", "[namespaces]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 namespace Test0 {}
 namespace Test1 {}
 		)");
@@ -49,7 +49,7 @@ namespace Test1 {}
 }
 
 TEST_CASE("Two nested namespaces", "[namespaces]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 namespace ParentNamespace {
 	namespace ChildNamespace {}
 }
@@ -78,7 +78,7 @@ namespace ParentNamespace {
 
 TEST_CASE("Two namespaces with the same name and level are the same",
           "[namespaces]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 namespace Name {
 }
 namespace Name {
@@ -97,7 +97,7 @@ namespace Name {
 }
 
 TEST_CASE("Three nested namespaces", "[namespaces]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 namespace ParentNamespace {
 	namespace ChildNamespace {
 		namespace GrandchildNamespace {}
@@ -132,7 +132,7 @@ namespace ParentNamespace {
 }
 
 TEST_CASE("Same name but different qualified name", "[namespaces]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 namespace A {
 	namespace B {}
 }

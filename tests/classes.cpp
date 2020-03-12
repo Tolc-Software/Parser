@@ -1,8 +1,8 @@
-#include "Parser/Parse.h"
+#include "TestUtil/parse.h"
 #include <catch2/catch.hpp>
 
 TEST_CASE("A class with a constructor", "[classes]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 class Simple {
 public:
 	Simple();
@@ -20,7 +20,7 @@ public:
 }
 
 TEST_CASE("Finds a global class", "[classes]") {
-	auto globalNS = Parser::parseString("class Simple {}; ");
+	auto globalNS = TestUtil::parseString("class Simple {}; ");
 	SECTION("Parser finds an empty class named Simple") {
 		REQUIRE(globalNS.m_structs.size() == 1);
 		auto& simple = globalNS.m_structs[0];
@@ -29,7 +29,7 @@ TEST_CASE("Finds a global class", "[classes]") {
 }
 
 TEST_CASE("Finds a global struct", "[classes]") {
-	auto globalNS = Parser::parseString("struct Simple {}; ");
+	auto globalNS = TestUtil::parseString("struct Simple {}; ");
 	SECTION("Parser finds an empty struct named Simple") {
 		REQUIRE(globalNS.m_structs.size() == 1);
 		auto& simple = globalNS.m_structs[0];
@@ -38,7 +38,7 @@ TEST_CASE("Finds a global struct", "[classes]") {
 }
 
 TEST_CASE("Finds a class within a namespace", "[classes]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 namespace NS {
 	class Simple {};
 }
@@ -54,7 +54,7 @@ namespace NS {
 }
 
 TEST_CASE("Finds a struct within a struct", "[classes]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 struct Outer {
 	struct Inner {};
 };

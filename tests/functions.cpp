@@ -1,6 +1,6 @@
-#include "Parser/Parse.h"
 #include "TestUtil/compare.h"
 #include "TestUtil/finders.h"
+#include "TestUtil/parse.h"
 #include "TestUtil/types.h"
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
@@ -12,7 +12,7 @@ TEST_CASE("Function works with default modifier", "[functions]") {
 	     {std::make_pair(AccessModifier::Private, std::string("class")),
 	      std::make_pair(AccessModifier::Public, std::string("struct"))}) {
 		auto globalNS =
-		    Parser::parseString(structure + " MyStructure { void fun(); };");
+		    TestUtil::parseString(structure + " MyStructure { void fun(); };");
 
 		SECTION("Parser finds the function") {
 			REQUIRE(globalNS.m_functions.size() == 0);
@@ -28,7 +28,7 @@ TEST_CASE("Function works with default modifier", "[functions]") {
 
 TEST_CASE("Function within class with modifier", "[functions]") {
 	for (auto accessModifier : TestUtil::getAccessModifiers()) {
-		auto globalNS = Parser::parseString(
+		auto globalNS = TestUtil::parseString(
 		    "class MyClass { " + TestUtil::getAsString(accessModifier) +
 		    ": void fun(); };");
 		SECTION("Parser finds the function") {
@@ -44,7 +44,7 @@ TEST_CASE("Function within class with modifier", "[functions]") {
 }
 
 TEST_CASE("Function within namespace", "[functions]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 namespace NS {
 void fun();
 }
@@ -61,7 +61,7 @@ void fun();
 }
 
 TEST_CASE("Function within class", "[functions]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 class MyClass {
 void fun();
 };
@@ -78,7 +78,7 @@ void fun();
 }
 
 TEST_CASE("Simple function", "[functions]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 void fun() {}
 		)");
 	SECTION("Parser finds the function") {
@@ -98,7 +98,7 @@ TEST_CASE("Function with different returns without includes", "[functions]") {
 			auto type = TestUtil::getAsString(irType);
 			std::string code = include + type + " fun() { return " +
 			                   TestUtil::getValidReturnForType(irType) + "; }";
-			auto globalNS = Parser::parseString(code);
+			auto globalNS = TestUtil::parseString(code);
 			// Print on error
 			CAPTURE(code);
 			CAPTURE(type);
@@ -127,7 +127,7 @@ TEST_CASE("Function with arguments not requiring includes", "[functions]") {
 				continue;
 			}
 			std::string code = "void fun(" + type + " myArg) { return; }";
-			auto globalNS = Parser::parseString(code);
+			auto globalNS = TestUtil::parseString(code);
 			// Print on error
 			CAPTURE(code);
 			CAPTURE(type);
@@ -151,7 +151,7 @@ TEST_CASE("Function with arguments not requiring includes", "[functions]") {
 }
 
 TEST_CASE("Multiple arguments", "[functions]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 void fun(int i, double d, char c);
 		)");
 	REQUIRE(globalNS.m_functions.size() == 1);
@@ -168,7 +168,7 @@ void fun(int i, double d, char c);
 }
 
 TEST_CASE("Function with const argument", "[functions]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 void fun(int const i) {}
 		)");
 	SECTION("Parser finds the function") {
@@ -183,7 +183,7 @@ void fun(int const i) {}
 }
 
 TEST_CASE("Function with pointer argument", "[functions]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 void fun(int* i);
 		)");
 	SECTION("Parser finds the function") {
@@ -198,7 +198,7 @@ void fun(int* i);
 }
 
 TEST_CASE("Function with const pointer argument", "[functions]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 void fun(int const* i);
 		)");
 	SECTION("Parser finds the function") {
@@ -214,7 +214,7 @@ void fun(int const* i);
 }
 
 TEST_CASE("Function with const return value", "[functions]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 char const* fun();
 		)");
 	SECTION("Parser finds the function") {

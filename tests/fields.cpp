@@ -1,13 +1,13 @@
-#include "Parser/Parse.h"
 #include "TestUtil/compare.h"
 #include "TestUtil/finders.h"
+#include "TestUtil/parse.h"
 #include "TestUtil/types.h"
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
 #include <variant>
 
 TEST_CASE("Simple string member variable", "[fields]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 #include <string>
 class MyClass {
 	std::string s;
@@ -29,7 +29,7 @@ TEST_CASE("Member variable works with default modifier", "[fields]") {
 	     {std::make_pair(AccessModifier::Private, std::string("class")),
 	      std::make_pair(AccessModifier::Public, std::string("struct"))}) {
 		auto globalNS =
-		    Parser::parseString(structure + " MyStructure { int m_var; };");
+		    TestUtil::parseString(structure + " MyStructure { int m_var; };");
 
 		SECTION("Parser finds the function") {
 			REQUIRE(globalNS.m_structs.size() == 1);
@@ -45,7 +45,7 @@ TEST_CASE("Member variable works with default modifier", "[fields]") {
 
 TEST_CASE("Member variable within class with modifier", "[fields]") {
 	for (auto accessModifier : TestUtil::getAccessModifiers()) {
-		auto globalNS = Parser::parseString(
+		auto globalNS = TestUtil::parseString(
 		    "class MyClass { " + TestUtil::getAsString(accessModifier) +
 		    ": double myDouble; };");
 		SECTION("Parser finds the variable") {
@@ -60,7 +60,7 @@ TEST_CASE("Member variable within class with modifier", "[fields]") {
 }
 
 TEST_CASE("Simple member variable", "[fields]") {
-	auto globalNS = Parser::parseString(R"(
+	auto globalNS = TestUtil::parseString(R"(
 class MyClass {
 	int i;
 };
@@ -102,7 +102,7 @@ TEST_CASE("Member variables of different types without includes", "[fields]") {
 }
 
 // TEST_CASE("Const variable", "[fields]") {
-// 	auto globalNS = Parser::parseString(R"(
+// 	auto globalNS = TestUtil::parseString(R"(
 // void fun(int const i) {}
 // 		)");
 // 	SECTION("Parser finds the variable") {
@@ -117,7 +117,7 @@ TEST_CASE("Member variables of different types without includes", "[fields]") {
 // }
 
 // TEST_CASE("Function with pointer argument", "[fields]") {
-// 	auto globalNS = Parser::parseString(R"(
+// 	auto globalNS = TestUtil::parseString(R"(
 // void fun(int* i);
 // 		)");
 // 	SECTION("Parser finds the variable") {
@@ -132,7 +132,7 @@ TEST_CASE("Member variables of different types without includes", "[fields]") {
 // }
 
 // TEST_CASE("Function with const pointer argument", "[fields]") {
-// 	auto globalNS = Parser::parseString(R"(
+// 	auto globalNS = TestUtil::parseString(R"(
 // void fun(int const* i);
 // 		)");
 // 	SECTION("Parser finds the variable") {
@@ -148,7 +148,7 @@ TEST_CASE("Member variables of different types without includes", "[fields]") {
 // }
 
 // TEST_CASE("Function with const return value", "[fields]") {
-// 	auto globalNS = Parser::parseString(R"(
+// 	auto globalNS = TestUtil::parseString(R"(
 // char const* fun();
 // 		)");
 // 	SECTION("Parser finds the variable") {
