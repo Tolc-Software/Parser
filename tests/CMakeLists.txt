@@ -53,3 +53,7 @@ setup_test(TEST_NAME
            split
            SOURCE
            Helpers/Utils/split.cpp)
+setup_test(TEST_NAME
+           includes
+           SOURCE
+           Helpers/includes.cpp)

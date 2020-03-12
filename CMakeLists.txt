@@ -26,27 +26,34 @@ FetchContent_MakeAvailable(IRSpecification)
 include(LLVMUtilities)
 # Download if necessary and get the clang libs
 # Defines llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
-setup_llvm(NAME "LLVM_ENTRY")
+set(llvm_entry_version 9.0.0)
+setup_llvm(NAME "LLVM_ENTRY" VERSION ${llvm_entry_version})
 
 # Macro to get downloaded Clang and llvm packages
 get_clang_and_llvm(PATH ${llvm_entry_SOURCE_DIR})
+
+# Set the include path for the library
+# We are using the standard library shipped with the downloaded llvm for include paths in the parsing
+set(INCLUDE_PATH "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include")
+configure_file(src/Helpers/includes.cpp.in ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/includes.cpp @ONLY)
+
 # From the LLVM cmake module. Defines add_llvm_{executable,library}
 include(AddLLVM)
-include(AddClang)
 
 # Define project_warnings and project_options targets
 include(WarningsAndOptions)
 
 add_llvm_library(Parser
-                 src/Consumer/ParserConsumer.cpp
                  src/Builders/commonBuilder.cpp
                  src/Builders/functionBuilder.cpp
                  src/Builders/namespaceBuilder.cpp
                  src/Builders/structBuilder.cpp
                  src/Builders/typeBuilder.cpp
+                 src/Consumer/ParserConsumer.cpp
                  src/Frontend/ParserFrontendAction.cpp
-                 src/Helpers/walkIRStructure.cpp
                  src/Helpers/Utils/split.cpp
+                 src/Helpers/includes.cpp
+                 src/Helpers/walkIRStructure.cpp
                  src/Parser/Parse.cpp
                  src/Visitor/ParserVisitor.cpp
                  src/Visitor/VisitCXXRecordDecl.cpp
