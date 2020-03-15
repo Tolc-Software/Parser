@@ -51,6 +51,8 @@ add_llvm_library(Parser
                  src/Builders/typeBuilder.cpp
                  src/Consumer/ParserConsumer.cpp
                  src/Frontend/ParserFrontendAction.cpp
+                 src/Helpers/Type/matchers.cpp
+                 src/Helpers/Type/utilities.cpp
                  src/Helpers/Utils/split.cpp
                  src/Helpers/includes.cpp
                  src/Helpers/walkIRStructure.cpp
