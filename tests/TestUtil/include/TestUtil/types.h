@@ -30,9 +30,9 @@ std::vector<IR::BaseType> getTypes() {
 std::string getAsString(IR::AccessModifier am) {
 	using IR::AccessModifier;
 	switch (am) {
-		case AccessModifier::Public: return "public"; break;
-		case AccessModifier::Private: return "private"; break;
-		case AccessModifier::Protected: return "protected"; break;
+		case AccessModifier::Public: return "public";
+		case AccessModifier::Private: return "private";
+		case AccessModifier::Protected: return "protected";
 	}
 	return "";
 }
@@ -40,13 +40,13 @@ std::string getAsString(IR::AccessModifier am) {
 std::string getAsString(IR::BaseType type) {
 	using IR::BaseType;
 	switch (type) {
-		case BaseType::Char: return "char"; break;
-		case BaseType::Double: return "double"; break;
-		case BaseType::Float: return "float"; break;
-		case BaseType::Int: return "int"; break;
-		case BaseType::Long: return "long"; break;
-		case BaseType::String: return "std::string"; break;
-		case BaseType::Void: return "void"; break;
+		case BaseType::Char: return "char";
+		case BaseType::Double: return "double";
+		case BaseType::Float: return "float";
+		case BaseType::Int: return "int";
+		case BaseType::Long: return "long";
+		case BaseType::String: return "std::string";
+		case BaseType::Void: return "void";
 	}
 	return "";
 }
@@ -55,7 +55,7 @@ std::string getIncludesIfNeeded(IR::BaseType type) {
 	std::string include = "";
 	using IR::BaseType;
 	switch (type) {
-		case BaseType::String: include = "#include <string>\n"; break;
+		case BaseType::String: include = "#include <string>\n";
 		default: break;
 	}
 	return include;
@@ -65,15 +65,15 @@ std::string getValidReturnForType(IR::BaseType type) {
 	std::string validReturn = "";
 	using IR::BaseType;
 	switch (type) {
-		case BaseType::Char: validReturn = "'c'"; break;
-		case BaseType::Double: validReturn = "1.0"; break;
-		case BaseType::Float: validReturn = "1.0"; break;
-		case BaseType::Int: validReturn = "1"; break;
-		case BaseType::Long: validReturn = "1"; break;
-		case BaseType::String: validReturn = "\"HelloWorld\""; break;
-		case BaseType::Void: validReturn = ""; break;
+		case BaseType::Char: return "'c'";
+		case BaseType::Double: return "1.0";
+		case BaseType::Float: return "1.0";
+		case BaseType::Int: return "1";
+		case BaseType::Long: return "1";
+		case BaseType::String: return "\"HelloWorld\"";
+		case BaseType::Void: return "";
 	}
-	return validReturn;
+	return "";
 }
 
 }    // namespace TestUtil
