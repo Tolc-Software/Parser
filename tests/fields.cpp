@@ -1,3 +1,4 @@
+#include "Helpers/walkIRStructure.h"
 #include "TestUtil/compare.h"
 #include "TestUtil/finders.h"
 #include "TestUtil/parse.h"
@@ -6,23 +7,23 @@
 #include <catch2/catch.hpp>
 #include <variant>
 
-// TEST_CASE("String member variable with using", "[fields]") {
-// 	auto globalNS = TestUtil::parseString(R"(
-// #include <string>
-// using MyString = std::string;
-// class MyClass {
-// 	MyString s;
-// };
-// 		)");
-// 	SECTION("Parser finds the variable") {
-// 		REQUIRE(globalNS.m_structs.size() == 1);
-// 		auto myClass = globalNS.m_structs[0];
-// 		REQUIRE(myClass.m_memberVariables.size() == 1);
-// 		auto& [access, variable] = myClass.m_memberVariables.back();
-// 		CHECK(variable.m_name == "s");
-// 		TestUtil::compare(variable.m_type, IR::BaseType::String);
-// 	}
-// }
+TEST_CASE("String member variable with using", "[fields]") {
+	auto globalNS = TestUtil::parseString(R"(
+#include <string>
+using MyString = std::string;
+class MyClass {
+	MyString s;
+};
+		)");
+	SECTION("Parser finds the variable") {
+		REQUIRE(globalNS.m_structs.size() == 1);
+		auto myClass = globalNS.m_structs[0];
+		REQUIRE(myClass.m_memberVariables.size() == 1);
+		auto& [access, variable] = myClass.m_memberVariables.back();
+		CHECK(variable.m_name == "s");
+		TestUtil::compare(variable.m_type, IR::BaseType::String);
+	}
+}
 
 TEST_CASE("Simple string member variable", "[fields]") {
 	auto globalNS = TestUtil::parseString(R"(
@@ -93,13 +94,13 @@ class MyClass {
 	}
 }
 
-TEST_CASE("Member variables of different types without includes", "[fields]") {
+TEST_CASE("Member variables of base types", "[fields]") {
 	for (auto irType : TestUtil::getTypes()) {
-		// Remove the ones who require an include
 		if (auto include = TestUtil::getIncludesIfNeeded(irType);
-		    include.empty() && irType != IR::BaseType::Void) {
+		    irType != IR::BaseType::Void) {
 			auto type = TestUtil::getAsString(irType);
-			std::string code = "class MyClass { " + type + " m_member; };";
+			std::string code =
+			    include + "\nclass MyClass { " + type + " m_member; };";
 			auto globalNS = Parser::parseString(code);
 			// Print on error
 			CAPTURE(code);

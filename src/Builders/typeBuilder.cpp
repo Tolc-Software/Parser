@@ -21,7 +21,7 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 		return BaseType::Int;
 	} else if (type == "long") {
 		return BaseType::Long;
-	} else if (type == "std::string") {
+	} else if (type == "class std::__cxx11::basic_string<char>") {
 		return BaseType::String;
 	} else if (type == "void") {
 		return BaseType::Void;
@@ -92,7 +92,8 @@ std::optional<IR::Type> buildType(clang::QualType type) {
 	auto numPointers = getNumberOfPointers(type);
 	type = getTypeWithPointersRemoved(type);
 
-	if (auto maybeIrType = getIRType(type.getUnqualifiedType().getAsString())) {
+	if (auto maybeIrType = getIRType(
+	        type.getUnqualifiedType().getCanonicalType().getAsString())) {
 		auto irType = maybeIrType.value();
 		irType.m_numPointers = numPointers;
 
