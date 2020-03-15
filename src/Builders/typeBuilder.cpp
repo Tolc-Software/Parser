@@ -21,7 +21,7 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 		return BaseType::Int;
 	} else if (type == "long") {
 		return BaseType::Long;
-	} else if (type == "string") {
+	} else if (type == "std::string") {
 		return BaseType::String;
 	} else if (type == "void") {
 		return BaseType::Void;

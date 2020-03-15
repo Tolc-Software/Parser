@@ -6,6 +6,24 @@
 #include <catch2/catch.hpp>
 #include <variant>
 
+// TEST_CASE("String member variable with using", "[fields]") {
+// 	auto globalNS = TestUtil::parseString(R"(
+// #include <string>
+// using MyString = std::string;
+// class MyClass {
+// 	MyString s;
+// };
+// 		)");
+// 	SECTION("Parser finds the variable") {
+// 		REQUIRE(globalNS.m_structs.size() == 1);
+// 		auto myClass = globalNS.m_structs[0];
+// 		REQUIRE(myClass.m_memberVariables.size() == 1);
+// 		auto& [access, variable] = myClass.m_memberVariables.back();
+// 		CHECK(variable.m_name == "s");
+// 		TestUtil::compare(variable.m_type, IR::BaseType::String);
+// 	}
+// }
+
 TEST_CASE("Simple string member variable", "[fields]") {
 	auto globalNS = TestUtil::parseString(R"(
 #include <string>
@@ -19,7 +37,7 @@ class MyClass {
 		REQUIRE(myClass.m_memberVariables.size() == 1);
 		auto& [access, variable] = myClass.m_memberVariables.back();
 		CHECK(variable.m_name == "s");
-		// TestUtil::compare(variable.m_type, IR::BaseType::Int);
+		TestUtil::compare(variable.m_type, IR::BaseType::String);
 	}
 }
 
