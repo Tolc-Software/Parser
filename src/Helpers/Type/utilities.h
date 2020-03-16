@@ -7,10 +7,6 @@
 
 namespace Helpers::Type {
 
-std::optional<IR::BaseType> getBaseType(std::string_view type);
-
-std::optional<IR::ContainerType> getContainerType(std::string_view type);
-
 clang::QualType getTypeWithPointersRemoved(clang::QualType type);
 
 /**
