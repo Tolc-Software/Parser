@@ -27,6 +27,8 @@ function(get_platform_specific_includes)
   if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Linux)
     set(platform_include "")
   elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Darwin)
+    # You can find the include paths by typing:
+    # $ clang -v -x c++ -
     set(
       platform_include
       "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include;/Library/Developer/CommandLineTools/usr/include/c++/v1"
