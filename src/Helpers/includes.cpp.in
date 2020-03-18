@@ -6,6 +6,6 @@ namespace Helpers {
 
 std::vector<std::string> getSystemIncludes() {
 	// This is substituted by CMake to the correct path
-	return {"-I@INCLUDE_PATH@"};
+	return {@INCLUDE_PATH@};
 }
 }    // namespace Helpers

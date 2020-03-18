@@ -5,7 +5,7 @@
 namespace {
 std::string removeIncludeFlag(std::string path) {
 	// Search for the include flag substring in string
-	std::string toErase = "-I";
+	std::string toErase = "-isystem";
 	auto pos = path.find(toErase);
 
 	// Should always exist
