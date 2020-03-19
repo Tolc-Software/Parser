@@ -11,6 +11,8 @@ src/Helpers/includes.cpp
 # Except these
 # Files
 !.clang-format
+!.clang-tidy
+!.cmake-format.yaml
 !.gitignore
 !CMakeLists.txt
 !README.md
