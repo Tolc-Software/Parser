@@ -2,21 +2,14 @@ cmake_minimum_required(VERSION 3.15)
 
 project(Parser VERSION 0.1 LANGUAGES CXX)
 
-# Export compile flags to compile_commands.json database. Useful for linters and
-# autocompletion
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Use ccache if available
-find_program(CCACHE ccache)
-if(CCACHE)
-  set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
-endif()
-
 # Add custom scripts
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 include(Doxygen)
 enable_doxygen()
+
+# Set ccache, ipo, etc.
+include(ProjectSettings)
 
 # Define project_warnings and project_options targets
 include(cmake/WarningsAndOptions.cmake)
