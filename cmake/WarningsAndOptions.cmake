@@ -12,28 +12,40 @@ add_library(project_warnings INTERFACE)
 if(MSVC)
   target_compile_options(
     project_warnings
-    INTERFACE /W4
-              /WX
-              "/permissive-"
-              /w14640
-              /w14242
-              /w14254
-              /w14263
-              /w14265
-              /w14287
-              /we4289
-              /w14296
-              /w14311
-              /w14545
-              /w14546
-              /w14547
-              /w14549
-              /w14555
-              /w14619
-              /w14826
-              /w14905
-              /w14906
-              /w14928)
+    INTERFACE
+      /W4
+      /WX # Treat warnings as errors
+      "/permissive-" # Adhere to standard
+      /w14242 # 'identfier': conversion from 'type1' to 'type1', possible loss
+              # of data
+      /w14254 # 'Operator': conversion from 'type1:field_bits' to
+              # 'type2:field_bits', possible loss of data
+      /w14263 # 'Function': member function does not override any base class
+              # virtual member function
+      /w14265 # 'Classname': class has virtual functions, but destructor is not
+              # virtual instances of this class may not be destructed correctly
+      /w14287 # 'Operator': unsigned/negative constant mismatch
+      /we4289 # Nonstandard extension used: 'variable': loop control variable
+              # declared in the for-loop is used outside the for-loop scope
+      /w14296 # 'Operator': expression is always 'boolean_value'
+      /w14311 # 'Variable': pointer truncation from 'type1' to 'type2'
+      /w14545 # Expression before comma evaluates to a function which is missing
+              # an argument list
+      /w14546 # Function call before comma missing argument list
+      /w14547 # 'Operator': operator before comma has no effect; expected
+              # operator with side-effect
+      /w14549 # 'Operator': operator before comma has no effect; did you intend
+              # 'operator'?
+      /w14555 # Expression has no effect; expected expression with side- effect
+      /w14619 # Pragma warning: there is no warning number 'number'
+      /w14640 # Enable warning on thread un-safe static member initialization
+      /w14826 # Conversion from 'type1' to 'type_2' is sign-extended. This may
+              # cause unexpected runtime behavior.
+      /w14905 # Wide string literal cast to 'LPSTR'
+      /w14906 # String literal cast to 'LPWSTR'
+      /w14928 # Illegal copy-initialization; more than one user-defined
+              # conversion has been implicitly applied
+  )
 else()
   # Either gcc or Clang
 
