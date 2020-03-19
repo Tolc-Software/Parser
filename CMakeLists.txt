@@ -42,7 +42,7 @@ include(IncludePathHelpers)
 # We are using the standard library shipped with the downloaded llvm for include paths in the parsing
 set(
   llvm_include_path
-  "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include;${llvm_entry_SOURCE_DIR}/include/c++/v1"
+  "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include"
   )
 get_platform_specific_includes(VARIABLE platform_include)
 format_includes(VARIABLE
