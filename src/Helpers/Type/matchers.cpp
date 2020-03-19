@@ -28,17 +28,17 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 
 std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 	using IR::ContainerType;
-	if (type == "char") {
+	if (type == "vector") {
 		return ContainerType::Vector;
-	} else if (type == "double") {
+	} else if (type == "array") {
 		return ContainerType::Array;
-	} else if (type == "double") {
+	} else if (type == "map") {
 		return ContainerType::Map;
-	} else if (type == "double") {
+	} else if (type == "set") {
 		return ContainerType::Set;
-	} else if (type == "double") {
+	} else if (type == "unordered_map") {
 		return ContainerType::Unordered_map;
-	} else if (type == "double") {
+	} else if (type == "unordered_set") {
 		return ContainerType::Unordered_set;
 	}
 	return {};

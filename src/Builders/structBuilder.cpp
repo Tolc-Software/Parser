@@ -57,8 +57,10 @@ std::string buildFullyQualifiedName(std::deque<std::pair<std::string, IRProxy::S
 	return ss.str();
 }
 
-std::optional<std::vector<IRProxy::MemberVariable>> getVariables(IRProxy::Struct& s,
-                   std::unordered_map<std::string, std::vector<IRProxy::MemberVariable>>& memberVariables) {
+std::optional<std::vector<IRProxy::MemberVariable>> getVariables(
+    IRProxy::Struct const& s,
+    std::unordered_map<std::string, std::vector<IRProxy::MemberVariable>>&
+        memberVariables) {
 	if (auto variables = memberVariables.find(buildFullyQualifiedName(s.m_name));
 			variables != memberVariables.end()) {
 		return variables->second;
