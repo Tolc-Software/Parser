@@ -15,6 +15,19 @@ endif()
 # Add custom scripts
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
+include(Doxygen)
+enable_doxygen()
+
+# Define project_warnings and project_options targets
+include(cmake/WarningsAndOptions.cmake)
+
+# allow for static analysis options
+include(cmake/StaticAnalyzers.cmake)
+
+include(cmake/Sanitizers.cmake)
+# Set the sanitizer options on project_options
+enable_sanitizers(project_options)
+
 include(FetchContent)
 FetchContent_Declare(
   IRSpecification
@@ -23,7 +36,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(IRSpecification)
 
-include(LLVMUtilities)
+include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs
 # Defines llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
 set(llvm_entry_version 9.0.0)
@@ -34,9 +47,11 @@ setup_llvm(NAME
 
 # Macro to get downloaded Clang and llvm packages
 get_clang_and_llvm(PATH ${llvm_entry_SOURCE_DIR})
+# From the LLVM cmake module. Defines add_llvm_{executable,library}
+include(AddLLVM)
 
 # Defines get_platform_specific_includes and format_includes
-include(IncludePathHelpers)
+include(cmake/IncludePathHelpers.cmake)
 
 # Set the include path for the library
 # We are using the standard library shipped with the downloaded llvm for include paths in the parsing
@@ -52,12 +67,6 @@ format_includes(VARIABLE
                 SYSTEM)
 configure_file(src/Helpers/includes.cpp.in
                ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/includes.cpp @ONLY)
-
-# From the LLVM cmake module. Defines add_llvm_{executable,library}
-include(AddLLVM)
-
-# Define project_warnings and project_options targets
-include(WarningsAndOptions)
 
 add_llvm_library(Parser
                  src/Builders/commonBuilder.cpp
