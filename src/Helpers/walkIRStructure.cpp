@@ -2,7 +2,9 @@
 #include "IRProxy/IRData.h"
 #include <IR/ir.hpp>
 #include <algorithm>
+#include <string_view>
 #include <variant>
+#include <vector>
 
 namespace {
 

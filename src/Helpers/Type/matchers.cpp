@@ -1,6 +1,7 @@
 #include "Helpers/Type/matchers.h"
 #include <IR/ir.hpp>
 #include <optional>
+#include <string>
 #include <string_view>
 
 namespace Helpers::Type {

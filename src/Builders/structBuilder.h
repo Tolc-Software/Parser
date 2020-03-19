@@ -2,8 +2,9 @@
 
 #include "IR/ir.hpp"
 #include "IRProxy/IRData.h"
-#include <vector>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace Builders {
 /**
