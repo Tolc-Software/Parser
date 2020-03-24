@@ -5,7 +5,8 @@ if(CCACHE)
   set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
 endif()
 
-# Export compile flags to compile_commands.json database. Useful for linters and autocompletion
+# Export compile flags to compile_commands.json database. Useful for linters and
+# autocompletion
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(ENABLE_IPO

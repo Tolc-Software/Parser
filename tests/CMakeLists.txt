@@ -1,9 +1,10 @@
 include_guard()
 
 include(FetchContent)
-FetchContent_Declare(Catch2
-                     GIT_REPOSITORY git@github.com:catchorg/Catch2.git
-                     GIT_TAG v2.11.0)
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY git@github.com:catchorg/Catch2.git
+  GIT_TAG v2.11.0)
 
 FetchContent_MakeAvailable(Catch2)
 
@@ -27,19 +28,9 @@ add_code_coverage_all_targets()
 
 # Integration tests are located at the root
 foreach(integrationTest functions fields namespaces classes userDefined)
-  setup_test(TEST_NAME
-             ${integrationTest}
-             SOURCE
-             ${integrationTest}.cpp
-             LIBRARIES
-             TestUtil)
+  setup_test(TEST_NAME ${integrationTest} SOURCE ${integrationTest}.cpp
+             LIBRARIES TestUtil)
 endforeach()
 
-setup_test(TEST_NAME
-           split
-           SOURCE
-           Helpers/Utils/split.cpp)
-setup_test(TEST_NAME
-           includes
-           SOURCE
-           Helpers/includes.cpp)
+setup_test(TEST_NAME split SOURCE Helpers/Utils/split.cpp)
+setup_test(TEST_NAME includes SOURCE Helpers/includes.cpp)

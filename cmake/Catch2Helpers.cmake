@@ -16,11 +16,8 @@ function(create_catch2_test)
   set(singleValues TARGET)
   set(multiValues SOURCES LINK_LIBRARIES INCLUDE)
   # Process the arguments passed in
-  cmake_parse_arguments(${prefix}
-                        "${noValues}"
-                        "${singleValues}"
-                        "${multiValues}"
-                        ${ARGN})
+  cmake_parse_arguments(${prefix} "${noValues}" "${singleValues}"
+                        "${multiValues}" ${ARGN})
 
   if(NOT ARG_TARGET)
     message(FATAL_ERROR "Must provide a target.")
@@ -33,16 +30,13 @@ function(create_catch2_test)
   _create_main_catch2()
 
   add_executable(${ARG_TARGET} ${ARG_SOURCES})
-  target_link_libraries(${ARG_TARGET}
-                        PRIVATE ${catch2_main_target} ${ARG_LINK_LIBRARIES})
+  target_link_libraries(${ARG_TARGET} PRIVATE ${catch2_main_target}
+                                              ${ARG_LINK_LIBRARIES})
   if(ARG_INCLUDE)
     target_include_directories(${ARG_TARGET} PRIVATE ${ARG_INCLUDE})
   endif()
-  set_target_properties(${ARG_TARGET}
-                        PROPERTIES CXX_STANDARD_REQUIRED
-                                   ON
-                                   CXX_EXTENSIONS
-                                   OFF)
+  set_target_properties(${ARG_TARGET} PROPERTIES CXX_STANDARD_REQUIRED ON
+                                                 CXX_EXTENSIONS OFF)
 endfunction()
 
 # NOTE: Internal function that should not be called
@@ -60,7 +54,9 @@ function(_create_main_catch2)
 
   # Export catch2_main_target to the caller
   set(catch2_main_target "_catch2Main")
-  set(catch2_main_target ${catch2_main_target} PARENT_SCOPE)
+  set(catch2_main_target
+      ${catch2_main_target}
+      PARENT_SCOPE)
   if(NOT TARGET ${catch2_main_target})
     # Add the main catch library
     message(STATUS "Creating library target: ${catch2_main_target}")

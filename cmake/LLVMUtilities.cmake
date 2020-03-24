@@ -6,8 +6,7 @@ function(setup_llvm)
   set(noValues)
   set(singleValues NAME VERSION)
   set(multiValues)
-  # Process the arguments passed in
-  # can be used e.g. via ARG_NAME
+  # Process the arguments passed in can be used e.g. via ARG_NAME
   cmake_parse_arguments(${prefix} "${noValues}" "${singleValues}"
                         "${multiValues}" ${ARGN})
 
@@ -61,8 +60,7 @@ macro(get_clang_and_llvm)
   set(noValues)
   set(singleValues PATH)
   set(multiValues)
-  # Process the arguments passed in
-  # can be used e.g. via ARG_PATH
+  # Process the arguments passed in can be used e.g. via ARG_PATH
   cmake_parse_arguments(${prefix} "${noValues}" "${singleValues}"
                         "${multiValues}" ${ARGN})
 

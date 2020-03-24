@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(Parser VERSION 0.1 LANGUAGES CXX)
+project(
+  Parser
+  VERSION 0.1
+  LANGUAGES CXX)
 
 # Add custom scripts
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -30,13 +33,10 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(IRSpecification)
 
 include(cmake/LLVMUtilities.cmake)
-# Download if necessary and get the clang libs
-# Defines llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
+# Download if necessary and get the clang libs Defines
+# llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
 set(llvm_entry_version 9.0.0)
-setup_llvm(NAME
-           "LLVM_ENTRY"
-           VERSION
-           ${llvm_entry_version})
+setup_llvm(NAME "LLVM_ENTRY" VERSION ${llvm_entry_version})
 
 # Macro to get downloaded Clang and llvm packages
 get_clang_and_llvm(PATH ${llvm_entry_SOURCE_DIR})
@@ -46,61 +46,50 @@ include(AddLLVM)
 # Defines get_platform_specific_includes and format_includes
 include(cmake/IncludePathHelpers.cmake)
 
-# Set the include path for the library
-# We are using the standard library shipped with the downloaded llvm for include paths in the parsing
-set(
-  llvm_include_path
-  "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include"
-  )
+# Set the include path for the library We are using the standard library shipped
+# with the downloaded llvm for include paths in the parsing
+set(llvm_include_path
+    "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include")
 get_platform_specific_includes(VARIABLE platform_include)
-format_includes(VARIABLE
-                INCLUDE_PATH
-                INCLUDES
-                "${platform_include};${llvm_include_path}"
-                SYSTEM)
+format_includes(VARIABLE INCLUDE_PATH INCLUDES
+                "${platform_include};${llvm_include_path}" SYSTEM)
 configure_file(src/Helpers/includes.cpp.in
                ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/includes.cpp @ONLY)
 
-add_llvm_library(Parser
-                 src/Builders/commonBuilder.cpp
-                 src/Builders/functionBuilder.cpp
-                 src/Builders/namespaceBuilder.cpp
-                 src/Builders/structBuilder.cpp
-                 src/Builders/typeBuilder.cpp
-                 src/Consumer/ParserConsumer.cpp
-                 src/Frontend/ParserFrontendAction.cpp
-                 src/Helpers/Type/matchers.cpp
-                 src/Helpers/Type/utilities.cpp
-                 src/Helpers/Utils/split.cpp
-                 src/Helpers/includes.cpp
-                 src/Helpers/walkIRStructure.cpp
-                 src/Parser/Parse.cpp
-                 src/Visitor/ParserVisitor.cpp
-                 src/Visitor/VisitCXXRecordDecl.cpp
-                 src/Visitor/VisitFieldDecl.cpp
-                 src/Visitor/VisitFunctionDecl.cpp
-                 src/Visitor/VisitNamespaceDecl.cpp)
+add_llvm_library(
+  Parser
+  src/Builders/commonBuilder.cpp
+  src/Builders/functionBuilder.cpp
+  src/Builders/namespaceBuilder.cpp
+  src/Builders/structBuilder.cpp
+  src/Builders/typeBuilder.cpp
+  src/Consumer/ParserConsumer.cpp
+  src/Frontend/ParserFrontendAction.cpp
+  src/Helpers/Type/matchers.cpp
+  src/Helpers/Type/utilities.cpp
+  src/Helpers/Utils/split.cpp
+  src/Helpers/includes.cpp
+  src/Helpers/walkIRStructure.cpp
+  src/Parser/Parse.cpp
+  src/Visitor/ParserVisitor.cpp
+  src/Visitor/VisitCXXRecordDecl.cpp
+  src/Visitor/VisitFieldDecl.cpp
+  src/Visitor/VisitFunctionDecl.cpp
+  src/Visitor/VisitNamespaceDecl.cpp)
 
-target_link_libraries(Parser
-                      PUBLIC IR::IR
-                      PRIVATE clangASTMatchers
-                              clangBasic
-                              clangTooling
-                              project_options
-                              project_warnings)
+target_link_libraries(
+  Parser
+  PUBLIC IR::IR
+  PRIVATE clangASTMatchers clangBasic clangTooling project_options
+          project_warnings)
 
-# Ignore warnings from clang/ as if they were system headers.
-# NOTE: This is only available on clang
+# Ignore warnings from clang/ as if they were system headers. NOTE: This is only
+# available on clang
 target_include_directories(Parser SYSTEM PRIVATE ${llvm_entry_INCLUDE_DIR})
 target_include_directories(Parser PRIVATE src)
 target_include_directories(Parser PUBLIC include)
-set_target_properties(Parser
-                      PROPERTIES CXX_STANDARD_REQUIRED
-                                 ON
-                                 CXX_EXTENSIONS
-                                 OFF
-                                 CXX_STANDARD
-                                 17)
+set_target_properties(
+  Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF CXX_STANDARD 17)
 
 # Only build tests and benchmarks if building this project directly
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)

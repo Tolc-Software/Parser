@@ -226,10 +226,8 @@ function(target_code_coverage TARGET_NAME)
         TARGET ${TARGET_NAME}
         APPEND_STRING
         PROPERTY LINK_FLAGS "-fprofile-instr-generate ")
-      set_property(
-        TARGET ${TARGET_NAME}
-        APPEND_STRING
-        PROPERTY LINK_FLAGS "-fcoverage-mapping ")
+      set_property(TARGET ${TARGET_NAME} APPEND_STRING
+                   PROPERTY LINK_FLAGS "-fcoverage-mapping ")
     elseif(CMAKE_COMPILER_IS_GNUCXX)
       target_compile_options(${TARGET_NAME} PRIVATE -fprofile-arcs
                                                     -ftest-coverage)
@@ -295,9 +293,10 @@ function(target_code_coverage TARGET_NAME)
         # Merge the generated profile data so llvm-cov can process it
         add_custom_target(
           ccov-processing-${target_code_coverage_COVERAGE_TARGET_NAME}
-          COMMAND ${LLVM_PROFDATA_PATH} merge -sparse
-                  ${target_code_coverage_COVERAGE_TARGET_NAME}.profraw -o
-                  ${target_code_coverage_COVERAGE_TARGET_NAME}.profdata
+          COMMAND
+            ${LLVM_PROFDATA_PATH} merge -sparse
+            ${target_code_coverage_COVERAGE_TARGET_NAME}.profraw -o
+            ${target_code_coverage_COVERAGE_TARGET_NAME}.profdata
           DEPENDS ccov-run-${target_code_coverage_COVERAGE_TARGET_NAME})
 
         # Ignore regex only works on LLVM >= 7
@@ -389,7 +388,8 @@ function(target_code_coverage TARGET_NAME)
       endif()
 
       add_custom_command(
-        TARGET ccov-${target_code_coverage_COVERAGE_TARGET_NAME} POST_BUILD
+        TARGET ccov-${target_code_coverage_COVERAGE_TARGET_NAME}
+        POST_BUILD
         COMMAND ;
         COMMENT
           "Open ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${target_code_coverage_COVERAGE_TARGET_NAME}/index.html in your browser to view the coverage report."
@@ -550,7 +550,8 @@ function(add_code_coverage_all_targets)
     endif()
 
     add_custom_command(
-      TARGET ccov-all POST_BUILD
+      TARGET ccov-all
+      POST_BUILD
       COMMAND ;
       COMMENT
         "Open ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/all-merged/index.html in your browser to view the coverage report."
