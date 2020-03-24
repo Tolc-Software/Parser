@@ -16,8 +16,8 @@ IR::Namespace parseFile(std::string const& filename) {
 	    fromDirectory, Helpers::getSystemIncludes());
 
 	clang::tooling::ClangTool tool(compDb, {filename});
-	// TODO: Create a new factory by inheriting from newFrontendActionFactory
 	tool.run(Factory::newParserFrontendActionFactory(parsedIR).get());
+
 	return parsedIR;
 }
 
