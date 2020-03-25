@@ -2,7 +2,27 @@
 
 #include <filesystem>
 #include <fstream>
+#include <limits>
+#include <random>
 #include <string>
+
+namespace {
+std::string getUniqueTempCppFilename() {
+	// Use to build a random string
+	std::random_device r;
+	std::default_random_engine rEngine(r());
+	std::uniform_int_distribution<> uniform(0, std::numeric_limits<int>::max());
+
+	auto tempDir = std::filesystem::temp_directory_path();
+	std::string tempFile = tempDir / std::to_string(uniform(rEngine));
+	tempFile += ".hpp";
+	while (std::filesystem::exists(tempFile)) {
+		tempFile = tempDir / std::to_string(uniform(rEngine));
+		tempFile += ".hpp";
+	}
+	return tempFile;
+}
+}    // namespace
 
 namespace TestUtil {
 
@@ -12,7 +32,7 @@ namespace TestUtil {
 class TemporaryFile {
 public:
 	TemporaryFile(std::string const& filename, std::string const& content)
-	    : m_filename(std::filesystem::temp_directory_path() / filename) {
+	    : m_filename(filename) {
 		std::ofstream file(m_filename);
 		file << content;
 		file.close();
@@ -35,7 +55,7 @@ private:
 TemporaryFile writeToFile(std::string const& code) {
 	// TODO: Make the name unique
 	//       so that more tests can use this at the same time
-	TemporaryFile tf("whatever.cpp", code);
+	TemporaryFile tf(getUniqueTempCppFilename(), code);
 	return tf;
 }
 
