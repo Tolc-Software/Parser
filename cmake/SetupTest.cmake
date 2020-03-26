@@ -23,8 +23,8 @@ function(setup_test)
     INCLUDE
     ${project_dir}/src
     LINK_LIBRARIES
-    project_warnings
-    project_options
+    Parser_warnings
+    Parser_options
     clangTooling
     clangBasic
     clangASTMatchers

@@ -12,17 +12,18 @@ include(Doxygen)
 enable_doxygen()
 
 # Set ccache, ipo, etc.
-include(ProjectSettings)
+include(cmake/ProjectSettings.cmake)
 
-# Define project_warnings and project_options targets
 include(cmake/WarningsAndOptions.cmake)
+add_warnings(TARGET Parser_warnings)
+add_options(TARGET Parser_options)
 
 # allow for static analysis options
 include(cmake/StaticAnalyzers.cmake)
 
 include(cmake/Sanitizers.cmake)
-# Set the sanitizer options on project_options
-enable_sanitizers(project_options)
+# Set the sanitizer options on Parser_options
+enable_sanitizers(Parser_options)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -80,8 +81,8 @@ add_llvm_library(
 target_link_libraries(
   Parser
   PUBLIC IR::IR
-  PRIVATE clangASTMatchers clangBasic clangTooling project_options
-          project_warnings)
+  PRIVATE clangASTMatchers clangBasic clangTooling Parser_options
+  Parser_warnings)
 
 # Ignore warnings from clang/ as if they were system headers. NOTE: This is only
 # available on clang
