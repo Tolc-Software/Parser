@@ -4,6 +4,7 @@
 #include "Helpers/includes.h"
 #include <clang/Tooling/CompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
+#include <memory>
 #include <string>
 
 namespace Parser {
@@ -24,7 +25,7 @@ IR::Namespace parseFile(std::string const& filename) {
 IR::Namespace parseString(std::string const& code) {
 	IR::Namespace parsedIR;
 	clang::tooling::runToolOnCodeWithArgs(
-	    new Frontend::ParserFrontendAction(parsedIR),
+	    std::make_unique<Frontend::ParserFrontendAction>(parsedIR),
 	    code.c_str(),
 	    Helpers::getSystemIncludes());
 

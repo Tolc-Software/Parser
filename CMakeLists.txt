@@ -35,7 +35,7 @@ FetchContent_MakeAvailable(IRSpecification)
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
 # llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
-set(llvm_entry_version 9.0.0)
+set(llvm_entry_version 10.0.0)
 setup_llvm(NAME "LLVM_ENTRY" VERSION ${llvm_entry_version})
 
 # Macro to get downloaded Clang and llvm packages

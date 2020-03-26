@@ -16,8 +16,9 @@ newParserFrontendActionFactory(IR::Namespace& ns) {
 		ParserFrontendActionFactory(IR::Namespace& parsedNamespaces)
 		    : m_parsedNamespaces(parsedNamespaces) {}
 		IR::Namespace& m_parsedNamespaces;
-		clang::FrontendAction* create() override {
-			return new Frontend::ParserFrontendAction(m_parsedNamespaces);
+		std::unique_ptr<clang::FrontendAction> create() override {
+			return std::make_unique<Frontend::ParserFrontendAction>(
+			    m_parsedNamespaces);
 		}
 	};
 

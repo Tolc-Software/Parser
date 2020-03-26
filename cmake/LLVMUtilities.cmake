@@ -1,5 +1,32 @@
 include_guard()
 
+function(_get_llvm_download_url)
+  # Define the supported set of keywords
+  set(prefix ARG)
+  set(noValues)
+  set(singleValues VERSION VARIABLE)
+  set(multiValues)
+  # Process the arguments passed in
+  # can be used e.g. via ARG_TARGET
+  cmake_parse_arguments(${prefix}
+                        "${noValues}"
+                        "${singleValues}"
+                        "${multiValues}"
+                        ${ARGN})
+
+  set(download_url "")
+  if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Linux)
+      set(download_url https://github.com/llvm/llvm-project/releases/download/llvmorg-${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-linux-gnu-ubuntu-18.04.tar.xz)
+  elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Darwin)
+      set(download_url https://github.com/llvm/llvm-project/releases/download/llvmorg-${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-apple-darwin.tar.xz)
+  else()
+    message(FATAL_ERROR "Unsupported platform for now.")
+  endif()
+  set(${ARG_VARIABLE}
+      ${download_url}
+      PARENT_SCOPE)
+endfunction()
+
 function(setup_llvm)
   # Define the supported set of keywords
   set(prefix ARG)
@@ -27,19 +54,12 @@ function(setup_llvm)
 
   include(FetchContent)
 
-  if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Linux)
-    FetchContent_Declare(
-      ${llvm_entry}
-      URL http://releases.llvm.org/${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-pc-linux-gnu.tar.xz
-    )
-  elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Darwin)
-    FetchContent_Declare(
-      ${llvm_entry}
-      URL http://releases.llvm.org/${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-darwin-apple.tar.xz
-    )
-  else()
-    message(FATAL_ERROR "Unsupported platform for now.")
-  endif()
+  _get_llvm_download_url(VERSION ${ARG_VERSION} VARIABLE DOWNLOAD_URL)
+
+  FetchContent_Declare(
+    ${llvm_entry}
+    URL ${DOWNLOAD_URL}
+  )
 
   FetchContent_Populate(${llvm_entry})
   message(STATUS "LLVM source dir: ${${llvm_entry}_SOURCE_DIR}")
