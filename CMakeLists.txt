@@ -92,6 +92,9 @@ target_include_directories(Parser PUBLIC include)
 set_target_properties(
   Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF CXX_STANDARD 17)
 
+# Export the library to link against
+add_library(Tolc::Parser ALIAS Parser)
+
 # Only build tests and benchmarks if building this project directly
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   option(ENABLE_TESTING "Build the testing tree" OFF)
