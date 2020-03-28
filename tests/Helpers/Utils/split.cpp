@@ -1,4 +1,4 @@
-#include "Helpers/Utils/split.h"
+#include "Helpers/Utils/split.hpp"
 #include "catch2/catch.hpp"
 
 namespace {

@@ -1,5 +1,5 @@
-#include "Consumer/ParserConsumer.h"
-#include "Visitor/ParserVisitor.h"
+#include "Consumer/ParserConsumer.hpp"
+#include "Visitor/ParserVisitor.hpp"
 #include "clang/AST/ASTConsumer.h"
 
 namespace Consumer {

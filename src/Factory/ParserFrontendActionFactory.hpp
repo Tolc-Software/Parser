@@ -1,5 +1,5 @@
 #pragma once
-#include "Frontend/ParserFrontendAction.h"
+#include "Frontend/ParserFrontendAction.hpp"
 #include <IR/ir.hpp>
 #include <clang/Tooling/Tooling.h>
 #include <memory>

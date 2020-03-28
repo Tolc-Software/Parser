@@ -1,13 +1,13 @@
-#include "Builders/structBuilder.h"
-#include "Helpers/walkIRStructure.h"
+#include "Builders/structBuilder.hpp"
+#include "Helpers/walkIRStructure.hpp"
 #include "IR/ir.hpp"
 #include <algorithm>
 #include <deque>
-#include <string>
-#include <variant>
-#include <unordered_map>
 #include <optional>
 #include <sstream>
+#include <string>
+#include <unordered_map>
+#include <variant>
 
 namespace {
 

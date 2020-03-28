@@ -1,5 +1,5 @@
-#include "Helpers/Type/utilities.h"
-#include "Helpers/Type/matchers.h"
+#include "Helpers/Type/utilities.hpp"
+#include "Helpers/Type/matchers.hpp"
 #include <IR/ir.hpp>
 #include <clang/AST/Type.h>
 #include <optional>

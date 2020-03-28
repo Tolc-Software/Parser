@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Helpers/Utils/split.h"
-#include "IRProxy/IRData.h"
+#include "Helpers/Utils/split.hpp"
+#include "IRProxy/IRData.hpp"
 #include <clang/AST/Type.h>
 #include <deque>
 #include <optional>

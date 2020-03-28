@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IR/ir.hpp"
-#include "IRProxy/IRData.h"
+#include "IRProxy/IRData.hpp"
 #include <string>
 #include <unordered_map>
 #include <vector>

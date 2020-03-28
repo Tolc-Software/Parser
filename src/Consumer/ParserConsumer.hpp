@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IR/ir.hpp"
-#include "Visitor/ParserVisitor.h"
+#include "Visitor/ParserVisitor.hpp"
 #include "clang/AST/ASTConsumer.h"
 
 namespace Consumer {

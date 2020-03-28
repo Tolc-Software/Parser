@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Parser/Parse.h"
+#include "Parser/Parse.hpp"
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
 #include <string>

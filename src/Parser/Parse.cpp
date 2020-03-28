@@ -1,7 +1,7 @@
-#include "Parser/Parse.h"
-#include "Factory/ParserFrontendActionFactory.h"
-#include "Frontend/ParserFrontendAction.h"
-#include "Helpers/includes.h"
+#include "Parser/Parse.hpp"
+#include "Factory/ParserFrontendActionFactory.hpp"
+#include "Frontend/ParserFrontendAction.hpp"
+#include "Helpers/includes.hpp"
 #include <clang/Tooling/CompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
 #include <memory>

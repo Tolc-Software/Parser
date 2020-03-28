@@ -1,6 +1,6 @@
-#include "Builders/commonBuilder.h"
-#include "IRProxy/IRData.h"
-#include "Visitor/ParserVisitor.h"
+#include "Builders/commonBuilder.hpp"
+#include "IRProxy/IRData.hpp"
+#include "Visitor/ParserVisitor.hpp"
 
 namespace Visitor {
 

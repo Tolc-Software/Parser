@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IR/ir.hpp"
-#include "IRProxy/IRData.h"
+#include "IRProxy/IRData.hpp"
 #include <clang/AST/Type.h>
 #include <clang/Basic/Specifiers.h>
 #include <vector>

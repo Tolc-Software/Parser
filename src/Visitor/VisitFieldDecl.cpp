@@ -1,10 +1,9 @@
-#include "Builders/commonBuilder.h"
-#include "IRProxy/IRData.h"
-#include "Visitor/ParserVisitor.h"
-#include "Builders/typeBuilder.h"
+#include "Builders/commonBuilder.hpp"
+#include "Builders/typeBuilder.hpp"
+#include "IRProxy/IRData.hpp"
+#include "Visitor/ParserVisitor.hpp"
 
 namespace Visitor {
-
 bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 	if (isInSystemHeader(fieldDecl)) {
 		// Continue the AST search
@@ -23,7 +22,8 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 	proxyVariable.m_variable = variable;
 
 	// TODO: Handle access modifier not being converted
-	if (auto accessModifier = Builders::convertToIRAccess(fieldDecl->getAccess())) {
+	if (auto accessModifier =
+	        Builders::convertToIRAccess(fieldDecl->getAccess())) {
 		proxyVariable.m_modifier = accessModifier.value();
 	}
 
@@ -33,6 +33,5 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 
 	// Continue the AST search
 	return true;
-}
-
-}
+	}
+    }    // namespace Visitor

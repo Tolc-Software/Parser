@@ -1,7 +1,7 @@
-#include "Builders/typeBuilder.h"
-#include "Helpers/Type/matchers.h"
-#include "Helpers/Type/utilities.h"
-#include "IRProxy/IRData.h"
+#include "Builders/typeBuilder.hpp"
+#include "Helpers/Type/matchers.hpp"
+#include "Helpers/Type/utilities.hpp"
+#include "IRProxy/IRData.hpp"
 #include <clang/AST/Type.h>
 
 namespace Builders {

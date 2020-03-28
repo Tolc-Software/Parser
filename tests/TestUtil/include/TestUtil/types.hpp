@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IR/ir.hpp"
-#include "Parser/Parse.h"
+#include "Parser/Parse.hpp"
 
 namespace TestUtil {
 

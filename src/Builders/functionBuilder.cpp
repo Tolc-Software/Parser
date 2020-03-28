@@ -1,5 +1,5 @@
-#include "Builders/structBuilder.h"
-#include "Helpers/walkIRStructure.h"
+#include "Builders/structBuilder.hpp"
+#include "Helpers/walkIRStructure.hpp"
 #include "IR/ir.hpp"
 #include <algorithm>
 #include <clang/AST/Type.h>

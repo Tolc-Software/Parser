@@ -1,7 +1,7 @@
-#include "Visitor/ParserVisitor.h"
-#include "Builders/functionBuilder.h"
-#include "Builders/namespaceBuilder.h"
-#include "Builders/structBuilder.h"
+#include "Visitor/ParserVisitor.hpp"
+#include "Builders/functionBuilder.hpp"
+#include "Builders/namespaceBuilder.hpp"
+#include "Builders/structBuilder.hpp"
 
 namespace Visitor {
 ParserVisitor::~ParserVisitor() {

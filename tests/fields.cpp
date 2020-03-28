@@ -1,8 +1,8 @@
-#include "Helpers/walkIRStructure.h"
-#include "TestUtil/compare.h"
-#include "TestUtil/finders.h"
-#include "TestUtil/parse.h"
-#include "TestUtil/types.h"
+#include "Helpers/walkIRStructure.hpp"
+#include "TestUtil/compare.hpp"
+#include "TestUtil/finders.hpp"
+#include "TestUtil/parse.hpp"
+#include "TestUtil/types.hpp"
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
 #include <variant>

@@ -1,5 +1,5 @@
-#include "Frontend/ParserFrontendAction.h"
-#include "Consumer/ParserConsumer.h"
+#include "Frontend/ParserFrontendAction.hpp"
+#include "Consumer/ParserConsumer.hpp"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
 

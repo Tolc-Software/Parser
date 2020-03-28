@@ -1,4 +1,4 @@
-#include "TestUtil/parse.h"
+#include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
 
 TEST_CASE("A class with a constructor", "[classes]") {

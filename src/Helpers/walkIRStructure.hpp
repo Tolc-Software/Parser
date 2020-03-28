@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IRProxy/IRData.h"
+#include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 #include <deque>
 #include <string>

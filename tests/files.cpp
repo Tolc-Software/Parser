@@ -1,6 +1,6 @@
-#include "TestUtil/files.h"
-#include "Parser/Parse.h"
-#include "TestUtil/compare.h"
+#include "TestUtil/files.hpp"
+#include "Parser/Parse.hpp"
+#include "TestUtil/compare.hpp"
 #include <catch2/catch.hpp>
 
 TEST_CASE("Simple namespace", "[files]") {

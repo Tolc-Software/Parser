@@ -1,7 +1,7 @@
-#include "Builders/commonBuilder.h"
-#include "Builders/functionBuilder.h"
-#include "Builders/typeBuilder.h"
-#include "Visitor/ParserVisitor.h"
+#include "Builders/commonBuilder.hpp"
+#include "Builders/functionBuilder.hpp"
+#include "Builders/typeBuilder.hpp"
+#include "Visitor/ParserVisitor.hpp"
 
 namespace Visitor {
 

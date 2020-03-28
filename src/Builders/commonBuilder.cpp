@@ -1,5 +1,5 @@
-#include "Builders/commonBuilder.h"
-#include "IRProxy/IRData.h"
+#include "Builders/commonBuilder.hpp"
+#include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 #include <clang/AST/DeclBase.h>
 #include <deque>

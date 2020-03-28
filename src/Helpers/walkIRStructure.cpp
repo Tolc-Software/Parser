@@ -1,5 +1,5 @@
-#include "Helpers/walkIRStructure.h"
-#include "IRProxy/IRData.h"
+#include "Helpers/walkIRStructure.hpp"
+#include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 #include <algorithm>
 #include <string_view>
