@@ -65,11 +65,11 @@ std::string getValidReturnForType(IR::BaseType type) {
 	std::string validReturn = "";
 	using IR::BaseType;
 	switch (type) {
+		case BaseType::Double:
+		case BaseType::Float:
+		case BaseType::Int:
+		case BaseType::Long: return "0";
 		case BaseType::Char: return "'c'";
-		case BaseType::Double: return "1.0";
-		case BaseType::Float: return "1.0";
-		case BaseType::Int: return "1";
-		case BaseType::Long: return "1";
 		case BaseType::String: return "\"HelloWorld\"";
 		case BaseType::Void: return "";
 	}

@@ -7,6 +7,9 @@
 namespace Builders {
 
 std::optional<IR::Type> buildType(clang::QualType type) {
+	// What the user wrote
+	auto representation = type.getAsString();
+
 	// Remove using aliases
 	type = type.getCanonicalType();
 
@@ -22,6 +25,7 @@ std::optional<IR::Type> buildType(clang::QualType type) {
 	if (auto maybeIrType = Helpers::Type::getIRType(type.getAsString())) {
 		auto irType = maybeIrType.value();
 
+		irType.m_representation = representation;
 		irType.m_numPointers = numPointers;
 		irType.m_isConst = hasConst;
 		return irType;
