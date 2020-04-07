@@ -24,16 +24,19 @@ void addStructToVariant(std::variant<IR::Namespace*, IR::Struct*> const& v,
 
 IR::Struct createStruct(IRProxy::Struct& s) {
 	IR::Struct newStruct;
-	auto& path = s.m_name;
+	auto& path = s.m_path;
 	auto& [name, structure] = path.back();
+
 	newStruct.m_name = name;
+	// Representation is the fully qualified name
+	newStruct.m_representation = s.m_fullyQualifiedName;
 	newStruct.m_memberVariables = s.m_variables;
 	return newStruct;
 }
 
 void addStruct(IRProxy::Struct& s, IR::Namespace& globalNamespace) {
 	// Take out the already created path
-	auto path = s.m_name;
+	auto path = s.m_path;
 	path.pop_back();
 
 	// Find the parent
@@ -61,8 +64,9 @@ std::optional<std::vector<IRProxy::MemberVariable>> getVariables(
     IRProxy::Struct const& s,
     std::unordered_map<std::string, std::vector<IRProxy::MemberVariable>>&
         memberVariables) {
-	if (auto variables = memberVariables.find(buildFullyQualifiedName(s.m_name));
-			variables != memberVariables.end()) {
+	if (auto variables =
+	        memberVariables.find(buildFullyQualifiedName(s.m_path));
+	    variables != memberVariables.end()) {
 		return variables->second;
 	}
 	return {};

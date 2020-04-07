@@ -12,7 +12,8 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	}
 
 	IRProxy::Function parsedFunc;
-	parsedFunc.m_name =
+	parsedFunc.m_fullyQualifiedName = functionDecl->getQualifiedNameAsString();
+	parsedFunc.m_path =
 	    Builders::buildStructure(functionDecl, IRProxy::Structure::Function);
 
 	if (auto returnType = Builders::buildType(functionDecl->getReturnType())) {

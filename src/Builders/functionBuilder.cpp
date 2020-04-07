@@ -26,6 +26,9 @@ IR::Function createFunction(std::string_view name,
                             IRProxy::Function const& proxyF) {
 	IR::Function f;
 	f.m_name = name;
+
+	// Representation is the fully qualified name
+	f.m_representation = proxyF.m_fullyQualifiedName;
 	f.m_returnType = proxyF.m_returnType;
 	f.m_arguments = proxyF.m_arguments;
 	return f;
@@ -34,7 +37,7 @@ IR::Function createFunction(std::string_view name,
 void addFunction(IRProxy::Function const& f,
                  IR::Namespace& globalNamespace) {
 	// Take out the already created path
-	auto path = f.m_name;
+	auto path = f.m_path;
 	auto [name, t] = path.back();
 	path.pop_back();
 

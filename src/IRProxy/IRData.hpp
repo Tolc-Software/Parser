@@ -24,10 +24,13 @@ enum class Structure {
   * Representation of a struct/class that can be used to create the IR::Struct
   */
 struct Struct {
-	// Fully qualified name
+	std::string m_fullyQualifiedName;
+
+	// Fully qualified name with structure annotations
+	// Path to where this struct belongs
 	// Ex:
 	//     Ns::cl => {(Ns, Structure::Namespace), (cl, Structure::Struct)}
-	std::deque<std::pair<std::string, Structure>> m_name;
+	std::deque<std::pair<std::string, Structure>> m_path;
 	// The variables within the struct/class
 	std::vector<std::pair<IR::AccessModifier, IR::Variable>> m_variables;
 };
@@ -36,10 +39,13 @@ struct Struct {
   * Representation of a function that can be used to create the IR::Function
   */
 struct Function {
-	// Fully qualified name
+	std::string m_fullyQualifiedName;
+
+	// Fully qualified name with structure annotations
+	// Path to where this function belongs
 	// Ex:
 	//     Ns::cl::fun => {(Ns, Structure::Namespace), (cl, Structure::Struct), (cl, Structure::Function)}
-	std::deque<std::pair<std::string, Structure>> m_name;
+	std::deque<std::pair<std::string, Structure>> m_path;
 	// The arguments to the function
 	std::vector<IR::Variable> m_arguments;
 
@@ -75,7 +81,9 @@ struct IRData {
 	// {Fully qualified namespace name}
 	// Ex: ParentNS::ChildNS::GrandChildNS
 	std::vector<std::string> m_namespaces;
+
 	std::vector<Struct> m_structs;
+
 	std::vector<Function> m_functions;
 
 	// {Fully qualified name of the owning class: variable}

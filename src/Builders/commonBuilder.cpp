@@ -46,6 +46,5 @@ convertToIRAccess(clang::AccessSpecifier access) {
 	}
 }
 
-
 }    // namespace Builders
 

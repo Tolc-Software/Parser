@@ -12,7 +12,10 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 
 	// Build the final parsedStruct
 	IRProxy::Struct parsedStruct;
-	parsedStruct.m_name =
+
+	parsedStruct.m_fullyQualifiedName = classDecl->getQualifiedNameAsString();
+
+	parsedStruct.m_path =
 	    Builders::buildStructure(classDecl, IRProxy::Structure::Struct);
 
 	m_irData.m_structs.push_back(parsedStruct);
