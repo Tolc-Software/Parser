@@ -12,6 +12,33 @@ void checkEmpty(IR::Namespace& ns) {
 }
 }    // namespace
 
+TEST_CASE("Deeply nested namespace", "[namespaces]") {
+	auto code = R"(
+#include <string>
+
+namespace MyLib {
+
+	int complexFunction() {
+		return 5;
+	}
+
+	namespace Deeper {
+		std::string meaningOfLife() {
+			return "42";
+		}
+	}
+}
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_namespaces.size() == 1);
+	auto& myLib = globalNS.m_namespaces.back();
+	REQUIRE(myLib.m_functions.size() == 1);
+	REQUIRE(myLib.m_namespaces.size() == 1);
+	auto& deeper = myLib.m_namespaces.back();
+	REQUIRE(deeper.m_functions.size() == 1);
+}
+
 TEST_CASE("Single namespace", "[namespaces]") {
 	auto globalNS = TestUtil::parseString("namespace Test {}");
 	SECTION("Parser finds an empty namespace named Test") {

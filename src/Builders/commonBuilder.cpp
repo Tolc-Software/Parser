@@ -26,8 +26,11 @@ buildParentStructure(clang::DeclContext const* parent,
                      std::deque<std::string> names) {
 	std::deque<std::pair<std::string, IRProxy::Structure>> structure;
 	while (parent && !names.empty()) {
+		auto name = names.back();
 		if (auto proxyStructure = getProxyStructure(parent)) {
-			structure.push_back({names.back(), proxyStructure.value()});
+			// NOTE: Since we are building from the bottom up,
+			//       we take from the back and push to the front
+			structure.push_front({name, proxyStructure.value()});
 		}
 		// TODO: Handle not being able to find the correct structure
 		parent = parent->getParent();

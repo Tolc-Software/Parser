@@ -1,6 +1,33 @@
 #include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
 
+TEST_CASE("Deeply nested classes", "[namespaces]") {
+	auto code = R"(
+#include <string>
+
+namespace MyLib {
+
+	class MyLibClass {
+	};
+
+	namespace Deeper {
+		class MyDeeperClass {
+		};
+	}
+}
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_namespaces.size() == 1);
+	auto& myLib = globalNS.m_namespaces.back();
+	REQUIRE(myLib.m_structs.size() == 1);
+	REQUIRE(myLib.m_structs.back().m_name == "MyLibClass");
+	REQUIRE(myLib.m_namespaces.size() == 1);
+	auto& deeper = myLib.m_namespaces.back();
+	REQUIRE(deeper.m_structs.size() == 1);
+	REQUIRE(deeper.m_structs.back().m_name == "MyDeeperClass");
+}
+
 TEST_CASE("A class with a constructor", "[classes]") {
 	auto globalNS = TestUtil::parseString(R"(
 class Simple {
