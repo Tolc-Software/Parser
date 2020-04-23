@@ -43,8 +43,6 @@ void addNamespaceToRoot(IR::Namespace& rootNS,
 		auto parentName = currentNs->m_name;
 		// Set child
 		currentNs = createOrGetChild(currentNs, name);
-		// Set parent
-		currentNs->m_parent = parentName;
 		currentNs->m_representation = representation;
 		ns.pop_front();
 	}

@@ -96,10 +96,6 @@ namespace ParentNamespace {
 			CHECK(ns.m_name == "ParentNamespace");
 			CHECK(child.m_name == "ChildNamespace");
 		}
-
-		SECTION("Nested correctly") {
-			CHECK(child.m_parent == "ParentNamespace");
-		}
 	}
 }
 
@@ -150,11 +146,6 @@ namespace ParentNamespace {
 			CHECK(child.m_name == "ChildNamespace");
 			CHECK(grandchild.m_name == "GrandchildNamespace");
 		}
-
-		SECTION("Nested correctly") {
-			CHECK(child.m_parent == "ParentNamespace");
-			CHECK(grandchild.m_parent == "ChildNamespace");
-		}
 	}
 }
 
@@ -188,11 +179,6 @@ namespace B {}
 			CHECK(a->m_name == "A");
 			CHECK(b->m_name == "B");
 			CHECK(aB.m_name == "B");
-		}
-
-		SECTION("Nested correctly") {
-			CHECK(aB.m_parent == "A");
-			CHECK(b->m_parent.empty());
 		}
 	}
 }
