@@ -47,25 +47,11 @@ void addStruct(IRProxy::Struct& s, IR::Namespace& globalNamespace) {
 	addStructToVariant(parentOfNewStruct, createStruct(s));
 }
 
-std::string buildFullyQualifiedName(std::deque<std::pair<std::string, IRProxy::Structure>> path) {
-	std::stringstream ss;
-	while (!path.empty()) {
-		auto& [name, structure] = path.front();
-		path.pop_front();
-		ss << name;
-		if (!path.empty()) {
-			ss << "::";
-		}
-	}
-	return ss.str();
-}
-
 std::optional<std::vector<IRProxy::MemberVariable>> getVariables(
     IRProxy::Struct const& s,
     std::unordered_map<std::string, std::vector<IRProxy::MemberVariable>>&
         memberVariables) {
-	if (auto variables =
-	        memberVariables.find(buildFullyQualifiedName(s.m_path));
+	if (auto variables = memberVariables.find(s.m_fullyQualifiedName);
 	    variables != memberVariables.end()) {
 		return variables->second;
 	}

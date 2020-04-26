@@ -27,7 +27,7 @@ target_code_coverage(Parser)
 add_code_coverage_all_targets()
 
 # Integration tests are located at the root
-foreach(integrationTest files functions fields namespaces classes userDefined representation)
+foreach(integrationTest multipleClasses files functions fields namespaces classes userDefined representation)
   setup_test(TEST_NAME ${integrationTest} SOURCE ${integrationTest}.cpp
              LIBRARIES TestUtil)
 endforeach()
