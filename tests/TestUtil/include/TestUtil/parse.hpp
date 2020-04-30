@@ -8,7 +8,6 @@
 namespace TestUtil {
 
 IR::Namespace parseString(std::string const& code) {
-	UNSCOPED_INFO(code);
 	return Parser::parseString(code);
 }
 }    // namespace TestUtil

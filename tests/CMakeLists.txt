@@ -4,7 +4,7 @@ include(FetchContent)
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY git@github.com:catchorg/Catch2.git
-  GIT_TAG v2.11.0)
+  GIT_TAG v2.12.1)
 
 FetchContent_MakeAvailable(Catch2)
 
@@ -27,7 +27,7 @@ target_code_coverage(Parser)
 add_code_coverage_all_targets()
 
 # Integration tests are located at the root
-foreach(integrationTest multipleClasses files functions fields namespaces classes userDefined representation)
+foreach(integrationTest multipleClasses files functions fields namespaces classes userDefined representation references)
   setup_test(TEST_NAME ${integrationTest} SOURCE ${integrationTest}.cpp
              LIBRARIES TestUtil)
 endforeach()

@@ -17,6 +17,10 @@ std::optional<IR::Type> buildType(clang::QualType type) {
 	auto numPointers = Helpers::Type::getNumberOfPointers(type);
 	type = Helpers::Type::getTypeWithPointersRemoved(type);
 
+	// Remove references
+	auto hasReference = type.getTypePtr()->isReferenceType();
+	type = type.getNonReferenceType();
+
 	// Remove const
 	// TODO: Handle unsupported qualifiers
 	bool hasConst = Helpers::Type::isConst(type);
@@ -28,6 +32,7 @@ std::optional<IR::Type> buildType(clang::QualType type) {
 		irType.m_representation = representation;
 		irType.m_numPointers = numPointers;
 		irType.m_isConst = hasConst;
+		irType.m_isReference = hasReference;
 		return irType;
 	}
 
