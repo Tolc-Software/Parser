@@ -1,6 +1,24 @@
 #include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
 
+TEST_CASE("Function with reference parameter", "[references]") {
+	auto code = R"(
+#include <string>
+
+void f(std::string const& s);
+
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_functions.size() == 1);
+	auto& f = globalNS.m_functions.back();
+	REQUIRE(f.m_arguments.size() == 1);
+	auto& s = f.m_arguments.back();
+	REQUIRE(s.m_type.m_isReference);
+	REQUIRE(s.m_type.m_isConst);
+	REQUIRE(s.m_type.m_numPointers == 0);
+}
+
 TEST_CASE("Class with reference variables", "[references]") {
 	auto code = R"(
 #include <string>
@@ -33,22 +51,4 @@ struct MyClass {
 			REQUIRE(s.m_isReference);
 		}
 	}
-}
-
-TEST_CASE("Function with reference parameter", "[references]") {
-	auto code = R"(
-#include <string>
-
-void f(std::string const& s);
-
-)";
-	CAPTURE(code);
-	auto globalNS = TestUtil::parseString(code);
-	REQUIRE(globalNS.m_functions.size() == 1);
-	auto& f = globalNS.m_functions.back();
-	REQUIRE(f.m_arguments.size() == 1);
-	auto& s = f.m_arguments.back();
-	REQUIRE(s.m_type.m_isReference);
-	REQUIRE(s.m_type.m_isConst);
-	REQUIRE(s.m_type.m_numPointers == 0);
 }

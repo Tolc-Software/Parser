@@ -15,16 +15,20 @@ clang::QualType getTypeWithPointersRemoved(clang::QualType type) {
 }
 
 /**
-  * Take a base and build a type
+  * Take a value and build a type
   */
-IR::Type buildTypeFromBase(IR::BaseType valueType,
-                           std::optional<IR::BaseType> keyType) {
-	IR::Type::Value v;
-	v.m_valueType = valueType;
-	v.m_keyType = keyType;
-
+IR::Type buildTypeFromValue(IR::Type::Value value) {
 	IR::Type type;
-	type.m_type = v;
+	type.m_type = value;
+	return type;
+}
+
+/**
+* Take a user defined type and create a full type
+*/
+IR::Type buildTypeFromUserDefined(IR::Type::UserDefined userDefined) {
+	IR::Type type;
+	type.m_type = userDefined;
 	return type;
 }
 
@@ -47,13 +51,15 @@ IR::Type buildTypeFromBase(IR::BaseType valueType,
 * NOTE: Assumes the qualifiers are removed (const, ...)
 */
 std::optional<IR::Type> getIRType(std::string_view type) {
-	if (auto baseType = getBaseType(type)) {
-		return buildTypeFromBase(baseType.value());
+	if (auto value = getValueType(type)) {
+		return buildTypeFromValue(value.value());
 	}
 	// TODO: Support containers
 	else if (auto containerType = getContainerType(type)) {
-		return {};
 		// return buildTypeFromContainer(containerType.value());
+		return {};
+	} else if (auto userDefined = getUserDefinedType(type)) {
+		return buildTypeFromUserDefined(userDefined.value());
 	}
 	return {};
 }

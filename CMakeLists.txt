@@ -71,6 +71,7 @@ add_llvm_library(
   src/Helpers/Utils/split.cpp
   src/Helpers/includes.cpp
   src/Helpers/walkIRStructure.cpp
+  src/Helpers/Utils/string.cpp
   src/Parser/Parse.cpp
   src/Visitor/ParserVisitor.cpp
   src/Visitor/VisitCXXRecordDecl.cpp

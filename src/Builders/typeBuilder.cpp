@@ -1,6 +1,7 @@
 #include "Builders/typeBuilder.hpp"
 #include "Helpers/Type/matchers.hpp"
 #include "Helpers/Type/utilities.hpp"
+#include "Helpers/Utils/string.hpp"
 #include "IRProxy/IRData.hpp"
 #include <clang/AST/Type.h>
 
@@ -29,7 +30,10 @@ std::optional<IR::Type> buildType(clang::QualType type) {
 	if (auto maybeIrType = Helpers::Type::getIRType(type.getAsString())) {
 		auto irType = maybeIrType.value();
 
-		irType.m_representation = representation;
+		// User defined types has a string type as {const struct UserDefined&}
+		// But since we are not interested in the "struct " part, we remove it if it exists
+		irType.m_representation =
+		    Helpers::Utils::removeSubString(representation, "struct ");
 		irType.m_numPointers = numPointers;
 		irType.m_isConst = hasConst;
 		irType.m_isReference = hasReference;

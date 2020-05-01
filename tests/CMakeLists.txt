@@ -26,11 +26,30 @@ target_code_coverage(Parser)
 
 add_code_coverage_all_targets()
 
-# Integration tests are located at the root
-foreach(integrationTest multipleClasses files functions fields namespaces classes userDefined representation references)
-  setup_test(TEST_NAME ${integrationTest} SOURCE ${integrationTest}.cpp
-             LIBRARIES TestUtil)
-endforeach()
+foreach(test
+  multipleClasses.cpp
+  files.cpp
+  functions.cpp
+  fields.cpp
+  namespaces.cpp
+  classes.cpp
+  userDefined.cpp
+  representation.cpp
+  references.cpp
 
-setup_test(TEST_NAME split SOURCE Helpers/Utils/split.cpp)
-setup_test(TEST_NAME includes SOURCE Helpers/includes.cpp)
+  Helpers/Type/matchers.cpp
+  Helpers/Utils/split.cpp
+  Helpers/includes.cpp
+  Helpers/Utils/string.cpp
+)
+  # Ex: PybindProxy/moduleFile.cpp -> moduleFile
+  get_filename_component(testName ${test} NAME_WLE)
+
+  setup_test(
+    TEST_NAME
+    ${testName}
+    SOURCE
+    ${test}
+    LIBRARIES
+    TestUtil)
+endforeach()
