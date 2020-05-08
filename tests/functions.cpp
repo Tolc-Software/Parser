@@ -224,8 +224,7 @@ char const* fun();
 			auto returnChar =
 			    std::get_if<IR::Type::Value>(&fun.m_returnType.m_type);
 			REQUIRE(returnChar);
-			CHECK(!returnChar->m_keyType.has_value());
-			CHECK(returnChar->m_valueType == IR::BaseType::Char);
+			CHECK(returnChar->m_base == IR::BaseType::Char);
 			CHECK(fun.m_returnType.m_numPointers == 1);
 			REQUIRE(fun.m_returnType.m_isConst);
 		}

@@ -29,6 +29,7 @@ add_code_coverage_all_targets()
 foreach(test
   multipleClasses.cpp
   files.cpp
+  containers.cpp
   functions.cpp
   fields.cpp
   namespaces.cpp
@@ -41,6 +42,7 @@ foreach(test
   Helpers/Utils/split.cpp
   Helpers/includes.cpp
   Helpers/Utils/string.cpp
+  Helpers/Type/Matchers/container.cpp
 )
   # Ex: PybindProxy/moduleFile.cpp -> moduleFile
   get_filename_component(testName ${test} NAME_WLE)
@@ -51,5 +53,6 @@ foreach(test
     SOURCE
     ${test}
     LIBRARIES
+    CONAN_PKG::fmt
     TestUtil)
 endforeach()

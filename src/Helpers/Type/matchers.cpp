@@ -27,26 +27,8 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 	return {};
 }
 
-std::optional<IR::ContainerType> getContainerType(std::string_view type) {
-	using IR::ContainerType;
-	if (type == "vector") {
-		return ContainerType::Vector;
-	} else if (type == "array") {
-		return ContainerType::Array;
-	} else if (type == "map") {
-		return ContainerType::Map;
-	} else if (type == "set") {
-		return ContainerType::Set;
-	} else if (type == "unordered_map") {
-		return ContainerType::Unordered_map;
-	} else if (type == "unordered_set") {
-		return ContainerType::Unordered_set;
-	}
-	return {};
-}
-
 std::optional<std::string> removeStructDeclaration(std::string_view type) {
-	constexpr std::string_view structDeclaration = "struct ";
+	constexpr static std::string_view structDeclaration = "struct ";
 	if (type.size() > structDeclaration.size()) {
 		// Check for our struct declaration
 		if (type.substr(0, structDeclaration.size()) == structDeclaration) {
@@ -60,7 +42,7 @@ std::optional<std::string> removeStructDeclaration(std::string_view type) {
 std::optional<IR::Type::Value> getValueType(std::string_view type) {
 	if (auto base = getBaseType(type)) {
 		IR::Type::Value v;
-		v.m_valueType = base.value();
+		v.m_base = base.value();
 		return v;
 	}
 	return {};

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.16)
 
 project(
   Parser
@@ -32,6 +32,12 @@ FetchContent_Declare(
   GIT_TAG master)
 
 FetchContent_MakeAvailable(IRSpecification)
+
+# Define run_conan
+include(cmake/ConanHelpers.cmake)
+run_conan(REQUIRES
+  fmt/6.1.2
+  CTRE/v2.8.2@ctre/stable)
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
@@ -72,6 +78,7 @@ add_llvm_library(
   src/Helpers/includes.cpp
   src/Helpers/walkIRStructure.cpp
   src/Helpers/Utils/string.cpp
+  src/Helpers/Type/Matchers/container.cpp
   src/Parser/Parse.cpp
   src/Visitor/ParserVisitor.cpp
   src/Visitor/VisitCXXRecordDecl.cpp
@@ -83,7 +90,7 @@ target_link_libraries(
   Parser
   PUBLIC IR::IR
   PRIVATE clangASTMatchers clangBasic clangTooling Parser_options
-  Parser_warnings)
+  Parser_warnings CONAN_PKG::fmt CONAN_PKG::CTRE)
 
 # Ignore warnings from clang/ as if they were system headers. NOTE: This is only
 # available on clang

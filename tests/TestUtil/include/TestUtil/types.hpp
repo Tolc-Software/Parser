@@ -2,6 +2,8 @@
 
 #include "IR/ir.hpp"
 #include "Parser/Parse.hpp"
+#include <algorithm>
+#include <vector>
 
 namespace TestUtil {
 
@@ -74,6 +76,20 @@ std::string getValidReturnForType(IR::BaseType type) {
 		case BaseType::Void: return "";
 	}
 	return "";
+}
+
+/**
+* Return all (hopefully) valid base types as strings. Optionally exclude some by input
+*/
+std::vector<std::string>
+getBaseTypes(std::vector<std::string> const& excluding = {}) {
+	std::vector<std::string> baseTypes = {
+	    "char", "double", "float", "int", "long", "std::string", "void"};
+	for (auto e : excluding) {
+		baseTypes.erase(std::remove(baseTypes.begin(), baseTypes.end(), e),
+		                baseTypes.end());
+	}
+	return baseTypes;
 }
 
 }    // namespace TestUtil

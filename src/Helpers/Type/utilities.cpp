@@ -1,4 +1,5 @@
 #include "Helpers/Type/utilities.hpp"
+#include "Helpers/Type/Matchers/container.hpp"
 #include "Helpers/Type/matchers.hpp"
 #include <IR/ir.hpp>
 #include <clang/AST/Type.h>
@@ -38,7 +39,7 @@ IR::Type buildTypeFromUserDefined(IR::Type::UserDefined userDefined) {
 // IR::Type buildTypeFromContainer(IR::BaseType valueType,
 //                                 clang::QualType originalType) {
 // 	IR::Type::Value v;
-// 	v.m_valueType = valueType;
+// 	v.m_base = valueType;
 
 // IR::Type type;
 // type.m_type = v;
@@ -54,8 +55,7 @@ std::optional<IR::Type> getIRType(std::string_view type) {
 	if (auto value = getValueType(type)) {
 		return buildTypeFromValue(value.value());
 	}
-	// TODO: Support containers
-	else if (auto containerType = getContainerType(type)) {
+	else if (auto containerType = Matchers::getContainerType(type)) {
 		// return buildTypeFromContainer(containerType.value());
 		return {};
 	} else if (auto userDefined = getUserDefinedType(type)) {
