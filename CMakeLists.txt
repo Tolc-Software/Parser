@@ -36,7 +36,6 @@ FetchContent_MakeAvailable(IRSpecification)
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
 run_conan(REQUIRES
-  fmt/6.1.2
   CTRE/v2.8.2@ctre/stable)
 
 include(cmake/LLVMUtilities.cmake)
@@ -90,7 +89,7 @@ target_link_libraries(
   Parser
   PUBLIC IR::IR
   PRIVATE clangASTMatchers clangBasic clangTooling Parser_options
-  Parser_warnings CONAN_PKG::fmt CONAN_PKG::CTRE)
+  Parser_warnings CONAN_PKG::CTRE)
 
 # Ignore warnings from clang/ as if they were system headers. NOTE: This is only
 # available on clang

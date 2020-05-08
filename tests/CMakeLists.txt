@@ -21,6 +21,10 @@ include(CodeCoverage)
 # Defines create_catch2_test
 include(SetupTest)
 
+# The tests need fmt
+run_conan(REQUIRES
+  fmt/6.1.2)
+
 # Use coverage of parser
 target_code_coverage(Parser)
 
