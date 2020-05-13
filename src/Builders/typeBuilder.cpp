@@ -57,9 +57,9 @@ bool isTemplateSpecialization(clang::QualType type) {
 /**
 * True if it is a template specialization. E.g. std::vector<int>
 */
-bool isTemplateSpecialization(IR::Type const* type) {
+bool isTemplateSpecialization(IR::Type const& type) {
 	// TODO: This should be true for user defined templates aswell maybe?
-	return type && std::get_if<IR::Type::Container>(&type->m_type);
+	return std::get_if<IR::Type::Container>(&type.m_type);
 }
 
 /**
@@ -119,43 +119,36 @@ IR::Type* addToTemplatedList(IR::Type& type, IR::Type& toBeAdded) {
 
 std::optional<IR::Type> buildType(clang::QualType type) {
 	std::optional<IR::Type> topLevelType = std::nullopt;
-	std::queue<IR::Type*> parentTypes;
+	std::queue<std::pair<IR::Type*, clang::QualType>> typesToProcess;
 	if (auto irType = buildOneLevelIRType(type)) {
 		topLevelType = irType.value();
-		parentTypes.push(&topLevelType.value());
+		typesToProcess.push({&topLevelType.value(), type});
 	} else {
 		// TODO: Handle not being able to parse type
 		return {};
 	}
 
-	std::queue<clang::QualType> qualTypesToProcess;
-	qualTypesToProcess.push(type);
-	while (!parentTypes.empty() || !qualTypesToProcess.empty()) {
-		auto currentType = parentTypes.front();
-		auto currentQualType = qualTypesToProcess.front();
+	while (!typesToProcess.empty()) {
+		auto [currentType, currentQualType] = typesToProcess.front();
 		// Go one step down
-		for (auto arg : getTemplateArgs(currentQualType)) {
+		for (auto qualTemplateArg : getTemplateArgs(currentQualType)) {
 			// Try to convert to ir
-			IR::Type* templatedIr = nullptr;
-			if (auto irType = buildOneLevelIRType(arg)) {
+			if (auto irType = buildOneLevelIRType(qualTemplateArg)) {
 				// Push it onto the current ir
-				if (auto addedType =
+				if (auto irTemplateArg =
 				        addToTemplatedList(*currentType, irType.value())) {
-					templatedIr = addedType;
+					// Check if we need to go even further
+					if (isTemplateSpecialization(*irTemplateArg) &&
+					    isTemplateSpecialization(qualTemplateArg)) {
+						typesToProcess.push({irTemplateArg, qualTemplateArg});
+					}
 				}
 			} else {
 				// TODO: Handle not being able to parse type
 				return {};
 			}
-
-			if (isTemplateSpecialization(arg) &&
-			    isTemplateSpecialization(templatedIr)) {
-				parentTypes.push(templatedIr);
-				qualTypesToProcess.push(arg);
-			}
 		}
-		parentTypes.pop();
-		qualTypesToProcess.pop();
+		typesToProcess.pop();
 	}
 
 	return topLevelType;
