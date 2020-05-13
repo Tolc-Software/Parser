@@ -8,42 +8,70 @@
 #include <clang/AST/Type.h>
 #include <iostream>
 #include <llvm/Support/Casting.h>
+#include <queue>
+#include <variant>
 #include <vector>
 
 namespace Builders {
 
-// generate vector<QualType> with all types that class uses if it tempalated
-std::vector<clang::QualType> get_type_dependencies(
-    clang::CXXRecordDecl const* C /*, bool include_members*/) {
-	std::vector<clang::QualType> r;
+// Generate vector<QualType> with all types that class uses if it tempalated
+/**
+* Returns a vector of QualType's which corresponds to the inputs template arguments list
+* E.g.
+*   std::vector<int> -> {int, std::allocator<int>}
+*/
+std::vector<clang::QualType>
+getTemplateArgs(clang::CXXRecordDecl const* classDecl) {
+	std::vector<clang::QualType> templateArgs;
 
-	std::cout << "Checking for specialization" << '\n';
-	if (auto t = llvm::dyn_cast<clang::ClassTemplateSpecializationDecl>(C)) {
-		std::cout << "It is a class specialization!" << '\n';
-		for (unsigned int i = 0; i < t->getTemplateArgs().size(); ++i) {
-			if (t->getTemplateArgs()[i].getKind() ==
-			    clang::TemplateArgument::Type) {
-				r.push_back(
-				    t->getTemplateArgs()[i]
-				        .getAsType() /*.getDesugaredType(C->getASTContext())*/);
+	if (auto templatedClass =
+	        llvm::dyn_cast<clang::ClassTemplateSpecializationDecl>(classDecl)) {
+		for (auto const& arg : templatedClass->getTemplateArgs().asArray()) {
+			if (arg.getKind() == clang::TemplateArgument::Type) {
+				templateArgs.push_back(arg.getAsType());
 			}
 		}
 	}
 
-	for (auto const& t : r) {
-		std::cout << t.getAsString() << '\n';
-	}
-
-	return r;
+	return templateArgs;
 }
 
-std::optional<IR::Type> buildType(clang::QualType type) {
+std::vector<clang::QualType> getTemplateArgs(clang::QualType type) {
+	if (auto classType = type->getAsCXXRecordDecl()) {
+		return getTemplateArgs(classType);
+	}
+	return {};
+}
+
+/**
+* True if it is a template specialization. E.g. std::vector<int>
+*/
+bool isTemplateSpecialization(clang::QualType type) {
+	if (auto classDecl = type->getAsCXXRecordDecl()) {
+		return llvm::dyn_cast<clang::ClassTemplateSpecializationDecl>(
+		           classDecl) != nullptr;
+	}
+	return false;
+}
+
+/**
+* True if it is a template specialization. E.g. std::vector<int>
+*/
+bool isTemplateSpecialization(IR::Type const* type) {
+	// TODO: This should be true for user defined templates aswell maybe?
+	return type && std::get_if<IR::Type::Container>(&type->m_type);
+}
+
+/**
+* Builds a shallow type. This does not include template arguments.
+* Note that this is the complete type if the input is 'simple' as say 'int const*'
+*/
+std::optional<IR::Type> buildOneLevelIRType(clang::QualType type) {
 	// What the user wrote
 	auto representation = type.getAsString();
 
-	std::cout << "Processing representation: " << representation << '\n';
 	if (auto record = type->getAsCXXRecordDecl()) {
-		get_type_dependencies(record);
+		getTemplateArgs(record);
 	}
 
 	// Remove using aliases
@@ -76,6 +104,61 @@ std::optional<IR::Type> buildType(clang::QualType type) {
 	}
 
 	return {};
+}
+
+/**
+* Return true if type can have a template list
+*/
+IR::Type* addToTemplatedList(IR::Type& type, IR::Type& toBeAdded) {
+	if (auto container = std::get_if<IR::Type::Container>(&type.m_type)) {
+		container->m_containedTypes.push_back(toBeAdded);
+		return &container->m_containedTypes.back();
+	}
+	return nullptr;
+}
+
+std::optional<IR::Type> buildType(clang::QualType type) {
+	std::optional<IR::Type> topLevelType = std::nullopt;
+	std::queue<IR::Type*> parentTypes;
+	if (auto irType = buildOneLevelIRType(type)) {
+		topLevelType = irType.value();
+		parentTypes.push(&topLevelType.value());
+	} else {
+		// TODO: Handle not being able to parse type
+		return {};
+	}
+
+	std::queue<clang::QualType> qualTypesToProcess;
+	qualTypesToProcess.push(type);
+	while (!parentTypes.empty() || !qualTypesToProcess.empty()) {
+		auto currentType = parentTypes.front();
+		auto currentQualType = qualTypesToProcess.front();
+		// Go one step down
+		for (auto arg : getTemplateArgs(currentQualType)) {
+			// Try to convert to ir
+			IR::Type* templatedIr = nullptr;
+			if (auto irType = buildOneLevelIRType(arg)) {
+				// Push it onto the current ir
+				if (auto addedType =
+				        addToTemplatedList(*currentType, irType.value())) {
+					templatedIr = addedType;
+				}
+			} else {
+				// TODO: Handle not being able to parse type
+				return {};
+			}
+
+			if (isTemplateSpecialization(arg) &&
+			    isTemplateSpecialization(templatedIr)) {
+				parentTypes.push(templatedIr);
+				qualTypesToProcess.push(arg);
+			}
+		}
+		parentTypes.pop();
+		qualTypesToProcess.pop();
+	}
+
+	return topLevelType;
 }
 
 }    // namespace Builders

@@ -13,10 +13,19 @@ constexpr auto match_vector(std::string_view sv) noexcept {
 	return ctre::match<vector_pattern>(sv);
 }
 
+static constexpr auto allocator_pattern =
+    ctll::fixed_string {"class std::allocator<.*>"};
+
+constexpr auto match_allocator(std::string_view sv) noexcept {
+	return ctre::match<allocator_pattern>(sv);
+}
+
 std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 	using IR::ContainerType;
 	if (match_vector(type)) {
 		return ContainerType::Vector;
+	} else if (match_allocator(type)) {
+		return ContainerType::Allocator;
 	} else if (type == "array") {
 		return ContainerType::Array;
 	} else if (type == "map") {

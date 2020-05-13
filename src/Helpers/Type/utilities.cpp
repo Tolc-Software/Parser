@@ -33,18 +33,17 @@ IR::Type buildTypeFromUserDefined(IR::Type::UserDefined userDefined) {
 	return type;
 }
 
-// /**
-//   * Take a container and build a type
-//   */
-// IR::Type buildTypeFromContainer(IR::BaseType valueType,
-//                                 clang::QualType originalType) {
-// 	IR::Type::Value v;
-// 	v.m_base = valueType;
+/**
+  * Take a container and build a type
+  */
+IR::Type buildTypeFromContainer(IR::ContainerType container) {
+	IR::Type::Container c;
+	c.m_container = container;
 
-// IR::Type type;
-// type.m_type = v;
-// return type;
-// }
+	IR::Type type;
+	type.m_type = c;
+	return type;
+}
 
 /**
 * Tries to create an IR::Type (Int, Void, String, ...) of the input
@@ -54,10 +53,8 @@ IR::Type buildTypeFromUserDefined(IR::Type::UserDefined userDefined) {
 std::optional<IR::Type> getIRType(std::string_view type) {
 	if (auto value = getValueType(type)) {
 		return buildTypeFromValue(value.value());
-	}
-	else if (auto containerType = Matchers::getContainerType(type)) {
-		// return buildTypeFromContainer(containerType.value());
-		return {};
+	} else if (auto containerType = Matchers::getContainerType(type)) {
+		return buildTypeFromContainer(containerType.value());
 	} else if (auto userDefined = getUserDefinedType(type)) {
 		return buildTypeFromUserDefined(userDefined.value());
 	}
