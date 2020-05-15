@@ -3,6 +3,7 @@
 #include "IR/ir.hpp"
 #include "Parser/Parse.hpp"
 #include <algorithm>
+#include <string>
 #include <vector>
 
 namespace TestUtil {
@@ -51,6 +52,25 @@ std::string getAsString(IR::BaseType type) {
 		case BaseType::Void: return "void";
 	}
 	return "";
+}
+
+std::optional<IR::BaseType> getIRFromString(std::string const& type) {
+	using IR::BaseType;
+	if (type == "char")
+		return BaseType::Char;
+	if (type == "double")
+		return BaseType::Double;
+	if (type == "float")
+		return BaseType::Float;
+	if (type == "int")
+		return BaseType::Int;
+	if (type == "long")
+		return BaseType::Long;
+	if (type == "std::string")
+		return BaseType::String;
+	if (type == "void")
+		return BaseType::Void;
+	return {};
 }
 
 std::string getIncludesIfNeeded(IR::BaseType type) {
