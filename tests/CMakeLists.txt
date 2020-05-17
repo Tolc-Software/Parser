@@ -33,7 +33,9 @@ add_code_coverage_all_targets()
 foreach(test
   multipleClasses.cpp
   files.cpp
-  containers.cpp
+  vectors.cpp
+  arrays.cpp
+  unordered_maps.cpp
   functions.cpp
   fields.cpp
   namespaces.cpp
