@@ -13,6 +13,13 @@ constexpr auto match_vector(std::string_view sv) noexcept {
 	return ctre::match<vector_pattern>(sv);
 }
 
+static constexpr auto array_pattern =
+    ctll::fixed_string {"struct std::array<.*>"};
+
+constexpr auto match_array(std::string_view sv) noexcept {
+	return ctre::match<array_pattern>(sv);
+}
+
 static constexpr auto allocator_pattern =
     ctll::fixed_string {"class std::allocator<.*>"};
 
@@ -26,7 +33,7 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::Vector;
 	} else if (match_allocator(type)) {
 		return ContainerType::Allocator;
-	} else if (type == "array") {
+	} else if (match_array(type)) {
 		return ContainerType::Array;
 	} else if (type == "map") {
 		return ContainerType::Map;
