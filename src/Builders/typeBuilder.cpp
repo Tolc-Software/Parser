@@ -7,7 +7,6 @@
 #include <clang/AST/DeclTemplate.h>
 #include <clang/AST/Type.h>
 #include <llvm/Support/Casting.h>
-#include <memory>
 #include <queue>
 #include <variant>
 #include <vector>
@@ -143,9 +142,6 @@ std::optional<IR::Type> buildType(clang::QualType type) {
 	if (auto irType = buildOneLevelIRType(type)) {
 		topLevelType = irType.value();
 		typesToProcess.push(buildProxyType(topLevelType.value(), type));
-	} else {
-		// TODO: Handle not being able to parse type
-		return {};
 	}
 
 	// Process template arguments
