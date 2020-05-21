@@ -26,6 +26,13 @@ constexpr auto match_map(std::string_view sv) noexcept {
 	return ctre::match<map_pattern>(sv);
 }
 
+static constexpr auto unordered_map_pattern =
+    ctll::fixed_string {"class std::unordered_map<.*>"};
+
+constexpr auto match_unordered_map(std::string_view sv) noexcept {
+	return ctre::match<unordered_map_pattern>(sv);
+}
+
 static constexpr auto set_pattern = ctll::fixed_string {"class std::set<.*>"};
 
 constexpr auto match_set(std::string_view sv) noexcept {
@@ -60,6 +67,20 @@ constexpr auto match_less(std::string_view sv) noexcept {
 	return ctre::match<less_pattern>(sv);
 }
 
+static constexpr auto hash_pattern =
+    ctll::fixed_string {"struct std::hash<.*>"};
+
+constexpr auto match_hash(std::string_view sv) noexcept {
+	return ctre::match<hash_pattern>(sv);
+}
+
+static constexpr auto equal_to_pattern =
+    ctll::fixed_string {"struct std::equal_to<.*>"};
+
+constexpr auto match_equal_to(std::string_view sv) noexcept {
+	return ctre::match<equal_to_pattern>(sv);
+}
+
 std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 	using IR::ContainerType;
 	if (match_vector(type)) {
@@ -78,10 +99,14 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::Map;
 	} else if (match_pair(type)) {
 		return ContainerType::Pair;
+	} else if (match_equal_to(type)) {
+		return ContainerType::Equal_to;
+	} else if (match_hash(type)) {
+		return ContainerType::Hash;
+	} else if (match_unordered_map(type)) {
+		return ContainerType::Unordered_map;
 	} else if (type == "tuple") {
 		return ContainerType::Tuple;
-	} else if (type == "unordered_map") {
-		return ContainerType::Unordered_map;
 	} else if (type == "unordered_set") {
 		return ContainerType::Unordered_set;
 	}

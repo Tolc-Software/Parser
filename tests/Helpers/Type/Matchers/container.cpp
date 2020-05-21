@@ -65,3 +65,35 @@ TEST_CASE("std::pair", "[container]") {
 	REQUIRE(ir.has_value());
 	REQUIRE(ir.value() == IR::ContainerType::Pair);
 }
+
+TEST_CASE("std::unordered_map", "[container]") {
+	using namespace Helpers::Type::Matchers;
+	std::string unordered_map =
+	    "class std::unordered_map<char, char, struct std::hash<char>, struct std::equal_to<char>, class std::allocator<struct std::pair<const char, char> > >";
+	CAPTURE(unordered_map);
+
+	auto ir = getContainerType(unordered_map);
+	REQUIRE(ir.has_value());
+	REQUIRE(ir.value() == IR::ContainerType::Unordered_map);
+}
+
+TEST_CASE("std::equal_to", "[container]") {
+	using namespace Helpers::Type::Matchers;
+	std::string equal_to = "struct std::equal_to<char>";
+	CAPTURE(equal_to);
+
+	auto ir = getContainerType(equal_to);
+	REQUIRE(ir.has_value());
+	REQUIRE(ir.value() == IR::ContainerType::Equal_to);
+}
+
+TEST_CASE("std::hash", "[container]") {
+	using namespace Helpers::Type::Matchers;
+	std::string hash = "struct std::hash<char>";
+	CAPTURE(hash);
+
+	auto ir = getContainerType(hash);
+	REQUIRE(ir.has_value());
+	REQUIRE(ir.value() == IR::ContainerType::Hash);
+}
+
