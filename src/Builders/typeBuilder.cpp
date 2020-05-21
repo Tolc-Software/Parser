@@ -6,7 +6,6 @@
 #include <clang/AST/Decl.h>
 #include <clang/AST/DeclTemplate.h>
 #include <clang/AST/Type.h>
-#include <iostream>
 #include <llvm/Support/Casting.h>
 #include <queue>
 #include <variant>
@@ -69,10 +68,6 @@ bool isTemplateSpecialization(IR::Type const& type) {
 std::optional<IR::Type> buildOneLevelIRType(clang::QualType type) {
 	// What the user wrote
 	auto representation = type.getAsString();
-
-	if (auto record = type->getAsCXXRecordDecl()) {
-		getTemplateArgs(record);
-	}
 
 	// Remove using aliases
 	type = type.getCanonicalType();

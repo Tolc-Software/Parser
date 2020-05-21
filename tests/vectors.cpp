@@ -4,7 +4,7 @@
 #include <fmt/format.h>
 #include <variant>
 
-TEST_CASE("Deeply nested classes", "[containers]") {
+TEST_CASE("Deeply nested classes", "[vector]") {
 	for (auto baseType :
 	     TestUtil::getBaseTypes(/* excluding */ {"std::string", "void"})) {
 		auto code = R"(
@@ -36,10 +36,10 @@ struct MyClass {
 		// {{baseType}, std::allocator<{baseType}>}
 		REQUIRE(vectorType->m_containedTypes.size() == 2);
 		for (auto const& type : vectorType->m_containedTypes) {
-			if (auto baseInt = std::get_if<IR::Type::Value>(&type.m_type)) {
+			if (auto value = std::get_if<IR::Type::Value>(&type.m_type)) {
 				auto base = TestUtil::getIRFromString(baseType);
 				REQUIRE(base.has_value());
-				REQUIRE(baseInt->m_base == base.value());
+				REQUIRE(value->m_base == base.value());
 				REQUIRE(type.m_isConst == false);
 				REQUIRE(type.m_isReference == false);
 				REQUIRE(type.m_representation == baseType);

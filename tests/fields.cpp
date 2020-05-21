@@ -91,6 +91,7 @@ class MyClass {
 		auto& [access, variable] = myClass.m_memberVariables.back();
 		CHECK(variable.m_name == "s");
 		TestUtil::compare(variable.m_type, IR::BaseType::String);
+		CHECK(variable.m_type.m_representation == "std::string");
 	}
 }
 

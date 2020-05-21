@@ -35,6 +35,7 @@ foreach(test
   files.cpp
   vectors.cpp
   arrays.cpp
+  sets.cpp
   unordered_maps.cpp
   functions.cpp
   fields.cpp
