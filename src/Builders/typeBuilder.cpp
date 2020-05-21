@@ -14,11 +14,10 @@
 
 namespace Builders {
 
-// Generate vector<QualType> with all types that class uses if it tempalated
 /**
 * Returns a vector of QualType's which corresponds to the inputs template arguments list
 * E.g.
-*   std::vector<int> -> {int, std::allocator<int>}
+*   std::vector<int, std::allocator<int>> -> {int, std::allocator<int>}
 */
 std::vector<clang::QualType>
 getTemplateArgs(clang::CXXRecordDecl const* classDecl) {
