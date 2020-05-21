@@ -39,6 +39,13 @@ constexpr auto match_set(std::string_view sv) noexcept {
 	return ctre::match<set_pattern>(sv);
 }
 
+static constexpr auto unordered_set_pattern =
+    ctll::fixed_string {"class std::unordered_set<.*>"};
+
+constexpr auto match_unordered_set(std::string_view sv) noexcept {
+	return ctre::match<unordered_set_pattern>(sv);
+}
+
 static constexpr auto allocator_pattern =
     ctll::fixed_string {"class std::allocator<.*>"};
 
@@ -105,10 +112,10 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::Hash;
 	} else if (match_unordered_map(type)) {
 		return ContainerType::Unordered_map;
+	} else if (match_unordered_set(type)) {
+		return ContainerType::Unordered_set;
 	} else if (type == "tuple") {
 		return ContainerType::Tuple;
-	} else if (type == "unordered_set") {
-		return ContainerType::Unordered_set;
 	}
 	return {};
 }

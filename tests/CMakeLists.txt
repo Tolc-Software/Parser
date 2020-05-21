@@ -31,26 +31,27 @@ target_code_coverage(Parser)
 add_code_coverage_all_targets()
 
 foreach(test
-  multipleClasses.cpp
-  files.cpp
-  vectors.cpp
   arrays.cpp
+  classes.cpp
+  fields.cpp
+  files.cpp
+  functions.cpp
+  maps.cpp
+  multipleClasses.cpp
+  namespaces.cpp
+  references.cpp
+  representation.cpp
   sets.cpp
   unordered_maps.cpp
-  functions.cpp
-  fields.cpp
-  namespaces.cpp
-  maps.cpp
-  classes.cpp
+  unordered_sets.cpp
   userDefined.cpp
-  representation.cpp
-  references.cpp
+  vectors.cpp
 
+  Helpers/Type/Matchers/container.cpp
   Helpers/Type/matchers.cpp
   Helpers/Utils/split.cpp
-  Helpers/includes.cpp
   Helpers/Utils/string.cpp
-  Helpers/Type/Matchers/container.cpp
+  Helpers/includes.cpp
 )
   # Ex: PybindProxy/moduleFile.cpp -> moduleFile
   get_filename_component(testName ${test} NAME_WLE)

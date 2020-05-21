@@ -97,3 +97,14 @@ TEST_CASE("std::hash", "[container]") {
 	REQUIRE(ir.value() == IR::ContainerType::Hash);
 }
 
+TEST_CASE("std::unordered_set", "[container]") {
+	using namespace Helpers::Type::Matchers;
+	std::string unordered_set =
+	    "class std::unordered_set<char, struct std::hash<char>, struct std::equal_to<char>, class std::allocator<char> >";
+	CAPTURE(unordered_set);
+
+	auto ir = getContainerType(unordered_set);
+	REQUIRE(ir.has_value());
+	REQUIRE(ir.value() == IR::ContainerType::Unordered_set);
+}
+
