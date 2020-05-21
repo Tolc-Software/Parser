@@ -4,7 +4,7 @@
 #include <fmt/format.h>
 #include <variant>
 
-TEST_CASE("Deeply nested classes", "[vector]") {
+TEST_CASE("std::vector<baseType>", "[vector]") {
 	for (auto baseType :
 	     TestUtil::getBaseTypes(/* excluding */ {"std::string", "void"})) {
 		auto code = R"(

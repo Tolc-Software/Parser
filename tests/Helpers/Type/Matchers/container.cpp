@@ -44,3 +44,24 @@ TEST_CASE("std::set", "[container]") {
 	REQUIRE(ir.has_value());
 	REQUIRE(ir.value() == IR::ContainerType::Set);
 }
+
+TEST_CASE("std::map", "[container]") {
+	using namespace Helpers::Type::Matchers;
+	std::string map =
+	    "class std::map<char, char, struct std::less<char>, class std::allocator<struct std::pair<const char, char> > >";
+	CAPTURE(map);
+
+	auto ir = getContainerType(map);
+	REQUIRE(ir.has_value());
+	REQUIRE(ir.value() == IR::ContainerType::Map);
+}
+
+TEST_CASE("std::pair", "[container]") {
+	using namespace Helpers::Type::Matchers;
+	std::string pair = "struct std::pair<const char, char>";
+	CAPTURE(pair);
+
+	auto ir = getContainerType(pair);
+	REQUIRE(ir.has_value());
+	REQUIRE(ir.value() == IR::ContainerType::Pair);
+}

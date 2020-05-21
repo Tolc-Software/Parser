@@ -20,6 +20,12 @@ constexpr auto match_array(std::string_view sv) noexcept {
 	return ctre::match<array_pattern>(sv);
 }
 
+static constexpr auto map_pattern = ctll::fixed_string {"class std::map<.*>"};
+
+constexpr auto match_map(std::string_view sv) noexcept {
+	return ctre::match<map_pattern>(sv);
+}
+
 static constexpr auto set_pattern = ctll::fixed_string {"class std::set<.*>"};
 
 constexpr auto match_set(std::string_view sv) noexcept {
@@ -31,6 +37,13 @@ static constexpr auto allocator_pattern =
 
 constexpr auto match_allocator(std::string_view sv) noexcept {
 	return ctre::match<allocator_pattern>(sv);
+}
+
+static constexpr auto pair_pattern =
+    ctll::fixed_string {"struct std::pair<.*>"};
+
+constexpr auto match_pair(std::string_view sv) noexcept {
+	return ctre::match<pair_pattern>(sv);
 }
 
 static constexpr auto greater_pattern =
@@ -61,8 +74,12 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::Less;
 	} else if (match_set(type)) {
 		return ContainerType::Set;
-	} else if (type == "map") {
+	} else if (match_map(type)) {
 		return ContainerType::Map;
+	} else if (match_pair(type)) {
+		return ContainerType::Pair;
+	} else if (type == "tuple") {
+		return ContainerType::Tuple;
 	} else if (type == "unordered_map") {
 		return ContainerType::Unordered_map;
 	} else if (type == "unordered_set") {

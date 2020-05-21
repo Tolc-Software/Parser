@@ -40,6 +40,7 @@ foreach(test
   functions.cpp
   fields.cpp
   namespaces.cpp
+  maps.cpp
   classes.cpp
   userDefined.cpp
   representation.cpp
