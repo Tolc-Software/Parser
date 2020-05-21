@@ -2,7 +2,6 @@
 
 #include "IR/ir.hpp"
 #include <deque>
-#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -19,11 +18,6 @@ enum class Structure {
 	Namespace,
 	Struct,
 	Function,
-};
-
-struct Type {
-	IR::Type* m_type;
-	std::vector<std::unique_ptr<IR::Type>> m_templateArgs;
 };
 
 /**

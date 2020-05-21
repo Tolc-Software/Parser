@@ -7,6 +7,7 @@
 #include <clang/AST/DeclTemplate.h>
 #include <clang/AST/Type.h>
 #include <llvm/Support/Casting.h>
+#include <memory>
 #include <queue>
 #include <variant>
 #include <vector>
@@ -105,47 +106,67 @@ std::optional<IR::Type> buildOneLevelIRType(clang::QualType type) {
 }
 
 /**
-* Return true if type can have a template list
+* Used to link an IR type with its template arguments
 */
-IR::Type* addToTemplatedList(IR::Type& type, IR::Type& toBeAdded) {
-	if (auto container = std::get_if<IR::Type::Container>(&type.m_type)) {
-		container->m_containedTypes.push_back(toBeAdded);
-		return &container->m_containedTypes.back();
+struct ProxyType {
+	IR::Type* m_type;
+	std::vector<std::pair<IR::Type, clang::QualType>> m_templateArgs;
+};
+
+/**
+* Builds a ProxyType that contains template arguments of irType
+*/
+ProxyType buildProxyType(IR::Type& irType, clang::QualType type) {
+	ProxyType p;
+	p.m_type = &irType;
+	// Check if we need to go even further
+	if (isTemplateSpecialization(irType) && isTemplateSpecialization(type)) {
+		for (auto templateArg : getTemplateArgs(type)) {
+			if (auto irTemplateArg = buildOneLevelIRType(templateArg)) {
+				p.m_templateArgs.emplace_back(
+				    std::make_pair(irTemplateArg.value(), templateArg));
+			}
+		}
 	}
-	return nullptr;
+	return p;
+}
+
+/**
+* Try to get the container type from type, otherwise nullptr
+*/
+IR::Type::Container* getContainer(IR::Type* type) {
+	return std::get_if<IR::Type::Container>(&type->m_type);
 }
 
 std::optional<IR::Type> buildType(clang::QualType type) {
 	std::optional<IR::Type> topLevelType = std::nullopt;
-	std::queue<std::pair<IR::Type*, clang::QualType>> typesToProcess;
+	std::queue<ProxyType> typesToProcess;
 	if (auto irType = buildOneLevelIRType(type)) {
 		topLevelType = irType.value();
-		typesToProcess.push({&topLevelType.value(), type});
+		typesToProcess.push(buildProxyType(topLevelType.value(), type));
 	} else {
 		// TODO: Handle not being able to parse type
 		return {};
 	}
 
+	// Process template arguments
 	while (!typesToProcess.empty()) {
-		auto [currentType, currentQualType] = typesToProcess.front();
-		// Go one step down
-		for (auto qualTemplateArg : getTemplateArgs(currentQualType)) {
-			// Try to convert to ir
-			if (auto irType = buildOneLevelIRType(qualTemplateArg)) {
-				// Push it onto the current ir
-				if (auto irTemplateArg =
-				        addToTemplatedList(*currentType, irType.value())) {
-					// Check if we need to go even further
-					if (isTemplateSpecialization(*irTemplateArg) &&
-					    isTemplateSpecialization(qualTemplateArg)) {
-						typesToProcess.push({irTemplateArg, qualTemplateArg});
-					}
-				}
-			} else {
-				// TODO: Handle not being able to parse type
-				return {};
+		auto& currentType = typesToProcess.front();
+		if (auto container = getContainer(currentType.m_type)) {
+			// Is needed to avoid pointer to reallocated vector entry
+			container->m_containedTypes.reserve(
+			    currentType.m_templateArgs.size());
+
+			for (auto const& [irTemplateArg, clangTemplateArg] :
+			     currentType.m_templateArgs) {
+				container->m_containedTypes.push_back(irTemplateArg);
+
+				typesToProcess.push(buildProxyType(
+				    container->m_containedTypes.back(), clangTemplateArg));
 			}
 		}
+
+		// NOTE: This has to be at the bottom for currentType to survive this long
 		typesToProcess.pop();
 	}
 
