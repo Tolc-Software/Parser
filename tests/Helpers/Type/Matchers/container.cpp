@@ -66,6 +66,17 @@ TEST_CASE("std::pair", "[container]") {
 	REQUIRE(ir.value() == IR::ContainerType::Pair);
 }
 
+TEST_CASE("std::tuple", "[container]") {
+	using namespace Helpers::Type::Matchers;
+	std::string tuple =
+	    "class std::tuple<class std::__cxx11::basic_string<char>, int>";
+	CAPTURE(tuple);
+
+	auto ir = getContainerType(tuple);
+	REQUIRE(ir.has_value());
+	REQUIRE(ir.value() == IR::ContainerType::Tuple);
+}
+
 TEST_CASE("std::unordered_map", "[container]") {
 	using namespace Helpers::Type::Matchers;
 	std::string unordered_map =

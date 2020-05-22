@@ -35,6 +35,7 @@ foreach(test
   classes.cpp
   fields.cpp
   files.cpp
+  tuples.cpp
   functions.cpp
   maps.cpp
   multipleClasses.cpp

@@ -60,6 +60,13 @@ constexpr auto match_pair(std::string_view sv) noexcept {
 	return ctre::match<pair_pattern>(sv);
 }
 
+static constexpr auto tuple_pattern =
+    ctll::fixed_string {"class std::tuple<.*>"};
+
+constexpr auto match_tuple(std::string_view sv) noexcept {
+	return ctre::match<tuple_pattern>(sv);
+}
+
 static constexpr auto greater_pattern =
     ctll::fixed_string {"struct std::greater<.*>"};
 
@@ -114,7 +121,7 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::Unordered_map;
 	} else if (match_unordered_set(type)) {
 		return ContainerType::Unordered_set;
-	} else if (type == "tuple") {
+	} else if (match_tuple(type)) {
 		return ContainerType::Tuple;
 	}
 	return {};
