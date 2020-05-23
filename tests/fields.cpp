@@ -105,7 +105,7 @@ TEST_CASE("Member variables of base types", "[fields]") {
 			//     class MyClass { std::string m_member; };
 			std::string code =
 			    include + "\nclass MyClass { " + type + " m_member; };";
-			auto globalNS = Parser::parseString(code);
+			auto globalNS = TestUtil::parseString(code);
 			// Print on error
 			CAPTURE(code);
 			CAPTURE(type);
@@ -136,7 +136,7 @@ TEST_CASE("Member variables of base types with using", "[fields]") {
 			std::string code = include + "\nusing MyWeirdType = " + type +
 			                   ";\n" +
 			                   "\nclass MyClass { MyWeirdType m_member; };";
-			auto globalNS = Parser::parseString(code);
+			auto globalNS = TestUtil::parseString(code);
 			// Print on error
 			CAPTURE(code);
 			CAPTURE(type);

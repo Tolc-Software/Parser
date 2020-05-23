@@ -48,6 +48,7 @@ foreach(test
   userDefined.cpp
   vectors.cpp
 
+  Parser/Parse.cpp
   Helpers/Type/Matchers/container.cpp
   Helpers/Type/matchers.cpp
   Helpers/Utils/split.cpp

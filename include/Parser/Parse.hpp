@@ -11,7 +11,7 @@ namespace Parser {
 *
 * @return: IR::Namespace - The global namespace
 */
-IR::Namespace parseFile(std::string const& filename);
+std::optional<IR::Namespace> parseFile(std::string const& filename);
 
 /**
 * @brief: Parse the input as C++ code and return the intermediate representation.
@@ -20,5 +20,5 @@ IR::Namespace parseFile(std::string const& filename);
 *
 * @return: IR::Namespace - The global namespace
 */
-IR::Namespace parseString(std::string const& code);
+std::optional<IR::Namespace> parseString(std::string const& code);
 }

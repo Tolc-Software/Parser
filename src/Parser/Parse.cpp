@@ -5,10 +5,11 @@
 #include <clang/Tooling/CompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace Parser {
-IR::Namespace parseFile(std::string const& filename) {
+std::optional<IR::Namespace> parseFile(std::string const& filename) {
 	IR::Namespace parsedIR;
 
 	// Create the db for flags
@@ -17,19 +18,26 @@ IR::Namespace parseFile(std::string const& filename) {
 	    fromDirectory, Helpers::getSystemIncludes());
 
 	clang::tooling::ClangTool tool(compDb, {filename});
-	tool.run(Factory::newParserFrontendActionFactory(parsedIR).get());
+	auto error =
+	    tool.run(Factory::newParserFrontendActionFactory(parsedIR).get());
 
-	return parsedIR;
+	if (error == 0) {
+		return parsedIR;
+	}
+	return std::nullopt;
 }
 
-IR::Namespace parseString(std::string const& code) {
+std::optional<IR::Namespace> parseString(std::string const& code) {
 	IR::Namespace parsedIR;
-	clang::tooling::runToolOnCodeWithArgs(
+	auto parsedSuccessfully = clang::tooling::runToolOnCodeWithArgs(
 	    std::make_unique<Frontend::ParserFrontendAction>(parsedIR),
 	    code.c_str(),
 	    Helpers::getSystemIncludes());
 
-	return parsedIR;
+	if (parsedSuccessfully) {
+		return parsedIR;
+	}
+	return std::nullopt;
 }
 
 }    // namespace Parser

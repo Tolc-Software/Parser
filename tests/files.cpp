@@ -1,13 +1,14 @@
 #include "TestUtil/files.hpp"
 #include "Parser/Parse.hpp"
 #include "TestUtil/compare.hpp"
+#include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
 
 TEST_CASE("Simple namespace", "[files]") {
 	auto file = TestUtil::writeToFile(R"(
 namespace Simple {}
 )");
-	auto globalNS = Parser::parseFile(file);
+	auto globalNS = TestUtil::parseFile(file);
 	REQUIRE(globalNS.m_namespaces.size() == 1);
 	auto& testNs = globalNS.m_namespaces[0];
 
@@ -18,7 +19,7 @@ TEST_CASE("Simple struct", "[files]") {
 	auto file = TestUtil::writeToFile(R"(
 class Simple {};
 )");
-	auto globalNS = Parser::parseFile(file);
+	auto globalNS = TestUtil::parseFile(file);
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto& simple = globalNS.m_structs[0];
 	REQUIRE(simple.m_name == "Simple");
@@ -28,7 +29,7 @@ TEST_CASE("Simple function", "[files]") {
 	auto file = TestUtil::writeToFile(R"(
 void fun();
 )");
-	auto globalNS = Parser::parseFile(file);
+	auto globalNS = TestUtil::parseFile(file);
 	REQUIRE(globalNS.m_functions.size() == 1);
 	auto fun = globalNS.m_functions[0];
 	CHECK(fun.m_name == "fun");
@@ -42,7 +43,7 @@ class MyClass {
 	int i;
 };
 		)");
-	auto globalNS = Parser::parseFile(file);
+	auto globalNS = TestUtil::parseFile(file);
 	SECTION("Parser finds the variable") {
 		REQUIRE(globalNS.m_structs.size() == 1);
 		auto myClass = globalNS.m_structs[0];
