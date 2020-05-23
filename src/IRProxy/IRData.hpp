@@ -33,6 +33,8 @@ struct Struct {
 	std::deque<std::pair<std::string, Structure>> m_path;
 	// The variables within the struct/class
 	std::vector<std::pair<IR::AccessModifier, IR::Variable>> m_variables;
+
+	bool m_hasDefaultConstructor;
 };
 
 /**

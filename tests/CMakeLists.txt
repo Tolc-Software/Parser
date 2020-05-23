@@ -41,6 +41,7 @@ foreach(test
   multipleClasses.cpp
   namespaces.cpp
   references.cpp
+  dataStructs.cpp
   representation.cpp
   sets.cpp
   unordered_maps.cpp

@@ -1,7 +1,7 @@
 #include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
 
-TEST_CASE("Deeply nested classes", "[namespaces]") {
+TEST_CASE("Deeply nested classes", "[classes]") {
 	auto code = R"(
 #include <string>
 
@@ -40,6 +40,7 @@ public:
 		auto& simple = globalNS.m_structs[0];
 		REQUIRE(simple.m_name == "Simple");
 		REQUIRE(simple.m_functions.size() == 1);
+		REQUIRE(simple.m_hasDefaultConstructor);
 		auto [access, constructor] = simple.m_functions.back();
 		REQUIRE(constructor.m_name == "Simple");
 		REQUIRE(access == IR::AccessModifier::Public);
@@ -47,20 +48,14 @@ public:
 }
 
 TEST_CASE("Finds a global class", "[classes]") {
-	auto globalNS = TestUtil::parseString("class Simple {}; ");
-	SECTION("Parser finds an empty class named Simple") {
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto& simple = globalNS.m_structs[0];
-		REQUIRE(simple.m_name == "Simple");
-	}
-}
-
-TEST_CASE("Finds a global struct", "[classes]") {
-	auto globalNS = TestUtil::parseString("struct Simple {}; ");
-	SECTION("Parser finds an empty struct named Simple") {
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto& simple = globalNS.m_structs[0];
-		REQUIRE(simple.m_name == "Simple");
+	for (std::string structure : {"class", "struct"}) {
+		auto globalNS = TestUtil::parseString(structure + " Simple {}; ");
+		SECTION("Parser finds an empty structure named Simple") {
+			REQUIRE(globalNS.m_structs.size() == 1);
+			auto& simple = globalNS.m_structs[0];
+			REQUIRE(simple.m_hasDefaultConstructor);
+			REQUIRE(simple.m_name == "Simple");
+		}
 	}
 }
 
