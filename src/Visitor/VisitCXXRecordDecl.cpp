@@ -18,7 +18,8 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 	parsedStruct.m_path =
 	    Builders::buildStructure(classDecl, IRProxy::Structure::Struct);
 
-	parsedStruct.m_hasDefaultConstructor = classDecl->hasDefaultConstructor();
+	parsedStruct.m_hasImplicitDefaultConstructor =
+	    classDecl->needsImplicitDefaultConstructor();
 
 	m_irData.m_structs.push_back(parsedStruct);
 	// Continue the AST search

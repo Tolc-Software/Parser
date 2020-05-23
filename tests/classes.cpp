@@ -40,7 +40,7 @@ public:
 		auto& simple = globalNS.m_structs[0];
 		REQUIRE(simple.m_name == "Simple");
 		REQUIRE(simple.m_functions.size() == 1);
-		REQUIRE(simple.m_hasDefaultConstructor);
+		REQUIRE(simple.m_hasImplicitDefaultConstructor);
 		auto [access, constructor] = simple.m_functions.back();
 		REQUIRE(constructor.m_name == "Simple");
 		REQUIRE(access == IR::AccessModifier::Public);
@@ -53,7 +53,7 @@ TEST_CASE("Finds a global class", "[classes]") {
 		SECTION("Parser finds an empty structure named Simple") {
 			REQUIRE(globalNS.m_structs.size() == 1);
 			auto& simple = globalNS.m_structs[0];
-			REQUIRE(simple.m_hasDefaultConstructor);
+			REQUIRE(simple.m_hasImplicitDefaultConstructor);
 			REQUIRE(simple.m_name == "Simple");
 		}
 	}

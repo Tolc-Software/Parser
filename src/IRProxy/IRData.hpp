@@ -34,7 +34,7 @@ struct Struct {
 	// The variables within the struct/class
 	std::vector<std::pair<IR::AccessModifier, IR::Variable>> m_variables;
 
-	bool m_hasDefaultConstructor;
+	bool m_hasImplicitDefaultConstructor;
 };
 
 /**
