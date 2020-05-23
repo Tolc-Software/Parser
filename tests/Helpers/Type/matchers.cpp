@@ -1,13 +1,16 @@
 #include "Helpers/Type/matchers.hpp"
 #include <catch2/catch.hpp>
+#include <string>
 
 TEST_CASE("User defined strings are parsed correctly", "[matchers]") {
 	for (auto const& className : {"MyClass", "struct", "structeD"}) {
-		std::string userDefined = std::string("struct ") + className;
-		CAPTURE(userDefined);
-		auto ud = Helpers::Type::getUserDefinedType(userDefined);
-		REQUIRE(ud.has_value());
-		REQUIRE(ud.value().m_representation == className);
+		for (std::string declaration : {"struct ", "class "}) {
+			std::string userDefined = declaration + className;
+			CAPTURE(userDefined);
+			auto ud = Helpers::Type::getUserDefinedType(userDefined);
+			REQUIRE(ud.has_value());
+			REQUIRE(ud.value().m_representation == className);
+		}
 	}
 }
 

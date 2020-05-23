@@ -1,5 +1,6 @@
 #include "Helpers/Type/matchers.hpp"
 #include <IR/ir.hpp>
+#include <array>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -27,13 +28,17 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 	return {};
 }
 
-std::optional<std::string> removeStructDeclaration(std::string_view type) {
-	constexpr static std::string_view structDeclaration = "struct ";
-	if (type.size() > structDeclaration.size()) {
-		// Check for our struct declaration
-		if (type.substr(0, structDeclaration.size()) == structDeclaration) {
-			// Remove it and return the rest
-			return std::string(type.substr(structDeclaration.size()));
+std::optional<std::string>
+removeClassOrStructDeclaration(std::string_view type) {
+	constexpr static std::array<std::string_view, 2> declarations = {"struct ",
+	                                                                 "class "};
+	for (auto const& declaration : declarations) {
+		if (type.size() > declaration.size()) {
+			// Check for our struct declaration
+			if (type.substr(0, declaration.size()) == declaration) {
+				// Remove it and return the rest
+				return std::string(type.substr(declaration.size()));
+			}
 		}
 	}
 	return {};
@@ -50,7 +55,7 @@ std::optional<IR::Type::Value> getValueType(std::string_view type) {
 
 std::optional<IR::Type::UserDefined> getUserDefinedType(std::string_view type) {
 	// All user defined are given as "struct FullyQualifiedNameOfClass"
-	if (auto userDefined = removeStructDeclaration(type)) {
+	if (auto userDefined = removeClassOrStructDeclaration(type)) {
 		IR::Type::UserDefined ud;
 		ud.m_representation = userDefined.value();
 		return ud;
