@@ -23,6 +23,14 @@ IR::Type buildTypeFromValue(IR::Type::Value value) {
 	type.m_type = value;
 	return type;
 }
+/**
+* Take a enum type and create a full type
+*/
+IR::Type buildTypeFromEnum(IR::Type::EnumValue enumValue) {
+	IR::Type type;
+	type.m_type = enumValue;
+	return type;
+}
 
 /**
 * Take a user defined type and create a full type
@@ -55,6 +63,8 @@ std::optional<IR::Type> getIRType(std::string_view type) {
 		return buildTypeFromValue(value.value());
 	} else if (auto containerType = Matchers::getContainerType(type)) {
 		return buildTypeFromContainer(containerType.value());
+	} else if (auto enumType = getEnumType(type)) {
+		return buildTypeFromEnum(enumType.value());
 	} else if (auto userDefined = getUserDefinedType(type)) {
 		return buildTypeFromUserDefined(userDefined.value());
 	}

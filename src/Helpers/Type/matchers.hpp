@@ -13,4 +13,7 @@ std::optional<IR::Type::Value> getValueType(std::string_view type);
 // Tries to match the input to a user defined struct type
 std::optional<IR::Type::UserDefined> getUserDefinedType(std::string_view type);
 
+// Tries to match the input to an enum
+std::optional<IR::Type::EnumValue> getEnumType(std::string_view type);
+
 }    // namespace Helpers::Type

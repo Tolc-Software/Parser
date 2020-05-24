@@ -89,7 +89,7 @@ std::optional<IR::Type> buildOneLevelIRType(clang::QualType type) {
 
 		// User defined types has a string type as {const struct UserDefined&}
 		// But since we are not interested in the "struct " part, we remove it if it exists
-		for (auto classPrefix : {"struct ", "class "}) {
+		for (auto classPrefix : {"struct ", "class ", "enum "}) {
 			representation =
 			    Helpers::Utils::removeSubString(representation, classPrefix);
 		}

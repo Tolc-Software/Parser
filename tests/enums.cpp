@@ -79,3 +79,79 @@ struct S {
 		REQUIRE(e.m_values.back() == "Value");
 	}
 }
+
+TEST_CASE("enum as a type in a function", "[enums]") {
+	auto code = R"(
+
+enum class E {
+	V0,
+};
+
+namespace MyLib {
+	enum class E2 {
+		V2,
+	};
+}
+
+E f(MyLib::E2 e);
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_functions.size() == 1);
+	auto& f = globalNS.m_functions.back();
+	REQUIRE(f.m_returnType.m_isConst == false);
+	REQUIRE(f.m_returnType.m_isReference == false);
+	REQUIRE(f.m_returnType.m_representation == "E");
+
+	REQUIRE(f.m_arguments.size() == 1);
+	REQUIRE(f.m_arguments.size() == 1);
+	auto& e = f.m_arguments.back();
+	REQUIRE(e.m_name == "e");
+	REQUIRE(e.m_type.m_isConst == false);
+	REQUIRE(e.m_type.m_isReference == false);
+	REQUIRE(e.m_type.m_representation == "MyLib::E2");
+}
+
+TEST_CASE("enum as a type in a class", "[enums]") {
+	auto code = R"(
+
+enum class E {
+	V0,
+};
+
+namespace MyLib {
+	enum class E2 {
+		V2,
+	};
+}
+
+class C {
+public:
+	E m_e;
+private:
+	MyLib::E2 m_e2;
+};
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto& C = globalNS.m_structs.back();
+	REQUIRE(C.m_memberVariables.size() == 2);
+	for (auto const& [am, e] : C.m_memberVariables) {
+		CAPTURE(e.m_name);
+		auto enumValue = std::get_if<IR::Type::EnumValue>(&e.m_type.m_type);
+		REQUIRE(enumValue != nullptr);
+		if (e.m_name == "m_e") {
+			REQUIRE(am == IR::AccessModifier::Public);
+			REQUIRE(enumValue->m_representation == "E");
+		} else if (e.m_name == "m_e2") {
+			REQUIRE(am == IR::AccessModifier::Private);
+			REQUIRE(enumValue->m_representation == "MyLib::E2");
+		} else {
+			REQUIRE(false);
+		}
+		REQUIRE(e.m_type.m_isConst == false);
+		REQUIRE(e.m_type.m_isReference == false);
+	}
+}
+
