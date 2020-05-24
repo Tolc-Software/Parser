@@ -65,22 +65,24 @@ configure_file(src/Helpers/includes.cpp.in
 add_llvm_library(
   Parser
   src/Builders/commonBuilder.cpp
+  src/Builders/enumBuilder.cpp
   src/Builders/functionBuilder.cpp
   src/Builders/namespaceBuilder.cpp
   src/Builders/structBuilder.cpp
   src/Builders/typeBuilder.cpp
   src/Consumer/ParserConsumer.cpp
   src/Frontend/ParserFrontendAction.cpp
+  src/Helpers/Type/Matchers/container.cpp
   src/Helpers/Type/matchers.cpp
   src/Helpers/Type/utilities.cpp
   src/Helpers/Utils/split.cpp
+  src/Helpers/Utils/string.cpp
   src/Helpers/includes.cpp
   src/Helpers/walkIRStructure.cpp
-  src/Helpers/Utils/string.cpp
-  src/Helpers/Type/Matchers/container.cpp
   src/Parser/Parse.cpp
   src/Visitor/ParserVisitor.cpp
   src/Visitor/VisitCXXRecordDecl.cpp
+  src/Visitor/VisitEnumDecl.cpp
   src/Visitor/VisitFieldDecl.cpp
   src/Visitor/VisitFunctionDecl.cpp
   src/Visitor/VisitNamespaceDecl.cpp)

@@ -18,7 +18,8 @@ getNameAndRepresentation(IRProxy::Structure const& structure,
 			REQUIRE(s.m_functions.size() == 1);
 			return {s.m_functions[0].second.m_name,
 			        s.m_functions[0].second.m_representation};
-		case Structure::Namespace: break;
+		case Structure::Namespace:
+		case Structure::Enum: break;
 	}
 	return {"default name", "default structure"};
 }
@@ -42,6 +43,7 @@ getNameAndRepresentation(IRProxy::Structure const& structure,
 			return {ns.m_functions[0].m_name,
 			        ns.m_functions[0].m_representation};
 			break;
+		case Structure::Enum: break;
 	}
 	return {"default name", "default structure"};
 }

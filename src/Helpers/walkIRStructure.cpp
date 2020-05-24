@@ -76,6 +76,7 @@ std::variant<IR::Namespace*, IR::Struct*> walkPathThroughStructure(
 				}
 				break;
 			case Structure::Function:
+			case Structure::Enum:
 				// TODO: Handle unknown
 				break;
 		}

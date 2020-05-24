@@ -18,6 +18,7 @@ enum class Structure {
 	Namespace,
 	Struct,
 	Function,
+	Enum,
 };
 
 /**
@@ -58,6 +59,27 @@ struct Function {
 };
 
 /**
+  * Representation of a enum that can be used to create the IR::Enum
+  */
+struct Enum {
+	std::string m_fullyQualifiedName;
+
+	// Fully qualified name with structure annotations
+	// Path to where this struct belongs
+	// Ex:
+	//     Ns::cl => {(Ns, Structure::Namespace), (cl, Structure::Struct)}
+	std::deque<std::pair<std::string, Structure>> m_path;
+
+	// public, private, protected
+	std::optional<IR::AccessModifier> m_modifier;
+
+	// Unscoped values of the enum
+	std::vector<std::string> m_values;
+
+	bool m_isScoped;
+};
+
+/**
   * Representation of a variable within a struct/class
   */
 struct MemberVariable {
@@ -87,6 +109,8 @@ struct IRData {
 	std::vector<Struct> m_structs;
 
 	std::vector<Function> m_functions;
+
+	std::vector<Enum> m_enums;
 
 	// {Fully qualified name of the owning class: variable}
 	std::unordered_map<std::string, std::vector<MemberVariable>> m_memberVariables;

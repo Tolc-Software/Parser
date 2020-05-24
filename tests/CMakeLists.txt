@@ -33,6 +33,7 @@ add_code_coverage_all_targets()
 foreach(test
   arrays.cpp
   classes.cpp
+  enums.cpp
   fields.cpp
   files.cpp
   tuples.cpp

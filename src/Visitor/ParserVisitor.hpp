@@ -23,6 +23,8 @@ public:
 
 	bool VisitFieldDecl(clang::FieldDecl* fieldDecl);
 
+	bool VisitEnumDecl(clang::EnumDecl* enumDecl);
+
 private:
 	clang::ASTContext* m_context;
 

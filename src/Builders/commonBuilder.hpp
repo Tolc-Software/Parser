@@ -33,13 +33,13 @@ buildParentStructure(clang::DeclContext const* parent,
 * @brief: Create a deque combining the type and the names of each DeclContext
 *
 * @param: ClangDecl const* clangDecl,
-*         IRProxy::Structure baseType - The type of the ClangDecl
+*         IRProxy::Structure baseStructure - The type of the ClangDecl
 *
 * @return: std::deque<std::pair<std::string, IRProxy::Structure>>
 */
 template <typename ClangDecl>
 std::deque<std::pair<std::string, IRProxy::Structure>>
-buildStructure(ClangDecl const* clangDecl, IRProxy::Structure baseType) {
+buildStructure(ClangDecl const* clangDecl, IRProxy::Structure baseStructure) {
 	auto splitNames =
 	    Helpers::Utils::split(clangDecl->getQualifiedNameAsString(), "::");
 
@@ -49,7 +49,7 @@ buildStructure(ClangDecl const* clangDecl, IRProxy::Structure baseType) {
 	auto structure =
 	    Builders::buildParentStructure(clangDecl->getParent(), splitNames);
 	// Push the base back in
-	structure.push_back({nameOfDecl, baseType});
+	structure.push_back({nameOfDecl, baseStructure});
 	return structure;
 }
 
