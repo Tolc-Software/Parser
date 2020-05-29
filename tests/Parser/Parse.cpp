@@ -19,8 +19,10 @@ class MyClass {
 	REQUIRE(!nsFromFile.has_value());
 }
 
-TEST_CASE("C++ code within a file with non-c++ extension", "[Parse]") {
-	for (auto extension : {".h", ".c", ".txt", ""}) {
+TEST_CASE("C++ code within a file does not depend on the file extension",
+          "[Parse]") {
+	for (auto extension :
+	     {".h", ".c", ".txt", "", ".cc", ".cpp", ".hpp", ".cxx", ".py"}) {
 		auto code = R"(
 class MyClass {
 	int i;
