@@ -44,7 +44,7 @@ public:
 	}
 
 	// Implicitly converts to the filename
-	operator std::string() const {
+	operator std::filesystem::path() const {
 		return m_filename;
 	}
 

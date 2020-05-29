@@ -4,12 +4,13 @@
 #include "Helpers/includes.hpp"
 #include <clang/Tooling/CompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
+#include <filesystem>
 #include <memory>
 #include <optional>
 #include <string>
 
 namespace Parser {
-std::optional<IR::Namespace> parseFile(std::string const& filename) {
+std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename) {
 	IR::Namespace parsedIR;
 
 	// Create the db for flags

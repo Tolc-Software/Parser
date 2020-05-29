@@ -3,6 +3,7 @@
 #include "Parser/Parse.hpp"
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
+#include <filesystem>
 #include <optional>
 #include <string>
 
@@ -14,7 +15,7 @@ IR::Namespace parseString(std::string const& code) {
 	return ns.has_value() ? ns.value() : IR::Namespace();
 }
 
-IR::Namespace parseFile(std::string const& filepath) {
+IR::Namespace parseFile(std::filesystem::path const& filepath) {
 	auto ns = Parser::parseFile(filepath);
 	REQUIRE(ns.has_value());
 	return ns.has_value() ? ns.value() : IR::Namespace();
