@@ -18,7 +18,7 @@ std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename) {
 
 	// TODO: Make this easier
 	auto args = Helpers::getSystemIncludes();
-	args.push_back("--language c++");
+	args.push_back("-x c++");
 
 	clang::tooling::FixedCompilationDatabase compDb(fromDirectory, args);
 
@@ -36,7 +36,7 @@ std::optional<IR::Namespace> parseString(std::string const& code) {
 	IR::Namespace parsedIR;
 	// TODO: Make this easier
 	auto args = Helpers::getSystemIncludes();
-	args.push_back("--language c++");
+	args.push_back("-x c++");
 
 	auto parsedSuccessfully = clang::tooling::runToolOnCodeWithArgs(
 	    std::make_unique<Frontend::ParserFrontendAction>(parsedIR),
