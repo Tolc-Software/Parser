@@ -16,8 +16,13 @@ std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename) {
 	// Create the db for flags
 	std::string fromDirectory = ".";
 
-	clang::tooling::FixedCompilationDatabase compDb(
-	    fromDirectory, Helpers::getSystemIncludes());
+	// Force the input to be interpreted as C++
+	// TODO: Make this easier
+	std::vector<std::string> args = Helpers::getSystemIncludes();
+	args.push_back("--language");
+	args.push_back("c++");
+
+	clang::tooling::FixedCompilationDatabase compDb(fromDirectory, args);
 
 	clang::tooling::ClangTool tool(compDb, {filename});
 
@@ -33,10 +38,16 @@ std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename) {
 std::optional<IR::Namespace> parseString(std::string const& code) {
 	IR::Namespace parsedIR;
 
+	// Force the input to be interpreted as C++
+	// TODO: Make this easier
+	std::vector<std::string> args = Helpers::getSystemIncludes();
+	args.push_back("--language");
+	args.push_back("c++");
+
 	auto parsedSuccessfully = clang::tooling::runToolOnCodeWithArgs(
 	    std::make_unique<Frontend::ParserFrontendAction>(parsedIR),
 	    code.c_str(),
-	    Helpers::getSystemIncludes());
+	    args);
 
 	if (parsedSuccessfully) {
 		return parsedIR;

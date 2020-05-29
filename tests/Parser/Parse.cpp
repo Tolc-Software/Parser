@@ -18,3 +18,21 @@ class MyClass {
 	auto nsFromFile = Parser::parseFile(file);
 	REQUIRE(!nsFromFile.has_value());
 }
+
+TEST_CASE("C++ code within a file with non-c++ extension", "[Parse]") {
+	for (auto extension : {".h", ".c", ".txt", ""}) {
+		auto code = R"(
+class MyClass {
+	int i;
+};
+)";
+		CAPTURE(extension);
+		CAPTURE(extension);
+		auto ns = Parser::parseString(code);
+		REQUIRE(ns.has_value());
+
+		auto file = TestUtil::writeToFile(code, extension);
+		auto nsFromFile = Parser::parseFile(file);
+		REQUIRE(nsFromFile.has_value());
+	}
+}
