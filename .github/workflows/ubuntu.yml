@@ -26,6 +26,7 @@ jobs:
     - name: download dependencies
       run: |
         pip3 install setuptools
+        pip3 install wheel
         pip3 install conan
 
     - name: configure
