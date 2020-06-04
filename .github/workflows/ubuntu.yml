@@ -25,11 +25,14 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
+    - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
     - name: download dependencies
       run: |
-        pip3 install setuptools
-        pip3 install wheel
-        pip3 install conan
+        python -m pip install setuptools wheel
+        python -m pip install conan
 
     - name: configure
       run: |
