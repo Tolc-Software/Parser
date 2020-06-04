@@ -19,15 +19,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: add ssh key
-      env:
-        SSH_KEY: ${{ secrets.SSH_KEY }}
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-        echo ${SSH_KEY} > ~/.ssh/id_rsa
-        sed -i -e "s#\\\\n#\n#g" ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_KEY }}
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
     - name: download dependencies
       run: |
