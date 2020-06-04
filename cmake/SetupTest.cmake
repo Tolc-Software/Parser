@@ -33,9 +33,11 @@ function(setup_test)
   target_include_directories(${ARG_TEST_NAME} SYSTEM
                              PRIVATE ${llvm_entry_INCLUDE_DIR})
 
-  # Assumes CodeCoverage.cmake is included Adds code coverage to the test and
-  # adds it to the ccov-all target
-  target_code_coverage(${ARG_TEST_NAME} ALL)
+  if(ENABLE_COVERAGE)
+    # Assumes CodeCoverage.cmake is included Adds code coverage to the test and
+    # adds it to the ccov-all target
+    target_code_coverage(${ARG_TEST_NAME} ALL)
+  endif()
 
   add_test(NAME ${ARG_TEST_NAME} COMMAND ${ARG_TEST_NAME})
 endfunction()
