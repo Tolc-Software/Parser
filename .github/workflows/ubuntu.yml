@@ -24,7 +24,9 @@ jobs:
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
     - name: download dependencies
-      run: pip3 install conan
+      run: |
+        pip3 install setuptools
+        pip3 install conan
 
     - name: configure
 
