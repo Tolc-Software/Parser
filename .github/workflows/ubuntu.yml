@@ -25,6 +25,9 @@ jobs:
       with:
         path: ${{github.workspace}}/${{env.INSTALL_LOCATION}}
         key: ${{runner.os}}-dependencies
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_KEY }}
 
     - name: configure
       run: |
