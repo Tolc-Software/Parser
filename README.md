@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/srydell/Parser/workflows/Ubuntu/badge.svg)](https://github.com/srydell/Parser/actions)
+
 # Parser #
 
 Parser is the library for converting a header file of `C++` to the intermediate representation declared in the library `IR::IR`

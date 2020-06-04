@@ -19,6 +19,7 @@ src/Helpers/includes.cpp
 !todo.md
 
 # Directories
+!.github
 !cmake
 !docs
 !include
