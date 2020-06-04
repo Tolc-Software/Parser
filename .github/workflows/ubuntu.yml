@@ -18,14 +18,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_KEY }}
 
     - name: download dependencies
       run: pip3 install conan
 
     - name: configure
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_KEY }}
 
       run: |
         cmake -S. -Bbuild -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_C_COMPILER="clang" -DCMAKE_BUILD_TYPE="Release" -DENABLE_TESTING=ON
