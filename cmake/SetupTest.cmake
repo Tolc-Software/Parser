@@ -1,7 +1,6 @@
 include_guard()
 # Requires other scripts
 include(Catch2Helpers)
-include(CodeCoverage)
 
 # Helper function to create a test
 function(setup_test)
@@ -34,6 +33,7 @@ function(setup_test)
                              PRIVATE ${llvm_entry_INCLUDE_DIR})
 
   if(ENABLE_COVERAGE)
+    include(CodeCoverage)
     # Assumes CodeCoverage.cmake is included Adds code coverage to the test and
     # adds it to the ccov-all target
     target_code_coverage(${ARG_TEST_NAME} ALL)
