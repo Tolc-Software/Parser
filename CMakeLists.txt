@@ -52,13 +52,19 @@ include(AddLLVM)
 # Defines get_platform_specific_includes and format_includes
 include(cmake/IncludePathHelpers.cmake)
 
-# Set the include path for the library We are using the standard library shipped
+# Set the include path for the system library in the variable
+# We are using the standard library shipped
 # with the downloaded llvm for include paths in the parsing
-set(llvm_include_path
-    "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include")
-get_platform_specific_includes(VARIABLE platform_include)
+get_system_include(
+  VARIABLE
+    platform_include
+  LLVM_DIRECTORY
+    ${llvm_entry_SOURCE_DIR}
+  LLVM_VERSION
+    ${llvm_entry_version})
+
 format_includes(VARIABLE INCLUDE_PATH INCLUDES
-                "${platform_include};${llvm_include_path}" SYSTEM)
+                ${platform_include} SYSTEM)
 configure_file(src/Helpers/includes.cpp.in
                ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/includes.cpp @ONLY)
 
@@ -75,6 +81,7 @@ add_llvm_library(
   src/Helpers/Type/Matchers/container.cpp
   src/Helpers/Type/matchers.cpp
   src/Helpers/Type/utilities.cpp
+  src/Helpers/Utils/combine.cpp
   src/Helpers/Utils/split.cpp
   src/Helpers/Utils/string.cpp
   src/Helpers/includes.cpp

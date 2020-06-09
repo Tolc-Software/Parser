@@ -48,11 +48,14 @@ struct MyClass {
 				REQUIRE(allocator->m_container == IR::ContainerType::Allocator);
 				REQUIRE(type.m_isConst == false);
 				REQUIRE(type.m_isReference == false);
-			    REQUIRE(type.m_representation ==
-			            fmt::format("std::allocator<{baseType}>",
-			                        fmt::arg("baseType", baseType)));
+				REQUIRE((type.m_representation ==
+				             fmt::format("std::allocator<{baseType}>",
+				                         fmt::arg("baseType", baseType)) ||
+				         type.m_representation ==
+				             fmt::format("std::__1::allocator<{baseType}>",
+				                         fmt::arg("baseType", baseType))));
 
-			    REQUIRE(allocator->m_containedTypes.size() == 1);
+				REQUIRE(allocator->m_containedTypes.size() == 1);
 				auto& allocInt = allocator->m_containedTypes.back();
 				REQUIRE(allocInt.m_isConst == false);
 				REQUIRE(allocInt.m_isReference == false);
