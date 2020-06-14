@@ -80,5 +80,5 @@ jobs:
       run: |
         go get -v github.com/github-release/github-release
         github-release release --user srydell --repo Parser --tag master-release --name "Head release" --description "This release gets updated with each commit to master" || true
-        github-release upload --user srydell --repo Parser --tag master-release --name "Parser-$(uname)-master" --file Parser-*.tar.gz --replace
+        github-release upload --user srydell --repo Parser --tag master-release --name "Parser-$(uname)-master.tar.gz" --file Parser-*.tar.gz --replace
 
