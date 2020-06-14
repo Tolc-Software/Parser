@@ -47,17 +47,17 @@ jobs:
         ctest --cores 4 --output-on-failure
 
     - name: Build the release tar.gzip package
-      if: github.ref == 'master'
+      if: {{ github.ref == 'ref/head/master' }}
       run: cpack -G TGZ --config build/CPackConfig.cmake
 
     - name: Setup go
-      if: github.ref == 'master'
+      if: {{ github.ref == 'ref/head/master' }}
       uses: actions/setup-go@v2
       with:
         go-version: '1.14'
 
     - name: Push master release
-      if: github.ref == 'master'
+      if: {{ github.ref == 'ref/head/master' }}
       env:
         GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
