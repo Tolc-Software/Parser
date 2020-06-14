@@ -32,13 +32,13 @@ function(get_system_include)
     set(system_include
       "${ARG_LLVM_DIRECTORY}/include/c++/v1"
       "/usr/local/include"
-      "${ARG_LLVM_DIRECTORY}/lib/clang/10.0.0/include"
+      "${ARG_LLVM_DIRECTORY}/lib/clang/${ARG_LLVM_VERSION}/include"
       "/usr/include")
   elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Darwin)
     set(system_include
       "${ARG_LLVM_DIRECTORY}/include/c++/v1"
       "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
-      "${ARG_LLVM_DIRECTORY}/lib/clang/10.0.0/include"
+      "${ARG_LLVM_DIRECTORY}/lib/clang/${ARG_LLVM_VERSION}/include"
       "/usr/local/include"
       "/System/Library/Frameworks"
       "/Library/Frameworks")

@@ -14,16 +14,14 @@ enable_doxygen()
 # Set ccache, ipo, etc.
 include(cmake/ProjectSettings.cmake)
 
+# Define add_{warnings,options}
 include(cmake/WarningsAndOptions.cmake)
-add_warnings(TARGET Parser_warnings)
-add_options(TARGET Parser_options)
 
 # allow for static analysis options
 include(cmake/StaticAnalyzers.cmake)
 
+# Define enable_sanitizers
 include(cmake/Sanitizers.cmake)
-# Set the sanitizer options on Parser_options
-enable_sanitizers(Parser_options)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -35,8 +33,10 @@ FetchContent_MakeAvailable(IRSpecification)
 
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
+# This helps with packaging
+set(CONAN_REQUIRES_PACKAGES "CTRE/v2.8.2@ctre/stable")
 run_conan(REQUIRES
-  CTRE/v2.8.2@ctre/stable)
+  ${CONAN_REQUIRES_PACKAGES})
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
@@ -97,16 +97,24 @@ add_llvm_library(
 target_link_libraries(
   Parser
   PUBLIC IR::IR
-  PRIVATE clangASTMatchers clangBasic clangTooling Parser_options
-  Parser_warnings CONAN_PKG::CTRE)
+  PRIVATE clangASTMatchers clangBasic clangTooling
+  CONAN_PKG::CTRE)
 
-# Ignore warnings from clang/ as if they were system headers. NOTE: This is only
-# available on clang
+add_warnings(TARGET Parser)
+add_options(TARGET Parser)
+
+# Set sanitizer options on Parser if options defined
+enable_sanitizers(Parser)
+
+# Ignore warnings from clang/ as if they were system headers.
 target_include_directories(Parser SYSTEM PRIVATE ${llvm_entry_INCLUDE_DIR})
 target_include_directories(Parser PRIVATE src)
-target_include_directories(Parser PUBLIC include)
+target_include_directories(Parser PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+
 set_target_properties(
-  Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF CXX_STANDARD 17)
+  Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
 
 # Export the library to link against
 add_library(Tolc::Parser ALIAS Parser)
@@ -122,5 +130,10 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   option(ENABLE_BENCHMARKS "Build the benchmarks" OFF)
   if(ENABLE_BENCHMARKS)
     # TODO: Add benchmarks
+  endif()
+
+  option(ENABLE_PACKAGING "Enables install and packaging via CPack" OFF)
+  if(ENABLE_PACKAGING)
+    add_subdirectory(tools/packaging)
   endif()
 endif()

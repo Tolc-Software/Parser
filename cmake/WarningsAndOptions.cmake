@@ -14,10 +14,7 @@ function(add_options)
                         "${multiValues}"
                         ${ARGN})
 
-  # Link this 'library' to set the c++ standard / compile-time options requested
-  add_library(${ARG_TARGET} INTERFACE)
-
-  target_compile_features(${ARG_TARGET} INTERFACE cxx_std_17)
+  target_compile_features(${ARG_TARGET} PRIVATE cxx_std_17)
 endfunction()
 
 function(add_warnings)
@@ -34,14 +31,11 @@ function(add_warnings)
                         "${multiValues}"
                         ${ARGN})
 
-  # Link this 'library' to use the standard warnings
-  add_library(${ARG_TARGET} INTERFACE)
-
   # Set warning flags for different compilers
   if(MSVC)
     target_compile_options(
       ${ARG_TARGET}
-      INTERFACE /W4
+      PRIVATE /W4
                 /WX # Treat warnings as errors
                 "/permissive-" # Adhere to standard
                 /w14242 # 'identfier': conversion from 'type1' to 'type1',
@@ -83,7 +77,7 @@ function(add_warnings)
 
     target_compile_options(
       ${ARG_TARGET}
-      INTERFACE -Wall
+      PRIVATE -Wall
                 -Werror # treat all warnings as errors
                 -Wextra # reasonable and standard
                 -Wshadow # warn the user if a variable declaration shadows one
@@ -109,7 +103,7 @@ function(add_warnings)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
       target_compile_options(
         ${ARG_TARGET}
-        INTERFACE -Wmisleading-indentation # warn if identation implies blocks
+        PRIVATE -Wmisleading-indentation # warn if identation implies blocks
                                            # where blocks do not exist
                   -Wduplicated-cond # warn if if / else chain has duplicated
                                     # conditions
@@ -122,7 +116,7 @@ function(add_warnings)
     elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
       target_compile_options(
         ${ARG_TARGET}
-        INTERFACE -Wduplicate-enum
+        PRIVATE -Wduplicate-enum
                   -fdiagnostics-absolute-paths # To avoid confusion about which
                                                # file is built
       )
