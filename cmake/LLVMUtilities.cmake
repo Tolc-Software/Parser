@@ -48,7 +48,6 @@ function(setup_llvm)
         "Must provide a version. e.g. setupLLVM(NAME LLVM_ENTRY VERSION 9.0.0)")
   endif()
 
-  message(STATUS "Got name: ${ARG_NAME}")
   # All fetchcontent stuff uses lowercase names
   string(TOLOWER "${ARG_NAME}" llvm_entry)
 
@@ -61,6 +60,7 @@ function(setup_llvm)
     URL ${DOWNLOAD_URL}
   )
 
+  message(STATUS "Checking if LLVM needs to be downloaded...")
   FetchContent_Populate(${llvm_entry})
   message(STATUS "LLVM source dir: ${${llvm_entry}_SOURCE_DIR}")
   message(STATUS "LLVM include dir: ${${llvm_entry}_SOURCE_DIR}/include")

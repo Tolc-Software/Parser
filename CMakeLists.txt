@@ -130,41 +130,8 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     # TODO: Add benchmarks
   endif()
 
-  option(ENABLE_PACKAGING "Build the packages" OFF)
+  option(ENABLE_PACKAGING "Enables install and packaging via CPack" OFF)
   if(ENABLE_PACKAGING)
-    include(GNUInstallDirs)
-
-    # Export the Parser library
-    install(TARGETS Parser EXPORT ParserTargets DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    install(EXPORT ParserTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Parser NAMESPACE Tolc::)
-    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/Parser
-      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-    install(FILES cmake/packaging/ParserConfig.cmake
-              DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Parser)
-
-    # Add the ways to get the libraries that Parser uses
-    # NOTE: Do not export imported targets; reuse the same way you got the library
-    #       https://cmake.org/pipermail/cmake-developers/2016-June/028673.html
-    # NOTE: Why are private libraries needed?
-    #       https://cmake.org/pipermail/cmake/2016-August/064054.html
-    install(FILES cmake/LLVMUtilities.cmake cmake/ConanHelpers.cmake
-              DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Parser)
-
-
-    # Make sure the system headers are exported
-    install(DIRECTORY
-      "${llvm_entry_SOURCE_DIR}/include/c++/v1"
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/include/c++)
-    install(DIRECTORY
-      "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include"
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/include/llvm)
-
-
-    # Export IR
-    install(TARGETS IR EXPORT IRTargets PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/IR)
-    install(EXPORT IRTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/IR NAMESPACE IR::)
-    install(FILES cmake/packaging/IRConfig.cmake
-              DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/IR)
-
+    add_subdirectory(tools/packaging)
   endif()
 endif()

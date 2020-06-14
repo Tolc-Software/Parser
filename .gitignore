@@ -25,3 +25,4 @@ src/Helpers/includes.cpp
 !include
 !src
 !tests
+!tools
