@@ -46,6 +46,11 @@ jobs:
       run: |
         cmake -S. -Bbuild -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_C_COMPILER="clang" -DCMAKE_BUILD_TYPE="Release" -DENABLE_TESTING=ON
 
+    - name: Find stuff
+      run: |
+        ls -la build
+        find . -iname 'cpack*' false
+
     - name: Build
       run: cmake --build build -j4
 
