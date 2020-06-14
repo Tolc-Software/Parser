@@ -7,15 +7,13 @@ install(TARGETS Parser EXPORT ParserTargets DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(EXPORT ParserTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Parser NAMESPACE Tolc::)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/Parser
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(FILES cmake/packaging/ParserConfig.cmake
-          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Parser)
 
 # Add the ways to get the libraries that Parser uses
 # NOTE: Do not export imported targets; reuse the same way you got the library
 #       https://cmake.org/pipermail/cmake-developers/2016-June/028673.html
 # NOTE: Why are private libraries needed?
 #       https://cmake.org/pipermail/cmake/2016-August/064054.html
-install(FILES cmake/LLVMUtilities.cmake cmake/ConanHelpers.cmake
+install(FILES ${CMAKE_SOURCE_DIR}/cmake/LLVMUtilities.cmake ${CMAKE_SOURCE_DIR}/cmake/ConanHelpers.cmake
           DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Parser)
 
 if(NOT llvm_entry_SOURCE_DIR)
@@ -34,11 +32,16 @@ install(DIRECTORY
   "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include"
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/include/llvm)
 
+configure_file(${CMAKE_SOURCE_DIR}/cmake/packaging/ParserConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/ParserConfig.cmake @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ParserConfig.cmake
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Parser)
 
 # Export IR
 install(TARGETS IR EXPORT IRTargets PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/IR)
 install(EXPORT IRTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/IR NAMESPACE IR::)
-install(FILES cmake/packaging/IRConfig.cmake
+install(FILES ${CMAKE_SOURCE_DIR}/cmake/packaging/IRConfig.cmake
           DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/IR)
 
 set(CPACK_VERBATIM_VARIABLES YES)

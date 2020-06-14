@@ -33,8 +33,10 @@ FetchContent_MakeAvailable(IRSpecification)
 
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
+# This helps with packaging
+set(CONAN_REQUIRES_PACKAGES "CTRE/v2.8.2@ctre/stable")
 run_conan(REQUIRES
-  CTRE/v2.8.2@ctre/stable)
+  ${CONAN_REQUIRES_PACKAGES})
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
