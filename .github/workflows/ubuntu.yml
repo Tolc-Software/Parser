@@ -53,8 +53,8 @@ jobs:
     - name: Setup go
       if: github.ref == 'master'
       uses: actions/setup-go@v2
-        with:
-          go-version: '1.14'
+      with:
+        go-version: '1.14'
 
     - name: Push master release
       if: github.ref == 'master'
