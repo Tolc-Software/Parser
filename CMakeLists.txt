@@ -65,8 +65,8 @@ get_system_include(
 
 format_includes(VARIABLE INCLUDE_PATH INCLUDES
                 ${platform_include} SYSTEM)
-configure_file(src/Helpers/includes.cpp.in
-               ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/includes.cpp @ONLY)
+              configure_file(src/Helpers/commandLineArgs.cpp.in
+               ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/commandLineArgs.cpp @ONLY)
 
 add_llvm_library(
   Parser
@@ -84,7 +84,7 @@ add_llvm_library(
   src/Helpers/Utils/combine.cpp
   src/Helpers/Utils/split.cpp
   src/Helpers/Utils/string.cpp
-  src/Helpers/includes.cpp
+  src/Helpers/commandLineArgs.cpp
   src/Helpers/walkIRStructure.cpp
   src/Parser/Parse.cpp
   src/Visitor/ParserVisitor.cpp

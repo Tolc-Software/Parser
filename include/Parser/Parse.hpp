@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IR/ir.hpp"
+#include "Parser/Config.hpp"
 #include <filesystem>
 #include <string>
 
@@ -12,7 +13,9 @@ namespace Parser {
 *
 * @return: IR::Namespace - The global namespace
 */
-std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename);
+std::optional<IR::Namespace>
+parseFile(std::filesystem::path const& filename,
+          Parser::Config const& config = Parser::Config());
 
 /**
 * @brief: Parse the input as C++ code and return the intermediate representation.
@@ -21,5 +24,7 @@ std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename);
 *
 * @return: IR::Namespace - The global namespace
 */
-std::optional<IR::Namespace> parseString(std::string const& code);
+std::optional<IR::Namespace>
+parseString(std::string const& code,
+            Parser::Config const& config = Parser::Config());
 }
