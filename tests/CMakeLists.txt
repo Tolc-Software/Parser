@@ -23,6 +23,8 @@ include(SetupTest)
 run_conan(REQUIRES
   fmt/6.1.2)
 
+find_package(fmt REQUIRED)
+
 if(ENABLE_COVERAGE)
   include(CodeCoverage)
 
@@ -68,6 +70,6 @@ foreach(test
     SOURCE
     ${test}
     LIBRARIES
-    CONAN_PKG::fmt
+    fmt::fmt
     TestUtil)
 endforeach()

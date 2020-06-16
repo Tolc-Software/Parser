@@ -34,9 +34,15 @@ FetchContent_MakeAvailable(IRSpecification)
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
 # This helps with packaging
-set(CONAN_REQUIRES_PACKAGES "CTRE/v2.8.2@ctre/stable")
+set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.6.1)
 run_conan(REQUIRES
   ${CONAN_REQUIRES_PACKAGES})
+
+# Get the paths for the find_package calls
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
+find_package(CTRE REQUIRED)
+find_package(spdlog REQUIRED)
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
@@ -98,7 +104,7 @@ target_link_libraries(
   Parser
   PUBLIC IR::IR
   PRIVATE clangASTMatchers clangBasic clangTooling
-  CONAN_PKG::CTRE)
+  CTRE::CTRE spdlog::spdlog)
 
 add_warnings(TARGET Parser)
 add_options(TARGET Parser)

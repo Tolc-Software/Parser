@@ -59,7 +59,9 @@ function(run_conan)
     OPTIONS
     ${ARG_OPTIONS}
     BASIC_SETUP
-    CMAKE_TARGETS # individual targets to link to
+    GENERATORS
+    cmake_paths
+    cmake_find_package
     BUILD
     missing)
 endfunction()
