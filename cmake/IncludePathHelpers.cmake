@@ -1,7 +1,12 @@
 include_guard()
 
 # Populate the input variable with a string/list with the platform specific
-# includes. Example: get_system_include(LLVM_DIRECTORY ${my_llvm_path} LLVM_VERSION 10.0.0 VARIABLE my_includes)
+# includes.
+# Variables:
+#   LLVM_DIRECTORY: Directory of downloaded LLVM
+#   LLVM_VERSION: Version of downloaded LLVM
+#   VARIABLE: Variable name to store the include paths
+# Example: get_system_include(LLVM_DIRECTORY ${my_llvm_path} LLVM_VERSION 10.0.0 VARIABLE my_includes)
 # message(STATUS "My includes are: ${my_includes}")
 function(get_system_include)
   # Define the supported set of keywords

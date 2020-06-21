@@ -14,7 +14,7 @@ set(packages @CONAN_REQUIRES_PACKAGES@)
 run_conan(REQUIRES ${packages})
 
 # Get the paths for the find_package modules
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/conan_paths.cmake)
 
 foreach(package ${packages})
   # Get the package name from the conan dependency
