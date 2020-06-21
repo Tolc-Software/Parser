@@ -6,7 +6,8 @@
 namespace Parser {
 /**
 * The values in this struct corresponds to the default values in configuring what Parser should do.
-* There should be no functions or logic here, just values.
+* - There should be no functions or logic here, just values.
+* - Every top level value should be commented.
 */
 struct Config {
 	// Absolute paths to system headers

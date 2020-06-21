@@ -25,6 +25,11 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
     - name: Python cache
       uses: actions/cache@v2
       with:
@@ -33,15 +38,18 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
-
     - name: Download python dependencies
       run: |
         python -m pip install setuptools wheel
-        python -m pip install conan ninja
+        python -m pip install conan
+
+    - name: Conan cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.conan
+        key: ${{ runner.os }}-conan-refreshed-at-20200621
+        restore-keys: |
+          ${{ runner.os }}-conan-
 
     - name: LLVM cache
       uses: actions/cache@v2
@@ -53,7 +61,7 @@ jobs:
 
     - name: Configure
       run: |
-        cmake -S. -Bbuild -G Ninja -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_C_COMPILER="clang" -DCMAKE_BUILD_TYPE="Release" -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON
+        cmake -S. -Bbuild -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_C_COMPILER="clang" -DCMAKE_BUILD_TYPE="Release" -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON
 
     - name: Build
       run: cmake --build build -j4
