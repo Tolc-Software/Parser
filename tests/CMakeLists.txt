@@ -20,8 +20,7 @@ set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
 include(SetupTest)
 
 # The tests need fmt
-run_conan(REQUIRES
-  fmt/6.1.2)
+run_conan(REQUIRES fmt/6.1.2)
 
 find_package(fmt REQUIRED)
 
@@ -34,7 +33,8 @@ if(ENABLE_COVERAGE)
   add_code_coverage_all_targets()
 endif()
 
-foreach(test
+foreach(
+  test
   arrays.cpp
   classes.cpp
   enums.cpp
@@ -53,14 +53,12 @@ foreach(test
   unordered_sets.cpp
   userDefined.cpp
   vectors.cpp
-
   Parser/Parse.cpp
   Helpers/Type/Matchers/container.cpp
   Helpers/Type/matchers.cpp
   Helpers/Utils/split.cpp
   Helpers/Utils/string.cpp
-  Helpers/commandLineArgs.cpp
-)
+  Helpers/commandLineArgs.cpp)
   # Ex: PybindProxy/moduleFile.cpp -> moduleFile
   get_filename_component(testName ${test} NAME_WLE)
 

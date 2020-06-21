@@ -48,7 +48,7 @@ int f() {
 
 ## Architecture ##
 
-![Parser Architecture](docs/Parser.png "Parser Architecture")
+![Parser Architecture](docs/internal/Parser.svg "Parser Architecture")
 
 The architecture roughly follows the figure above. The `code` is supplied by the user, and passes through a `Frontend` and a `Consumer`. Both of these are entry points from where various clang tools can be built. Since we are mainly interested in the actual `AST` ([Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree)) of the code, we must use the third and last entry point, the `Visitor`. The `Visitor` is a class with a set of functions, all beginning with `Visit` followed by what that function should be called on. E.g. `VisitNamespaceDecl` gets called whenever the `Visitor` encounters a `C++` `namespace` within the `AST`. The function will then take the `AST` node as input.
 

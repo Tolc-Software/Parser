@@ -3,6 +3,7 @@
 #include "Frontend/ParserFrontendAction.hpp"
 #include "Helpers/Utils/combine.hpp"
 #include "Helpers/commandLineArgs.hpp"
+#include "Helpers/logging.hpp"
 #include "Parser/Config.hpp"
 #include <clang/Tooling/CompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
@@ -15,7 +16,7 @@
 namespace Parser {
 std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename,
                                        Parser::Config const& config) {
-	IR::Namespace parsedIR;
+	Helpers::setupLogging(config.m_logLevel);
 
 	// Create the db for flags
 	std::string fromDirectory = ".";
@@ -25,10 +26,14 @@ std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename,
 
 	clang::tooling::ClangTool tool(compDb, {filename});
 
-	auto parsedSuccessfully =
-	    tool.run(Factory::newParserFrontendActionFactory(parsedIR).get()) == 0;
+	bool parsedSuccessfully = true;
 
-	if (parsedSuccessfully) {
+	IR::Namespace parsedIR;
+	auto astCreated = tool.run(Factory::newParserFrontendActionFactory(
+	                               parsedIR, parsedSuccessfully)
+	                               .get()) == 0;
+
+	if (astCreated && parsedSuccessfully) {
 		return parsedIR;
 	}
 	return std::nullopt;
@@ -36,14 +41,18 @@ std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename,
 
 std::optional<IR::Namespace> parseString(std::string const& code,
                                          Parser::Config const& config) {
+	Helpers::setupLogging(config.m_logLevel);
+
+	bool parsedSuccessfully = true;
 	IR::Namespace parsedIR;
 
-	auto parsedSuccessfully = clang::tooling::runToolOnCodeWithArgs(
-	    std::make_unique<Frontend::ParserFrontendAction>(parsedIR),
-	    code.c_str(),
+	auto astCreated = clang::tooling::runToolOnCodeWithArgs(
+	    std::make_unique<Frontend::ParserFrontendAction>(parsedIR,
+	                                                     parsedSuccessfully),
+	    code,
 	    Helpers::getCommandLineArgs(config.m_systemIncludes));
 
-	if (parsedSuccessfully) {
+	if (astCreated && parsedSuccessfully) {
 		return parsedIR;
 	}
 	return std::nullopt;

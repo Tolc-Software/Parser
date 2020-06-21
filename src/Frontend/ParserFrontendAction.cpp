@@ -9,7 +9,7 @@ std::unique_ptr<clang::ASTConsumer>
 ParserFrontendAction::CreateASTConsumer(clang::CompilerInstance& compiler,
                                         llvm::StringRef /*InFile*/) {
 	return std::unique_ptr<clang::ASTConsumer>(new Consumer::ParserConsumer(
-	    &compiler.getASTContext(), m_parsedNamespaces));
+	    &compiler.getASTContext(), m_parsedNamespaces, m_parsedSuccessfully));
 }
 
 }    // namespace Frontend

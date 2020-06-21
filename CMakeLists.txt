@@ -84,6 +84,7 @@ add_llvm_library(
   src/Builders/typeBuilder.cpp
   src/Consumer/ParserConsumer.cpp
   src/Frontend/ParserFrontendAction.cpp
+  src/Helpers/logging.cpp
   src/Helpers/Type/Matchers/container.cpp
   src/Helpers/Type/matchers.cpp
   src/Helpers/Type/utilities.cpp
