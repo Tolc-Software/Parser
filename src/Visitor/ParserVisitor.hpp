@@ -2,14 +2,16 @@
 
 #include "IR/ir.hpp"
 #include "IRProxy/IRData.hpp"
-#include "clang/AST/RecursiveASTVisitor.h"
+#include <clang/AST/RecursiveASTVisitor.h>
 
 namespace Visitor {
 class ParserVisitor : public clang::RecursiveASTVisitor<ParserVisitor> {
 public:
 	explicit ParserVisitor(clang::ASTContext* context,
-	                       IR::Namespace& parsedNamespaces)
-	    : m_context(context), m_parsedNamespaces(parsedNamespaces) {}
+	                       IR::Namespace& parsedNamespaces,
+	                       bool& parsedSuccessfully)
+	    : m_context(context), m_parsedNamespaces(parsedNamespaces),
+	      m_parsedSuccessfully(parsedSuccessfully) {}
 
 	// Will populate the m_parsedNamespaces
 	// since it is guaranteed that all visitors will have run by then
@@ -33,6 +35,9 @@ private:
 
 	// This will get filled in the destructor of the visitor
 	IR::Namespace& m_parsedNamespaces;
+
+	// Set to false if any visitor found an unrecoverable error
+	bool& m_parsedSuccessfully;
 
 	bool isInSystemHeader(clang::Decl* decl) {
 		return m_context->getSourceManager().isInSystemHeader(

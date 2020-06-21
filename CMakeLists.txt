@@ -34,9 +34,15 @@ FetchContent_MakeAvailable(IRSpecification)
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
 # This helps with packaging
-set(CONAN_REQUIRES_PACKAGES "CTRE/v2.8.2@ctre/stable")
+set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.6.1)
 run_conan(REQUIRES
   ${CONAN_REQUIRES_PACKAGES})
+
+# Get the paths for the find_package calls
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
+find_package(CTRE REQUIRED)
+find_package(spdlog REQUIRED)
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
@@ -65,8 +71,8 @@ get_system_include(
 
 format_includes(VARIABLE INCLUDE_PATH INCLUDES
                 ${platform_include} SYSTEM)
-configure_file(src/Helpers/includes.cpp.in
-               ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/includes.cpp @ONLY)
+              configure_file(src/Helpers/commandLineArgs.cpp.in
+               ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/commandLineArgs.cpp @ONLY)
 
 add_llvm_library(
   Parser
@@ -78,13 +84,14 @@ add_llvm_library(
   src/Builders/typeBuilder.cpp
   src/Consumer/ParserConsumer.cpp
   src/Frontend/ParserFrontendAction.cpp
+  src/Helpers/logging.cpp
   src/Helpers/Type/Matchers/container.cpp
   src/Helpers/Type/matchers.cpp
   src/Helpers/Type/utilities.cpp
   src/Helpers/Utils/combine.cpp
   src/Helpers/Utils/split.cpp
   src/Helpers/Utils/string.cpp
-  src/Helpers/includes.cpp
+  src/Helpers/commandLineArgs.cpp
   src/Helpers/walkIRStructure.cpp
   src/Parser/Parse.cpp
   src/Visitor/ParserVisitor.cpp
@@ -98,7 +105,7 @@ target_link_libraries(
   Parser
   PUBLIC IR::IR
   PRIVATE clangASTMatchers clangBasic clangTooling
-  CONAN_PKG::CTRE)
+  CTRE::CTRE spdlog::spdlog)
 
 add_warnings(TARGET Parser)
 add_options(TARGET Parser)

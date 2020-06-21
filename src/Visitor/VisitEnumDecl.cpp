@@ -1,6 +1,7 @@
 #include "Builders/commonBuilder.hpp"
 #include "IRProxy/IRData.hpp"
 #include "Visitor/ParserVisitor.hpp"
+#include <spdlog/spdlog.h>
 
 namespace Visitor {
 
@@ -9,6 +10,8 @@ bool ParserVisitor::VisitEnumDecl(clang::EnumDecl* enumDecl) {
 		// Continue the AST search
 		return true;
 	}
+
+	spdlog::debug("Parsing enum: {}", enumDecl->getQualifiedNameAsString());
 
 	// Build the final parsedEnum
 	IRProxy::Enum parsedEnum;

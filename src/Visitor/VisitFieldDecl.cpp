@@ -2,6 +2,7 @@
 #include "Builders/typeBuilder.hpp"
 #include "IRProxy/IRData.hpp"
 #include "Visitor/ParserVisitor.hpp"
+#include <spdlog/spdlog.h>
 
 namespace Visitor {
 bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
@@ -9,6 +10,8 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 		// Continue the AST search
 		return true;
 	}
+	spdlog::debug("Parsing member variable: {}",
+	              fieldDecl->getQualifiedNameAsString());
 
 	IRProxy::MemberVariable proxyVariable;
 
@@ -17,6 +20,13 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 	// TODO: Handle type not being converted
 	if (auto type = Builders::buildType(fieldDecl->getType())) {
 		variable.m_type = type.value();
+	} else {
+		spdlog::error("Failed to parse type {} for member variable {}",
+		              fieldDecl->getType().getAsString(),
+		              fieldDecl->getQualifiedNameAsString());
+		m_parsedSuccessfully = false;
+		// Stop parsing
+		return false;
 	}
 
 	proxyVariable.m_variable = variable;
@@ -25,6 +35,12 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 	if (auto accessModifier =
 	        Builders::convertToIRAccess(fieldDecl->getAccess())) {
 		proxyVariable.m_modifier = accessModifier.value();
+	} else {
+		spdlog::error("Failed to parse access modifier for member variable {}",
+		              fieldDecl->getQualifiedNameAsString());
+		m_parsedSuccessfully = false;
+		// Stop parsing
+		return false;
 	}
 
 	auto parentName = fieldDecl->getParent()->getQualifiedNameAsString();
@@ -33,5 +49,5 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 
 	// Continue the AST search
 	return true;
-	}
+    }
     }    // namespace Visitor

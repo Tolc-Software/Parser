@@ -9,14 +9,17 @@ namespace Frontend {
 
 class ParserFrontendAction : public clang::ASTFrontendAction {
 public:
-	explicit ParserFrontendAction(IR::Namespace& parsedNamespaces)
-	    : m_parsedNamespaces(parsedNamespaces) {}
+	explicit ParserFrontendAction(IR::Namespace& parsedNamespaces,
+	                              bool& parsedSuccessfully)
+	    : m_parsedNamespaces(parsedNamespaces),
+	      m_parsedSuccessfully(parsedSuccessfully) {}
 
 	std::unique_ptr<clang::ASTConsumer>
 	CreateASTConsumer(clang::CompilerInstance& compiler,
 	                  llvm::StringRef /*InFile*/);
 
 	IR::Namespace& m_parsedNamespaces;
+	bool& m_parsedSuccessfully;
 };
 
 }    // namespace Frontend

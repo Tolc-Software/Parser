@@ -9,8 +9,9 @@ namespace Consumer {
 class ParserConsumer : public clang::ASTConsumer {
 public:
 	explicit ParserConsumer(clang::ASTContext* context,
-	                        IR::Namespace& parsedNamespaces)
-	    : m_visitor(context, parsedNamespaces) {}
+	                        IR::Namespace& parsedNamespaces,
+	                        bool& parsedSuccessfully)
+	    : m_visitor(context, parsedNamespaces, parsedSuccessfully) {}
 
 	virtual void HandleTranslationUnit(clang::ASTContext& context);
 
