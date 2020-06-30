@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/srydell/Parser/workflows/Ubuntu/badge.svg)](https://github.com/srydell/Parser/actions)
+![Ubuntu](https://github.com/srydell/Parser/workflows/Ubuntu/badge.svg) ![MacOS](https://github.com/srydell/Parser/workflows/MacOS/badge.svg)
 
 # Parser #
 
