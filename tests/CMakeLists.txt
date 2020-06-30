@@ -19,9 +19,6 @@ set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
 # Defines create_catch2_test
 include(SetupTest)
 
-# The tests need fmt
-run_conan(REQUIRES fmt/6.1.2)
-
 find_package(fmt REQUIRED)
 
 if(ENABLE_COVERAGE)
