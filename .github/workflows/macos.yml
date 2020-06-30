@@ -10,7 +10,6 @@ on:
 
 env:
   BUILD_TYPE: Release
-  INSTALL_LOCATION: .local
 
 jobs:
   build:
