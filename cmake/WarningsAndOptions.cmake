@@ -15,10 +15,12 @@ function(add_options)
                         ${ARGN})
 
   target_compile_features(${ARG_TARGET} PRIVATE cxx_std_17)
-  # Create Position Independent Executables when building this lib/executable
-  # NOTE: Also needed for static libraries
-  # https://mropert.github.io/2018/02/02/pic_pie_sanitizers/
-  target_compile_options(${ARG_TARGET} PRIVATE -fPIE)
+  if(NOT MSVC)
+    # Create Position Independent Executables when building this lib/executable
+    # NOTE: Also needed for static libraries
+    # https://mropert.github.io/2018/02/02/pic_pie_sanitizers/
+    target_compile_options(${ARG_TARGET} PRIVATE -fPIE)
+  endif()
 endfunction()
 
 function(add_warnings)
