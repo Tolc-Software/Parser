@@ -34,7 +34,7 @@ FetchContent_MakeAvailable(IRSpecification)
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
 # This helps with packaging
-set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.7.0)
+set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.6.1)
 find_conan_packages(REQUIRES
   ${CONAN_REQUIRES_PACKAGES})
 
