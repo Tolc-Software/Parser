@@ -23,7 +23,7 @@ macro(find_conan_packages)
     list(GET split_dep 0 package_name)
 
     # Try to find the package, as it might be given by a consumer
-    find_package(${package_name} QUIET)
+    find_package(${package_name} NO_SYSTEM_ENVIRONMENT_PATH)
     if(NOT ${package_name}_FOUND)
       list(APPEND not_found_requires ${package})
     endif()

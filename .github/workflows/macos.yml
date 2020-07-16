@@ -48,7 +48,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.conan
-        key: ${{ runner.os }}-conan-refreshed-at-20200621
+        key: ${{ runner.os }}-conan-refreshed-at-20200716
         restore-keys: |
           ${{ runner.os }}-conan-
 
