@@ -35,14 +35,16 @@ And you should get all the necessary components of the library.
 
 int main() {
     // Get a IR::Namespace representing the global namespace
-    auto globalNamespace = parseString(R"(
+    auto globalNamespace = Parser::parseString(R"(
 int f() {
     return 5;
 }
     )");
 
-    // Will return "f"
-    std::cout << globalNamespace.m_functions[0].m_name << '\n';
+    if (globalNamespace) {
+        // Will return "f"
+        std::cout << globalNamespace.m_functions[0].m_name << '\n';
+    }
 }
 ```
 
