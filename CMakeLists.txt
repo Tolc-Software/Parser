@@ -35,13 +35,12 @@ FetchContent_MakeAvailable(IRSpecification)
 include(cmake/ConanHelpers.cmake)
 # This helps with packaging
 set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.6.1)
-find_conan_packages(REQUIRES
-  ${CONAN_REQUIRES_PACKAGES})
+find_conan_packages(REQUIRES ${CONAN_REQUIRES_PACKAGES})
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
 # llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
-set(llvm_entry_version 10.0.0)
+set(llvm_entry_version 10.0.1)
 setup_llvm(NAME "LLVM_ENTRY" VERSION ${llvm_entry_version})
 
 # Macro to get downloaded Clang and llvm packages
@@ -55,21 +54,13 @@ include(cmake/IncludePathHelpers.cmake)
 # Set the include path for the system library in the variable
 # We are using the standard library shipped
 # with the downloaded llvm for include paths in the parsing
-get_system_include(
-  VARIABLE
-    platform_include
-  LLVM_DIRECTORY
-    ${llvm_entry_SOURCE_DIR}
-  LLVM_VERSION
-    ${llvm_entry_version})
+get_system_include(VARIABLE platform_include LLVM_DIRECTORY
+                   ${llvm_entry_SOURCE_DIR} LLVM_VERSION ${llvm_entry_version})
 
-format_includes(VARIABLE INCLUDE_PATH INCLUDES
-                ${platform_include} SYSTEM)
+format_includes(VARIABLE INCLUDE_PATH INCLUDES ${platform_include} SYSTEM)
 
-configure_file(
-  src/Helpers/commandLineArgs.cpp.in
-  ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/commandLineArgs.cpp
-    @ONLY)
+configure_file(src/Helpers/commandLineArgs.cpp.in
+               ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/commandLineArgs.cpp @ONLY)
 
 add_llvm_library(
   Parser
@@ -101,8 +92,7 @@ add_llvm_library(
 target_link_libraries(
   Parser
   PUBLIC IR::IR
-  PRIVATE clangASTMatchers clangBasic clangTooling
-  CTRE::CTRE spdlog::spdlog)
+  PRIVATE clangASTMatchers clangBasic clangTooling CTRE::CTRE spdlog::spdlog)
 
 add_warnings(TARGET Parser)
 add_options(TARGET Parser)
@@ -113,12 +103,12 @@ enable_sanitizers(Parser)
 # Ignore warnings from clang/ as if they were system headers.
 target_include_directories(Parser SYSTEM PRIVATE ${llvm_entry_INCLUDE_DIR})
 target_include_directories(Parser PRIVATE src)
-target_include_directories(Parser PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+target_include_directories(
+  Parser PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+                $<INSTALL_INTERFACE:include>)
 
-set_target_properties(
-  Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
+set_target_properties(Parser PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS
+                                                                 OFF)
 
 # Export the library to link against
 add_library(Tolc::Parser ALIAS Parser)
