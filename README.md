@@ -108,3 +108,24 @@ $ <build_command> -v
 ```
 
 Search these directories for the missing header, hopefully you will not find it. In this case the offender is actually that we are using `-stdlib=libc++`, and it is not installed on my machine.
+
+### Conan package is built with the wrong compiler ###
+
+You might get the error:
+
+```shell
+CMake Error at conanbuildinfo.cmake:573 (message):
+  Incorrect 'clang', is not the one detected by CMake: 'GNU'
+  Call Stack (most recent call first):
+    conanbuildinfo.cmake:136 (conan_check_compiler)
+      CMakeLists.txt:5 (conan_basic_setup)
+```
+
+
+while building some dependency managed by conan. The easiest way of resolving this is setting the `CC` and `CXX` environment variables to your C and C++ compiler respectively. For example;
+
+```shell
+$ export CC=$(which clang)
+$ export CXX=$(which clang++)
+$ <build step>
+```
