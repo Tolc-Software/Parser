@@ -7,14 +7,14 @@ macro(find_conan_packages)
   set(prefix ARG)
   set(noValues)
   set(singleValues)
-  set(multiValues OPTIONS REQUIRES)
+  set(multiValues OPTIONS REQUIRES SETTINGS)
   # Process the arguments passed in can be used e.g. via ARG_TARGET
   cmake_parse_arguments(${prefix} "${noValues}" "${singleValues}"
                         "${multiValues}" ${ARGN})
 
   # Download it via conan
   message(STATUS "Will download dependencies via conan: ${ARG_REQUIRES}")
-  run_conan(REQUIRES ${ARG_REQUIRES} OPTIONS ${ARG_OPTIONS})
+  run_conan(REQUIRES ${ARG_REQUIRES} OPTIONS ${ARG_OPTIONS} SETTINGS ${ARG_SETTINGS})
 
   # Get the paths for the find_package calls
   include(${CMAKE_CURRENT_BINARY_DIR}/conan_paths.cmake)
@@ -67,7 +67,7 @@ function(run_conan)
   set(prefix ARG)
   set(noValues)
   set(singleValues)
-  set(multiValues OPTIONS REQUIRES)
+  set(multiValues SETTINGS OPTIONS REQUIRES)
   # Process the arguments passed in can be used e.g. via ARG_TARGET
   cmake_parse_arguments(${prefix} "${noValues}" "${singleValues}"
                         "${multiValues}" ${ARGN})
@@ -87,6 +87,8 @@ function(run_conan)
     ${ARG_REQUIRES}
     OPTIONS
     ${ARG_OPTIONS}
+    SETTINGS
+    ${ARG_SETTINGS}
     BASIC_SETUP
     GENERATORS
     cmake_paths

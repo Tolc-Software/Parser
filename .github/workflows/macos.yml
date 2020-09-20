@@ -53,6 +53,9 @@ jobs:
           ${{ runner.os }}-conan-
 
     - name: Configure
+      env:
+        CC: /usr/local/opt/llvm/bin/clang
+        CXX: /usr/local/opt/llvm/bin/clang++
       run: |
         cmake -S. -Bbuild -G Ninja -DCMAKE_CXX_COMPILER="/usr/local/opt/llvm/bin/clang++" -DCMAKE_C_COMPILER="/usr/local/opt/llvm/bin/clang" -DCMAKE_BUILD_TYPE="Release" -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON
 
