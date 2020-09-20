@@ -129,3 +129,12 @@ $ export CC=$(which clang)
 $ export CXX=$(which clang++)
 $ <build step>
 ```
+
+### Standard library ABI with Conan ###
+
+By default, Conan sometimes sets the default ABI to `compiler.libcxx=libstdc++` instead of `compiler.libcxx=libstdc++11`. This is to preserve backwards compatibility with older libraries, as C++11 changed the ABIof the language (for example changes in the `std::string` implementation). This is not something that we want and it should be turned off. Typically done via the conan CMake module with:
+
+```cmake
+find_conan_packages(... compiler.libcxx=libstdc++11)
+```
+
