@@ -52,8 +52,8 @@ jobs:
 
     - name: Configure
       env:
-        CC: $(which clang)
-        CXX: $(which clang++)
+        CC: /usr/bin/clang
+        CXX: /usr/bin/clang++
       run: |
         cmake -S. -Bbuild -G Ninja -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_C_COMPILER="clang" -DCMAKE_BUILD_TYPE="Release" -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON
 
