@@ -35,8 +35,7 @@ FetchContent_MakeAvailable(IRSpecification)
 include(cmake/ConanHelpers.cmake)
 # This helps with packaging
 set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.6.1)
-find_conan_packages(REQUIRES ${CONAN_REQUIRES_PACKAGES} SETTINGS compiler=clang
-                    compiler.libcxx=libc++)
+find_conan_packages(REQUIRES ${CONAN_REQUIRES_PACKAGES})
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
