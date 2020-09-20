@@ -61,3 +61,80 @@ Whenever an appropriate `AST` node is found, it is passed on to a `Builder`, whi
 * The `AST` nodes (or clang `decl`s) do not live until the `Visitor` is destructed, so they cannot be a part of the `IRProxy`.
 
 * The clang `decl`s use an inheritance scheme, where you can choose to visit more "specialized" `decl`, or even the base (simply `decl`). E.g. `FunctionDecl` covers all functions, but `CXXMethodDecl` is a class function.
+
+### Conan library does not find headers ###
+
+Example:
+
+```shell
+In file included from /home/simon/.conan/data/fmt/6.2.0/_/_/build/9aea1b1a46cc502b3591eafb492153938cec535f/source_subfolder/src/os.cc:13:
+/home/simon/.conan/data/fmt/6.2.0/_/_/build/9aea1b1a46cc502b3591eafb492153938cec535f/source_subfolder/include/fmt/os.h:16:10: fatal error: 'cerrno' file not found
+#include <cerrno>
+         ^~~~~~~~
+	 1 error generated.
+```
+
+This needs some debugging. To see what header directories are being searched, we need to know the compilation step; go to the build directory, in this case:
+
+```shell
+$ cd /home/simon/.conan/data/fmt/6.2.0/_/_/build/9aea1b1a46cc502b3591eafb492153938cec535f/build_subfolder/source_subfolder
+```
+
+In this case the library is built with `make`, so;
+
+```shell
+$ VERBOSE=1 make
+```
+
+The output is large, but find the offending command. In this case:
+
+```shell
+$ cd /home/simon/.conan/data/fmt/6.2.0/_/_/build/9aea1b1a46cc502b3591eafb492153938cec535f/build_subfolder/source_subfolder && /usr/bin/clang++  -I/home/simon/.conan/data/fmt/6.2.0/_/_/build/9aea1b1a46cc502b3591eafb492153938cec535f/source_subfolder/include -m64 -stdlib=libc++ -g  -fPIC -std=gnu++11 -o CMakeFiles/fmt.dir/src/os.cc.o -c /home/simon/.conan/data/fmt/6.2.0/_/_/build/9aea1b1a46cc502b3591eafb492153938cec535f/source_subfolder/src/os.cc
+```
+
+Add the verbose flag `-v` at the end to get what directories are searched;
+
+```shell
+$ <build_command> -v
+...
+#include "..." search starts here:
+#include <...> search starts here:
+  /home/simon/.conan/data/fmt/6.2.0/_/_/build/9aea1b1a46cc502b3591eafb492153938cec535f/source_subfolder/include
+  /usr/local/include
+  /usr/lib/clang/10.0.1/include
+  /usr/include
+  End of search list.
+<previously shown error>
+```
+
+Search these directories for the missing header, hopefully you will not find it. In this case the offender is actually that we are using `-stdlib=libc++`, and it is not installed on my machine.
+
+### Conan package is built with the wrong compiler ###
+
+You might get the error:
+
+```shell
+CMake Error at conanbuildinfo.cmake:573 (message):
+  Incorrect 'clang', is not the one detected by CMake: 'GNU'
+  Call Stack (most recent call first):
+    conanbuildinfo.cmake:136 (conan_check_compiler)
+      CMakeLists.txt:5 (conan_basic_setup)
+```
+
+
+while building some dependency managed by conan. The easiest way of resolving this is setting the `CC` and `CXX` environment variables to your C and C++ compiler respectively. For example;
+
+```shell
+$ export CC=$(which clang)
+$ export CXX=$(which clang++)
+$ <build step>
+```
+
+### Standard library ABI with Conan ###
+
+By default, Conan sometimes sets the default ABI to `compiler.libcxx=libstdc++` instead of `compiler.libcxx=libstdc++11`. This is to preserve backwards compatibility with older libraries, as C++11 changed the ABIof the language (for example changes in the `std::string` implementation). This is not something that we want and it should be turned off. Typically done via the conan CMake module with:
+
+```cmake
+find_conan_packages(... compiler.libcxx=libstdc++11)
+```
+
