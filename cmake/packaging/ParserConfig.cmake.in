@@ -12,9 +12,14 @@ get_clang_and_llvm(PATH ${llvm_entry_SOURCE_DIR})
 
 include("${CMAKE_CURRENT_LIST_DIR}/ConanHelpers.cmake")
 set(PARSER_CONAN_PACKAGES @CONAN_REQUIRES_PACKAGES@)
-# Force use clang and C++11 ABI
+
+# Set PARSER_CONAN_PROFILE to use a custom profile
+if(PARSER_CONAN_PROFILE)
+	set(current_profile PROFILE ${PARSER_CONAN_PROFILE})
+else()
+	set(current_profile "")
+endif()
 find_conan_packages(
-  REQUIRES ${PARSER_CONAN_PACKAGES} PROFILE
-  ${CMAKE_CURRENT_LIST_DIR}/clang)
+  REQUIRES ${PARSER_CONAN_PACKAGES} ${current_profile})
 
 include("${CMAKE_CURRENT_LIST_DIR}/ParserTargets.cmake")
