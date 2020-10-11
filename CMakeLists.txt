@@ -33,9 +33,13 @@ FetchContent_MakeAvailable(IRSpecification)
 
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
+# Create the profile from variables known during configure
+setup_conan_profile()
 # This helps with packaging
-set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.6.1)
-find_conan_packages(REQUIRES ${CONAN_REQUIRES_PACKAGES})
+set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.8.0)
+find_conan_packages(
+  REQUIRES ${CONAN_REQUIRES_PACKAGES} PROFILE
+  ${CMAKE_CURRENT_LIST_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang)
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
