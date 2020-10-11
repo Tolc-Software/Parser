@@ -113,7 +113,7 @@ function(setup_conan_profile)
   # Define the supported set of keywords
   set(prefix ARG)
   set(noValues)
-  set(singleValues)
+  set(singleValues PROFILE_TO_CONFIGURE)
   set(multiValues)
   # Process the arguments passed in
   # can be used e.g. via ARG_TARGET
@@ -127,6 +127,13 @@ function(setup_conan_profile)
   string(REPLACE "." ";" versionList ${CMAKE_CXX_COMPILER_VERSION})
   list(GET versionList 0 COMPILER_MAJOR_VERSION)
 
-  configure_file(${PROJECT_SOURCE_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang.in
+  if(ARG_PROFILE_TO_CONFIGURE)
+    set(inProfile ${ARG_PROFILE_TO_CONFIGURE})
+  else()
+    # Default to tools/conan_profiles/{OS}/clang.in
+    set(inProfile ${PROJECT_SOURCE_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang.in)
+  endif()
+
+  configure_file(${inProfile}
                  ${PROJECT_SOURCE_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang @ONLY)
 endfunction()

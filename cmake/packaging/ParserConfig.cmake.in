@@ -13,13 +13,9 @@ get_clang_and_llvm(PATH ${llvm_entry_SOURCE_DIR})
 include("${CMAKE_CURRENT_LIST_DIR}/ConanHelpers.cmake")
 set(PARSER_CONAN_PACKAGES @CONAN_REQUIRES_PACKAGES@)
 
-# Set PARSER_CONAN_PROFILE to use a custom profile
-if(PARSER_CONAN_PROFILE)
-	set(current_profile PROFILE ${PARSER_CONAN_PROFILE})
-else()
-	set(current_profile "")
-endif()
+setup_conan_profile(PROFILE_TO_CONFIGURE ${CMAKE_CURRENT_LIST_DIR}/clang.in)
 find_conan_packages(
-  REQUIRES ${PARSER_CONAN_PACKAGES} ${current_profile})
+  REQUIRES ${PARSER_CONAN_PACKAGES} PROFILE
+  ${CMAKE_CURRENT_LIST_DIR}/clang)
 
 include("${CMAKE_CURRENT_LIST_DIR}/ParserTargets.cmake")
