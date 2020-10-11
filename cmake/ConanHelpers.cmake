@@ -109,6 +109,10 @@ function(run_conan)
     missing)
 endfunction()
 
+# Configure a conan profile that has '.in' as an extension with configure_file
+# and puts the output next to the configured file.
+# With no input it configures
+#   ${PROJECT_SOURCE_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang.in
 function(setup_conan_profile)
   # Define the supported set of keywords
   set(prefix ARG)
@@ -117,11 +121,8 @@ function(setup_conan_profile)
   set(multiValues)
   # Process the arguments passed in
   # can be used e.g. via ARG_TARGET
-  cmake_parse_arguments(${prefix}
-                        "${noValues}"
-                        "${singleValues}"
-                        "${multiValues}"
-                        ${ARGN})
+  cmake_parse_arguments(${prefix} "${noValues}" "${singleValues}"
+                        "${multiValues}" ${ARGN})
 
   # Get variables for writing the conan profile
   string(REPLACE "." ";" versionList ${CMAKE_CXX_COMPILER_VERSION})
@@ -131,9 +132,13 @@ function(setup_conan_profile)
     set(inProfile ${ARG_PROFILE_TO_CONFIGURE})
   else()
     # Default to tools/conan_profiles/{OS}/clang.in
-    set(inProfile ${PROJECT_SOURCE_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang.in)
+    set(inProfile
+        ${PROJECT_SOURCE_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang.in
+    )
   endif()
+  # {outProfile, '.in'}
+  string(REPLACE "." ";" profileList ${inProfile})
+  list(GET profileList 0 outProfile)
 
-  configure_file(${inProfile}
-                 ${PROJECT_SOURCE_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang @ONLY)
+  configure_file(${inProfile} ${outProfile} @ONLY)
 endfunction()
