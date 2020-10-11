@@ -136,9 +136,14 @@ function(setup_conan_profile)
         ${PROJECT_SOURCE_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang.in
     )
   endif()
-  # {outProfile, '.in'}
+  if(NOT EXISTS ${inProfile})
+    message(FATAL_ERROR "The profile to configure does not exist. Got the profile: ${inProfile}")
+  endif()
+  # {[outProfile, 'anythingDotSeparated'], 'in'}
+  # Get the profile path without the '.in' extension
   string(REPLACE "." ";" profileList ${inProfile})
-  list(GET profileList 0 outProfile)
+  list(REMOVE_AT profileList -1)
+  list(JOIN profileList "." outProfile)
 
   configure_file(${inProfile} ${outProfile} @ONLY)
 endfunction()
