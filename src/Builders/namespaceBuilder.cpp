@@ -14,7 +14,8 @@ namespace {
  * If it doesn't exist, create it and return the new child
  */
 IR::Namespace* createOrGetChild(IR::Namespace* parent,
-                                std::string_view childName) {
+                                std::string_view childName,
+                                std::string_view childRepresentation) {
 	auto& children = parent->m_namespaces;
 	// Check if the child exists
 	if (auto child = std::find_if(children.begin(),
@@ -28,6 +29,7 @@ IR::Namespace* createOrGetChild(IR::Namespace* parent,
 	// Create the child
 	IR::Namespace childNS;
 	childNS.m_name = childName;
+	childNS.m_representation = childRepresentation;
 	return &children.emplace_back(childNS);
 }
 
@@ -42,8 +44,7 @@ void addNamespaceToRoot(IR::Namespace& rootNS,
 		auto& name = ns.front();
 		auto parentName = currentNs->m_name;
 		// Set child
-		currentNs = createOrGetChild(currentNs, name);
-		currentNs->m_representation = representation;
+		currentNs = createOrGetChild(currentNs, name, representation);
 		ns.pop_front();
 	}
 }
