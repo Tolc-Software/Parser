@@ -36,7 +36,7 @@ include(cmake/ConanHelpers.cmake)
 # Create the profile from variables known during configure
 setup_conan_profile()
 # This helps with packaging
-set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.8.0)
+set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.8.0 fmt/7.1.3)
 find_conan_packages(
   REQUIRES ${CONAN_REQUIRES_PACKAGES} PROFILE
   ${CMAKE_CURRENT_LIST_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang)
@@ -96,7 +96,7 @@ add_llvm_library(
 target_link_libraries(
   Parser
   PUBLIC IR::IR
-  PRIVATE clangASTMatchers clangBasic clangTooling CTRE::CTRE spdlog::spdlog)
+  PRIVATE clangASTMatchers clangBasic clangTooling CTRE::CTRE spdlog::spdlog fmt::fmt)
 
 add_warnings(TARGET Parser)
 add_options(TARGET Parser)

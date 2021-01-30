@@ -19,8 +19,6 @@ set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
 # Defines create_catch2_test
 include(SetupTest)
 
-find_package(fmt REQUIRED)
-
 if(ENABLE_COVERAGE)
   include(CodeCoverage)
 
