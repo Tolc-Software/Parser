@@ -12,7 +12,7 @@ void checkEmpty(IR::Namespace& ns) {
 }
 }    // namespace
 
-TEST_CASE("Deeply nested namespace", "[namespaces]") {
+TEST_CASE("Nested namespace", "[namespaces]") {
 	auto code = R"(
 #include <string>
 
@@ -35,8 +35,10 @@ namespace MyLib {
 	auto& myLib = globalNS.m_namespaces.back();
 	REQUIRE(myLib.m_functions.size() == 1);
 	REQUIRE(myLib.m_namespaces.size() == 1);
+	REQUIRE(myLib.m_representation == "MyLib");
 	auto& deeper = myLib.m_namespaces.back();
 	REQUIRE(deeper.m_functions.size() == 1);
+	REQUIRE(deeper.m_representation == "MyLib::Deeper");
 }
 
 TEST_CASE("Single namespace", "[namespaces]") {
@@ -182,3 +184,63 @@ namespace B {}
 		}
 	}
 }
+
+TEST_CASE("Deeply nested namespace with correct representations",
+          "[namespaces]") {
+	auto code = R"(
+#include <string>
+
+namespace MyLib {
+
+int complexFunction() {
+	return 5;
+}
+
+namespace We {
+	namespace Are {
+		namespace Going {
+			namespace Pretty {
+				namespace Deep {
+					std::string meaningOfLife() {
+						return "42";
+					}
+				}
+			}
+		}
+	}
+}
+}
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_namespaces.size() == 1);
+	auto& myLib = globalNS.m_namespaces.back();
+	REQUIRE(myLib.m_functions.size() == 1);
+	REQUIRE(myLib.m_namespaces.size() == 1);
+	REQUIRE(myLib.m_representation == "MyLib");
+
+	auto& we = myLib.m_namespaces.back();
+	REQUIRE(we.m_namespaces.size() == 1);
+	REQUIRE(we.m_representation == "MyLib::We");
+
+	auto& are = we.m_namespaces.back();
+	REQUIRE(are.m_namespaces.size() == 1);
+	REQUIRE(are.m_representation == "MyLib::We::Are");
+
+	auto& going = are.m_namespaces.back();
+	REQUIRE(going.m_namespaces.size() == 1);
+	REQUIRE(going.m_representation == "MyLib::We::Are::Going");
+
+	auto& pretty = going.m_namespaces.back();
+	REQUIRE(pretty.m_namespaces.size() == 1);
+	REQUIRE(pretty.m_representation == "MyLib::We::Are::Going::Pretty");
+
+	auto& deep = pretty.m_namespaces.back();
+	REQUIRE(deep.m_functions.size() == 1);
+	REQUIRE(deep.m_representation == "MyLib::We::Are::Going::Pretty::Deep");
+
+	auto& meaningOfLife = deep.m_functions.back();
+	REQUIRE(meaningOfLife.m_representation ==
+	        "MyLib::We::Are::Going::Pretty::Deep::meaningOfLife");
+}
+
