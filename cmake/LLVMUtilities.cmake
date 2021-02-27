@@ -14,7 +14,7 @@ function(_get_llvm_download_url)
   set(download_url "")
   if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Linux)
     set(download_url
-        https://github.com/llvm/llvm-project/releases/download/llvmorg-${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+        https://github.com/llvm/llvm-project/releases/download/llvmorg-${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-linux-gnu-ubuntu-20.10.tar.xz
     )
   elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Darwin)
     set(download_url
