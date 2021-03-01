@@ -44,7 +44,7 @@ find_conan_packages(
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
 # llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
-set(llvm_entry_version 10.0.1)
+set(llvm_entry_version 11.0.0)
 setup_llvm(NAME "LLVM_ENTRY" VERSION ${llvm_entry_version})
 
 # Macro to get downloaded Clang and llvm packages

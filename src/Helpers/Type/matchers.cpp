@@ -20,7 +20,10 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 	} else if (type == "long") {
 		return BaseType::Long;
 	// Either in LLVM lib or the one provided by Apple
-	} else if (type == "class std::__cxx11::basic_string<char>" || type == "class std::__1::basic_string<char>") {
+	} else if (
+	    type == "class std::__cxx11::basic_string<char>" ||
+	    type ==
+	        "class std::__1::basic_string<char, struct std::__1::char_traits<char>, class std::__1::allocator<char> >") {
 		return BaseType::String;
 	} else if (type == "void") {
 		return BaseType::Void;
