@@ -8,6 +8,9 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
+# Add custom scripts
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
+
 # Everything put in TestUtil/include is available
 add_library(TestUtil INTERFACE)
 target_include_directories(TestUtil INTERFACE TestUtil/include)
@@ -17,10 +20,10 @@ set(Catch2_FOUND TRUE)
 set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
 
 # Defines create_catch2_test
-include(SetupTest)
+include(${PROJECT_SOURCE_DIR}/cmake/SetupTest.cmake)
 
 if(ENABLE_COVERAGE)
-  include(CodeCoverage)
+  include(cmake/CodeCoverage.cmake)
 
   # Use coverage of parser
   target_code_coverage(Parser)

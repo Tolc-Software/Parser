@@ -5,6 +5,9 @@ project(
   VERSION 0.1
   LANGUAGES CXX)
 
+# Set /MT (or /MTd if debug) in MSVC-like compilers
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "Used to tell which runtime lib to link with." FORCE)
+
 set(FETCHCONTENT_FULLY_DISCONNECTED
     ON
     CACHE BOOL

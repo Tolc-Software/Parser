@@ -14,13 +14,13 @@ std::string getUniqueTempFilename(std::string const& ext = ".hpp") {
 	std::uniform_int_distribution<> uniform(0, std::numeric_limits<int>::max());
 
 	auto tempDir = std::filesystem::temp_directory_path();
-	std::string tempFile = tempDir / std::to_string(uniform(rEngine));
+	auto tempFile = tempDir / std::to_string(uniform(rEngine));
 	tempFile += ext;
 	while (std::filesystem::exists(tempFile)) {
 		tempFile = tempDir / std::to_string(uniform(rEngine));
 		tempFile += ext;
 	}
-	return tempFile;
+	return tempFile.string();
 }
 }    // namespace
 
