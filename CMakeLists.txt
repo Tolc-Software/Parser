@@ -5,10 +5,7 @@ project(
   VERSION 0.1
   LANGUAGES CXX)
 
-# Add custom scripts
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-
-include(Doxygen)
+include(cmake/Doxygen.cmake)
 enable_doxygen()
 
 # Set ccache, ipo, etc.
@@ -34,12 +31,12 @@ FetchContent_MakeAvailable(IRSpecification)
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
 # Create the profile from variables known during configure
-setup_conan_profile()
+setup_conan_profile(VARIABLE parser_conan_profile)
 # This helps with packaging
 set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.8.0 fmt/7.1.3)
 find_conan_packages(
   REQUIRES ${CONAN_REQUIRES_PACKAGES} PROFILE
-  ${CMAKE_CURRENT_LIST_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang)
+  ${parser_conan_profile})
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines

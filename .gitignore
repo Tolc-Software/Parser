@@ -9,6 +9,7 @@
 src/Helpers/commandLineArgs.cpp
 tools/conan_profiles/Linux/clang
 tools/conan_profiles/Darwin/clang
+tools/conan_profiles/Windows/clang
 
 # Except these
 # Files
@@ -17,8 +18,8 @@ tools/conan_profiles/Darwin/clang
 !.cmake-format.yaml
 !.gitignore
 !CMakeLists.txt
+!CMakeSettings.json
 !README.md
-!todo.md
 
 # Directories
 !.github

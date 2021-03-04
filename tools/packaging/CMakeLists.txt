@@ -31,9 +31,11 @@ endif()
 # Make sure the system headers are exported
 # NOTE: They are meant to mirror the directory structure found in the LLVM project.
 #       This way, scripts can be reused in consuming projects
-install(DIRECTORY
-  "${llvm_entry_SOURCE_DIR}/include/c++/v1"
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/include/c++)
+if(NOT MSVC)
+  install(DIRECTORY
+    "${llvm_entry_SOURCE_DIR}/include/c++/v1"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/include/c++)
+endif()
 install(DIRECTORY
   "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include"
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/lib/clang/${llvm_entry_version})
