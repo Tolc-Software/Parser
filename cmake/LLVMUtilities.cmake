@@ -20,8 +20,18 @@ function(_get_llvm_download_url)
     set(download_url
         https://github.com/llvm/llvm-project/releases/download/llvmorg-${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-apple-darwin.tar.xz
     )
+  elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+    if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
+      set(download_url
+          https://github.com/Tolc-Software/custom-llvm/releases/download/${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-windows-Debug.tar.xz
+      )
+    else()
+      set(download_url
+          https://github.com/Tolc-Software/custom-llvm/releases/download/${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-windows-Release.tar.gz
+      )
+    endif()
   else()
-    message(FATAL_ERROR "Unsupported platform for now.")
+    message(FATAL_ERROR "Unsupported platform for now: ${CMAKE_HOST_SYSTEM}")
   endif()
   set(${ARG_VARIABLE}
       ${download_url}

@@ -39,14 +39,17 @@ function(get_system_include)
       "/usr/local/include"
       "${ARG_LLVM_DIRECTORY}/lib/clang/${ARG_LLVM_VERSION}/include"
       "/usr/include")
-  elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Darwin)
-    set(system_include
-      "${ARG_LLVM_DIRECTORY}/include/c++/v1"
-      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
+  elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+  # TODO: These should not be allowed to so specific
+  set(system_include
       "${ARG_LLVM_DIRECTORY}/lib/clang/${ARG_LLVM_VERSION}/include"
-      "/usr/local/include"
-      "/System/Library/Frameworks"
-      "/Library/Frameworks")
+      "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.28.29333/ATLMFC/include"
+      "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/14.28.29333/include"
+      "C:/Program Files (x86)/Windows Kits/10/include/10.0.18362.0/ucrt"
+      "C:/Program Files (x86)/Windows Kits/10/include/10.0.18362.0/shared"
+      "C:/Program Files (x86)/Windows Kits/10/include/10.0.18362.0/um"
+      "C:/Program Files (x86)/Windows Kits/10/include/10.0.18362.0/winrt"
+      "C:/Program Files (x86)/Windows Kits/10/include/10.0.18362.0/cppwinrt")
   else()
     message(FATAL_ERROR "Unsupported platform for now.")
   endif()
