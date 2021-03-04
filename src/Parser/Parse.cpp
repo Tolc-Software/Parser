@@ -6,6 +6,7 @@
 #include "Parser/Config.hpp"
 #include <clang/Tooling/CompilationDatabase.h>
 #include <clang/Tooling/Tooling.h>
+#include <llvm/ADT/ArrayRef.h>
 #include <filesystem>
 #include <memory>
 #include <optional>
@@ -21,7 +22,8 @@ std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename,
 	clang::tooling::FixedCompilationDatabase compDb(
 	    fromDirectory, Helpers::getCommandLineArgs(config.m_systemIncludes));
 
-	clang::tooling::ClangTool tool(compDb, {filename});
+	std::vector<std::string> filesToProcess = {filename.string()};
+	clang::tooling::ClangTool tool(compDb, filesToProcess);
 
 	bool parsedSuccessfully = true;
 
