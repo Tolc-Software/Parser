@@ -6,7 +6,9 @@ Logging is done via [spdlog](https://github.com/gabime/spdlog). **It should not 
 
 ## Where/what to log ##
 
-Logging is done **exclusively** in the `visitor` functions (i.e. `VisitNamespaceDecl`, `VisitEnumDecl` etc.). This is to avoid cluttering. It also forces the developer to log at a certain level. Prefer logging `Failed to parse return type: {returnType}` rather than `Failed to parse third level allocator in vector<vector<vector<...>>>`.
+External logging (using `spdlog::{warn,error}`) is done **exclusively** in the `visitor` functions (i.e. `VisitNamespaceDecl`, `VisitEnumDecl` etc.). This is to avoid cluttering. It also forces the developer to log at a certain level. Prefer logging `Failed to parse return type: {returnType}` rather than `Failed to parse third level allocator in vector<vector<vector<...>>>`.
+
+Internal logging (using `spdlog::debug`) can be used on multiple levels.
 
 ## Log configuration ##
 
