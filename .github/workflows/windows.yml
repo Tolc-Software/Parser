@@ -52,12 +52,9 @@ jobs:
 
     - name: Configure
       shell: cmd
-      env:
-        CC: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe
-        CXX: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe
       run: |
         call "%VCVARS%"
-        cmake -S. -Bbuild -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
+        cmake -S. -Bbuild -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
 
     - name: Build
       shell: cmd
