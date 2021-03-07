@@ -51,24 +51,20 @@ jobs:
 
     - name: Configure
       run: |
-        cmd /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        cmake -S. -Bbuild -G Ninja -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release
+        cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -T ClangCL -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Release
 
     - name: Build
       run: |
-        cmd /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cmake --build build -j4
 
     - name: Run tests
       run: |
-        cmd /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cd build
         ctest --cores 4 --output-on-failure
 
     - name: Build the release tar.gzip package
       if: github.ref == 'refs/heads/master'
       run: |
-        cmd /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cpack -G TGZ --config build/CPackConfig.cmake
 
     - name: Setup go
