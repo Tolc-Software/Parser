@@ -1,5 +1,6 @@
 #include "Helpers/commandLineArgs.hpp"
 #include "Helpers/Utils/combine.hpp"
+#include "Helpers/windowsPathExtraction.hpp"
 #include <string>
 #include <vector>
 
@@ -7,7 +8,7 @@ namespace Helpers {
 
 std::vector<std::string> getSystemIncludes() {
 	// This is substituted by CMake to the correct path
-	return {@INCLUDE_PATH@};
+	return @INCLUDE_PATH@;
 }
 
 std::vector<std::string>

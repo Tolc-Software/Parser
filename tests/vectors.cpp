@@ -4,6 +4,33 @@
 #include <fmt/format.h>
 #include <variant>
 
+TEST_CASE("Nested vectors", "[vector]") {
+	auto code = R"(
+#include <vector>
+
+std::vector<std::vector<int>> f();
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_functions.size() == 1);
+	auto& f = globalNS.m_functions.back();
+	auto& returnType = f.m_returnType;
+	auto& vecOfVecs = returnType.m_type;
+	auto vectorType = std::get_if<IR::Type::Container>(&vecOfVecs);
+	REQUIRE(vectorType != nullptr);
+	REQUIRE(vectorType->m_container == IR::ContainerType::Vector);
+	// NOTE: Also has an allocator
+	REQUIRE(vectorType->m_containedTypes.size() == 2);
+
+	auto& nestedVector = vectorType->m_containedTypes[0];
+	auto nestedVectorType = std::get_if<IR::Type::Container>(&nestedVector.m_type);
+	REQUIRE(nestedVectorType != nullptr);
+	REQUIRE(nestedVectorType->m_container == IR::ContainerType::Vector);
+	// NOTE: Also has an allocator
+	REQUIRE(nestedVectorType->m_containedTypes.size() == 2);
+	REQUIRE(nestedVectorType->m_containedTypes[0].m_representation == "int");
+}
+
 TEST_CASE("std::vector<baseType>", "[vector]") {
 	for (auto baseType :
 	     TestUtil::getBaseTypes(/* excluding */ {"std::string", "void"})) {
@@ -26,10 +53,10 @@ struct MyClass {
 		REQUIRE(myClass.m_memberVariables.size() == 1);
 		auto& [am, m_v] = myClass.m_memberVariables.back();
 		REQUIRE(am == IR::AccessModifier::Public);
-	    REQUIRE(m_v.m_type.m_representation ==
-	            fmt::format("std::vector<{baseType}>",
-	                        fmt::arg("baseType", baseType)));
-	    auto vectorType = std::get_if<IR::Type::Container>(&m_v.m_type.m_type);
+		REQUIRE(m_v.m_type.m_representation ==
+		        fmt::format("std::vector<{baseType}>",
+		                    fmt::arg("baseType", baseType)));
+		auto vectorType = std::get_if<IR::Type::Container>(&m_v.m_type.m_type);
 		REQUIRE(vectorType != nullptr);
 
 		REQUIRE(vectorType->m_container == IR::ContainerType::Vector);

@@ -7,7 +7,7 @@ set(test_package ${CMAKE_CURRENT_BINARY_DIR}/test_package/parser)
 add_test(
   NAME InstallPackage
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-  COMMAND ${CMAKE_COMMAND} --install build --prefix ${test_package})
+  COMMAND ${CMAKE_COMMAND} --install ${CMAKE_BINARY_DIR} --prefix ${test_package})
 set_tests_properties(InstallPackage PROPERTIES FIXTURES_SETUP
                                                FixtureInstallPackage)
 
@@ -38,7 +38,7 @@ add_test(
   COMMAND
     ${CMAKE_COMMAND} -S. -Bbuild -GNinja
     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_BUILD_TYPE=Debug)
+    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
 set_tests_properties(GenerateConsumer PROPERTIES FIXTURES_SETUP
                                                  FixtureGenerateConsumer)
 

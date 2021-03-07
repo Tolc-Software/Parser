@@ -1,19 +1,19 @@
-name: Ubuntu
+name: Windows
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
-
-env:
-  BUILD_TYPE: Release
+    branches:
+      - master
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip ubuntu]')"
+    runs-on: windows-latest
+    env:
+      VCVARS: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat
 
     steps:
     - uses: actions/checkout@v2
@@ -32,7 +32,7 @@ jobs:
     - name: Python cache
       uses: actions/cache@v2
       with:
-        path: ~/.cache/pip
+        path: ~\AppData\Local\pip\Cache
         key: ${{ runner.os }}-pip-refreshed-at-20200621-1
         restore-keys: |
           ${{ runner.os }}-pip-
@@ -51,23 +51,30 @@ jobs:
           ${{ runner.os }}-conan-
 
     - name: Configure
-      env:
-        CC: /usr/bin/clang
-        CXX: /usr/bin/clang++
+      shell: cmd
       run: |
-        cmake -S. -Bbuild -G Ninja -DCMAKE_CXX_COMPILER="clang++" -DCMAKE_C_COMPILER="clang" -DCMAKE_BUILD_TYPE="Release" -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON
+        call "%VCVARS%"
+        cmake -S. -Bbuild -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
 
     - name: Build
-      run: cmake --build build -j4
+      shell: cmd
+      run: |
+        call "%VCVARS%"
+        cmake --build build -j4
 
     - name: Run tests
+      shell: cmd
       run: |
+        call "%VCVARS%"
         cd build
         ctest --cores 4 --output-on-failure
 
     - name: Build the release tar.gzip package
       if: github.ref == 'refs/heads/master'
-      run: cpack -G TGZ --config build/CPackConfig.cmake
+      shell: cmd
+      run: |
+        call "%VCVARS%"
+        cpack -G TGZ --config build/CPackConfig.cmake
 
     - name: Setup go
       if: github.ref == 'refs/heads/master'
@@ -93,5 +100,5 @@ jobs:
         echo "Checking if a new release is needed"
         github-release release --user srydell --repo Parser --tag master-release --name "Head release" --description "This release gets updated with each commit to master" || true
         echo "Pushing the release"
-        github-release upload --user srydell --repo Parser --tag master-release --name "Parser-$(uname)-master.tar.gz" --file Parser-*.tar.gz --replace
+        github-release upload --user srydell --repo Parser --tag master-release --name "Parser-Windows-master-Release.tar.gz" --file Parser-*.tar.gz --replace
 

@@ -33,7 +33,7 @@ TEST_CASE("getCommandLineArgs returns include paths that exists that exists",
 TEST_CASE("getCommandLineArgs returns a custom system include path",
           "[commandLineArgs]") {
 	using path = std::filesystem::path;
-	std::string myPath = path("my") / path("custom") / path("path");
+	std::string myPath = (path("my") / path("custom") / path("path")).string();
 	std::string systemInclude = "-isystem";
 	auto args = Helpers::getCommandLineArgs({systemInclude + myPath});
 	REQUIRE(!args.empty());

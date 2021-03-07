@@ -40,8 +40,7 @@ class MyClass {
 	}
 }
 
-TEST_CASE("Without paths to system includes, code including std headers fail",
-          "[Parse]") {
+TEST_CASE("System includes works with default config", "[Parse]") {
 	auto code = R"(
 #include <string>
 
@@ -51,14 +50,6 @@ class MyClass {
 };
 )";
 
-	using path = std::filesystem::path;
-	// Sanity check so that everything works by default
+	// System includes "just works"
 	REQUIRE(Parser::parseString(code).has_value());
-
-	auto config = Parser::Config();
-	config.m_systemIncludes = {"-isystem" +
-	                           std::string(path("imaginary") / path("path"))};
-	CAPTURE(config.m_systemIncludes[0]);
-	// Incorrect system header paths should yield no parsed namespace
-	REQUIRE(!Parser::parseString(code, config).has_value());
 }

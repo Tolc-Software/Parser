@@ -5,10 +5,7 @@ project(
   VERSION 0.1
   LANGUAGES CXX)
 
-# Add custom scripts
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-
-include(Doxygen)
+include(cmake/Doxygen.cmake)
 enable_doxygen()
 
 # Set ccache, ipo, etc.
@@ -34,12 +31,12 @@ FetchContent_MakeAvailable(IRSpecification)
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
 # Create the profile from variables known during configure
-setup_conan_profile()
+setup_conan_profile(VARIABLE parser_conan_profile)
 # This helps with packaging
 set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.8.0 fmt/7.1.3)
 find_conan_packages(
   REQUIRES ${CONAN_REQUIRES_PACKAGES} PROFILE
-  ${CMAKE_CURRENT_LIST_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang)
+  ${parser_conan_profile})
 
 include(cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
@@ -61,7 +58,18 @@ include(cmake/IncludePathHelpers.cmake)
 get_system_include(VARIABLE platform_include LLVM_DIRECTORY
                    ${llvm_entry_SOURCE_DIR} LLVM_VERSION ${llvm_entry_version})
 
-format_includes(VARIABLE INCLUDE_PATH INCLUDES ${platform_include} SYSTEM)
+# if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+  # set(temp "")
+  # foreach(include ${platform_include})
+    # if(NOT temp)
+      # set(temp "\"-isystem${include}\"")
+    # else()
+      # string(APPEND temp ", \"-isystem${include}\"")
+    # endif()
+  # endforeach()
+# else()
+  format_includes(VARIABLE INCLUDE_PATH INCLUDES ${platform_include} SYSTEM)
+# endif()
 
 configure_file(src/Helpers/commandLineArgs.cpp.in
                ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/commandLineArgs.cpp @ONLY)
@@ -84,6 +92,7 @@ add_llvm_library(
   src/Helpers/Utils/string.cpp
   src/Helpers/commandLineArgs.cpp
   src/Helpers/walkIRStructure.cpp
+  src/Helpers/windowsPathExtraction.cpp
   src/Parser/Parse.cpp
   src/Visitor/ParserVisitor.cpp
   src/Visitor/VisitCXXRecordDecl.cpp

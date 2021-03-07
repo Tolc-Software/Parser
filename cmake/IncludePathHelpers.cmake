@@ -29,24 +29,41 @@ function(get_system_include)
   endif()
   # We are using the standard library shipped with the downloaded llvm (libc++) for include paths in the parsing
   # But we also need some platform specific code which cannot be assumed
-  # These are copied from the platform and added to source control
   # You can find the include paths by typing: $ /path/to/llvm/imported/clang -v -x c++ -
-  # These correspond to the way they appear in the command above (this is necessary because they use #include_next)
+  # These correspond to the way they appear in the command above (the order is strict because they use #include_next)
   set(system_include "")
   if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Linux)
     set(system_include
-      "${ARG_LLVM_DIRECTORY}/include/c++/v1"
-      "/usr/local/include"
-      "${ARG_LLVM_DIRECTORY}/lib/clang/${ARG_LLVM_VERSION}/include"
-      "/usr/include")
-  elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Darwin)
+        "${ARG_LLVM_DIRECTORY}/include/c++/v1"
+        "/usr/local/include"
+        "${ARG_LLVM_DIRECTORY}/lib/clang/${ARG_LLVM_VERSION}/include"
+        "/usr/include")
+   elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Darwin)
+     set(system_include
+         "${ARG_LLVM_DIRECTORY}/include/c++/v1"
+         "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
+         "${ARG_LLVM_DIRECTORY}/lib/clang/${ARG_LLVM_VERSION}/include"
+         "/usr/local/include"
+         "/System/Library/Frameworks"
+         "/Library/Frameworks")
+  elseif(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+    set(version_placeholder "{LATEST_VERSION}")
+    set(version_placeholder
+        ${version_placeholder}
+        PARENT_SCOPE)
     set(system_include
-      "${ARG_LLVM_DIRECTORY}/include/c++/v1"
-      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"
-      "${ARG_LLVM_DIRECTORY}/lib/clang/${ARG_LLVM_VERSION}/include"
-      "/usr/local/include"
-      "/System/Library/Frameworks"
-      "/Library/Frameworks")
+        "${ARG_LLVM_DIRECTORY}/lib/clang/${ARG_LLVM_VERSION}/include"
+	    "C:/Program Files (x86)/Microsoft Visual Studio/${version_placeholder}/Enterprise/VC/Tools/MSVC/${version_placeholder}/ATLMFC/include"
+	    "C:/Program Files (x86)/Microsoft Visual Studio/${version_placeholder}/Professional/VC/Tools/MSVC/${version_placeholder}/ATLMFC/include"
+	    "C:/Program Files (x86)/Microsoft Visual Studio/${version_placeholder}/Community/VC/Tools/MSVC/${version_placeholder}/ATLMFC/include"
+	    "C:/Program Files (x86)/Microsoft Visual Studio/${version_placeholder}/Enterprise/VC/Tools/MSVC/${version_placeholder}/include"
+	    "C:/Program Files (x86)/Microsoft Visual Studio/${version_placeholder}/Professional/VC/Tools/MSVC/${version_placeholder}/include"
+	    "C:/Program Files (x86)/Microsoft Visual Studio/${version_placeholder}/Community/VC/Tools/MSVC/${version_placeholder}/include"
+	    "C:/Program Files (x86)/Windows Kits/${version_placeholder}/include/${version_placeholder}/ucrt"
+	    "C:/Program Files (x86)/Windows Kits/${version_placeholder}/include/${version_placeholder}/shared"
+	    "C:/Program Files (x86)/Windows Kits/${version_placeholder}/include/${version_placeholder}/um"
+	    "C:/Program Files (x86)/Windows Kits/${version_placeholder}/include/${version_placeholder}/winrt"
+	    "C:/Program Files (x86)/Windows Kits/${version_placeholder}/include/${version_placeholder}/cppwinrt")
   else()
     message(FATAL_ERROR "Unsupported platform for now.")
   endif()
@@ -81,14 +98,31 @@ function(format_includes)
   endif()
 
   set(temp "")
-  # format as: "-Iinclude[0]", "-Iinclude[1]", ...
-  foreach(include ${ARG_INCLUDES})
-    if(NOT temp)
-      set(temp "\"${include_flag}${include}\"")
+  if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+    # Use the windowsPathExtraction.hpp
+    foreach(include ${ARG_INCLUDES})
+      if(NOT temp)
+        set(temp "Helpers::appendSystemIncludes(Helpers::filterExistingPathsWithLatestVersion({\"${include}\"")
+      else()
+        string(APPEND temp ", \"${include}\"")
+      endif()
+    endforeach()
+    if(version_placeholder)
+      string(APPEND temp "}, \"${version_placeholder}\"))")
     else()
-      string(APPEND temp ", \"${include_flag}${include}\"")
+      message(FATAL_ERROR "version_placeholder must be set. Was it not set from the call to get_system_include?")
     endif()
-  endforeach()
+  else()
+    # format as: "-Iinclude[0]", "-Iinclude[1]", ...
+    foreach(include ${ARG_INCLUDES})
+      if(NOT temp)
+        set(temp "{\"${include_flag}${include}\"")
+      else()
+        string(APPEND temp ", \"${include_flag}${include}\"")
+      endif()
+    endforeach()
+    string(APPEND temp "}")
+  endif()
   set(${ARG_VARIABLE}
       ${temp}
       PARENT_SCOPE)
