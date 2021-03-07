@@ -50,20 +50,27 @@ jobs:
           ${{ runner.os }}-conan-
 
     - name: Configure
+      shell: cmd
       run: |
-        cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -T ClangCL -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Release
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        dir "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin"
+        clang-cl --version
+        cmake -S. -Bbuild -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release -G Ninja
 
     - name: Build
+      shell: cmd
       run: |
         cmake --build build -j4
 
     - name: Run tests
+      shell: cmd
       run: |
         cd build
         ctest --cores 4 --output-on-failure
 
     - name: Build the release tar.gzip package
       if: github.ref == 'refs/heads/master'
+      shell: cmd
       run: |
         cpack -G TGZ --config build/CPackConfig.cmake
 
