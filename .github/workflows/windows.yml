@@ -54,7 +54,7 @@ jobs:
       shell: cmd
       run: |
         call "%VCVARS%"
-        cmake -S. -Bbuild -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
+        cmake -S. -Bbuild -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Release -DCPACK_PACKAGE_FILE_NAME=Parser -G Ninja
 
     - name: Build
       shell: cmd
@@ -100,5 +100,5 @@ jobs:
         echo "Checking if a new release is needed"
         github-release release --user srydell --repo Parser --tag master-release --name "Head release" --description "This release gets updated with each commit to master" || true
         echo "Pushing the release"
-        github-release upload --user srydell --repo Parser --tag master-release --name "Parser-Windows-master-Release.tar.gz" --file Parser-*.tar.gz --replace
+        github-release upload --user srydell --repo Parser --tag master-release --name "Parser-Windows-master-Release.tar.gz" --file Parser.tar.gz --replace
 
