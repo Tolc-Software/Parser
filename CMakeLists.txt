@@ -58,7 +58,18 @@ include(cmake/IncludePathHelpers.cmake)
 get_system_include(VARIABLE platform_include LLVM_DIRECTORY
                    ${llvm_entry_SOURCE_DIR} LLVM_VERSION ${llvm_entry_version})
 
-format_includes(VARIABLE INCLUDE_PATH INCLUDES ${platform_include} SYSTEM)
+# if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+  # set(temp "")
+  # foreach(include ${platform_include})
+    # if(NOT temp)
+      # set(temp "\"-isystem${include}\"")
+    # else()
+      # string(APPEND temp ", \"-isystem${include}\"")
+    # endif()
+  # endforeach()
+# else()
+  format_includes(VARIABLE INCLUDE_PATH INCLUDES ${platform_include} SYSTEM)
+# endif()
 
 configure_file(src/Helpers/commandLineArgs.cpp.in
                ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/commandLineArgs.cpp @ONLY)
@@ -81,6 +92,7 @@ add_llvm_library(
   src/Helpers/Utils/string.cpp
   src/Helpers/commandLineArgs.cpp
   src/Helpers/walkIRStructure.cpp
+  src/Helpers/windowsPathExtraction.cpp
   src/Parser/Parse.cpp
   src/Visitor/ParserVisitor.cpp
   src/Visitor/VisitCXXRecordDecl.cpp

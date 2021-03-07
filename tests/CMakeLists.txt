@@ -56,7 +56,8 @@ foreach(
   Helpers/Type/matchers.cpp
   Helpers/Utils/split.cpp
   Helpers/Utils/string.cpp
-  Helpers/commandLineArgs.cpp)
+  Helpers/commandLineArgs.cpp
+  Helpers/windowsPathExtraction.cpp)
   # Ex: PybindProxy/moduleFile.cpp -> moduleFile
   get_filename_component(testName ${test} NAME_WLE)
 
