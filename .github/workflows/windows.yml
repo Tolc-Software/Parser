@@ -50,7 +50,6 @@ jobs:
           ${{ runner.os }}-conan-
 
     - name: Configure
-      env:
       run: |
         cmd /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cmake -S. -Bbuild -G Ninja -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DCMAKE_BUILD_TYPE=Release
