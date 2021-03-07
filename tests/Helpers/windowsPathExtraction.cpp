@@ -85,30 +85,3 @@ TEST_CASE("Filter between versions of just numbers finds the latest version",
 		REQUIRE(filtered.front() == latestVersion.string());
 	}
 }
-
-TEST_CASE("Get latest version finds the righte", "[windowsPathExtraction]") {
-	std::string versionPlaceholder = "{LATEST_VERSION}";
-	std::vector<std::string> paths = {
-	    "D:/code/cpp/Parser/out/build/x64-Clang-Debug/_deps/llvm_entry-src/lib/clang/11.0.0/include",
-	    "C:/Program Files (x86)/Microsoft Visual Studio/{LATEST_VERSION}/Enterprise/VC/Tools/MSVC/{LATEST_VERSION}/ATLMFC/include",
-	    "C:/Program Files (x86)/Microsoft Visual Studio/{LATEST_VERSION}/Professional/VC/Tools/MSVC/{LATEST_VERSION}/ATLMFC/include",
-	    "C:/Program Files (x86)/Microsoft Visual Studio/{LATEST_VERSION}/Community/VC/Tools/MSVC/{LATEST_VERSION}/ATLMFC/include",
-	    "C:/Program Files (x86)/Microsoft Visual Studio/{LATEST_VERSION}/Enterprise/VC/Tools/MSVC/{LATEST_VERSION}/include",
-	    "C:/Program Files (x86)/Microsoft Visual Studio/{LATEST_VERSION}/Professional/VC/Tools/MSVC/{LATEST_VERSION}/include",
-	    "C:/Program Files (x86)/Microsoft Visual Studio/{LATEST_VERSION}/Community/VC/Tools/MSVC/{LATEST_VERSION}/include",
-	    "C:/Program Files (x86)/Windows Kits/{LATEST_VERSION}/include/{LATEST_VERSION}/ucrt",
-	    "C:/Program Files (x86)/Windows Kits/{LATEST_VERSION}/include/{LATEST_VERSION}/shared",
-	    "C:/Program Files (x86)/Windows Kits/{LATEST_VERSION}/include/{LATEST_VERSION}/um",
-	    "C:/Program Files (x86)/Windows Kits/{LATEST_VERSION}/include/{LATEST_VERSION}/winrt",
-	    "C:/Program Files (x86)/Windows Kits/{LATEST_VERSION}/include/{LATEST_VERSION}/cppwinrt"};
-	REQUIRE(paths.size() > 0);
-
-	auto expandedPaths = Helpers::filterExistingPathsWithLatestVersion(
-	    paths, versionPlaceholder);
-
-	std::vector<std::string> includes;
-	for (auto const& path : expandedPaths) {
-		includes.push_back("-isystem" + path);
-	}
-	REQUIRE(includes.size() > 0);
-}
