@@ -56,17 +56,19 @@ jobs:
         CC: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe
         CXX: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\Llvm\bin\clang-cl.exe
       run: |
-        cmd /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "%VCVARS%"
         cmake -S. -Bbuild -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
 
     - name: Build
       shell: cmd
       run: |
+        call "%VCVARS%"
         cmake --build build -j4
 
     - name: Run tests
       shell: cmd
       run: |
+        call "%VCVARS%"
         cd build
         ctest --cores 4 --output-on-failure
 
@@ -74,6 +76,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
       shell: cmd
       run: |
+        call "%VCVARS%"
         cpack -G TGZ --config build/CPackConfig.cmake
 
     - name: Setup go
