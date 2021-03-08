@@ -1,4 +1,4 @@
-#include "Helpers/windowsPathExtraction.hpp"
+#include "Parser/Windows/systemIncludeHelper.hpp"
 #include "Helpers/Utils/split.hpp"
 #include <ctre.hpp>
 #include <filesystem>
@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace Helpers {
+namespace Parser::Windows {
 
 static constexpr auto versionPattern =
     ctll::fixed_string {"^(\\d+\\.)?(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$"};

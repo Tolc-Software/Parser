@@ -102,7 +102,7 @@ function(format_includes)
     # Use the windowsPathExtraction.hpp
     foreach(include ${ARG_INCLUDES})
       if(NOT temp)
-        set(temp "Helpers::appendSystemIncludes(Helpers::filterExistingPathsWithLatestVersion({\"${include}\"")
+        set(temp "Parser::Windows::appendSystemIncludes(Parser::Windows::filterExistingPathsWithLatestVersion({\"${include}\"")
       else()
         string(APPEND temp ", \"${include}\"")
       endif()

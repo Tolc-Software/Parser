@@ -1,6 +1,6 @@
 #include "Helpers/commandLineArgs.hpp"
 #include "Helpers/Utils/combine.hpp"
-#include "Helpers/windowsPathExtraction.hpp"
+#include "Parser/Windows/systemIncludeHelper.hpp"
 #include <string>
 #include <vector>
 

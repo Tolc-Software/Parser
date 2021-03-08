@@ -1,4 +1,4 @@
-#include "Helpers/windowsPathExtraction.hpp"
+#include "Parser/Windows/systemIncludeHelper.hpp"
 #include "Helpers/Utils/split.hpp"
 #include "TestUtil/files.hpp"
 #include <catch2/catch.hpp>
@@ -7,16 +7,16 @@
 #include <vector>
 
 TEST_CASE("appendSystemIncludes appends system includes : )",
-          "[windowsPathExtraction]") {
+          "[WindowsSystemIncludeHelper]") {
 	std::string path = "SomePath";
-	auto includes = Helpers::appendSystemIncludes({path});
+	auto includes = Parser::Windows::appendSystemIncludes({path});
 	REQUIRE(includes.size() == 1);
 	auto include = includes.front();
 	REQUIRE(include == std::string("-isystem") + path);
 }
 
 TEST_CASE("Filter does not include the path if it isn't a version",
-          "[windowsPathExtraction]") {
+          "[WindowsSystemIncludeHelper]") {
 	std::string versionPlaceholder = "{LATEST_VERSION}";
 	for (auto const& notAVersion :
 	     {"Hello", "2020Stuff", "10.11.Hello", "v2020"}) {
@@ -24,7 +24,7 @@ TEST_CASE("Filter does not include the path if it isn't a version",
 
 		std::string path =
 		    (notValid.getRootDirectory() / versionPlaceholder).string();
-		auto filtered = Helpers::filterExistingPathsWithLatestVersion(
+		auto filtered = Parser::Windows::filterExistingPathsWithLatestVersion(
 		    {path}, versionPlaceholder);
 
 		CAPTURE(filtered.size());
@@ -39,7 +39,7 @@ TEST_CASE("Filter does not include the path if it isn't a version",
 }
 
 TEST_CASE("Filter between versions and not versions",
-          "[windowsPathExtraction]") {
+          "[WindowsSystemIncludeHelper]") {
 	std::string versionPlaceholder = "{LATEST_VERSION}";
 	for (auto const& [actualVersion, notAVersion] :
 	     {std::make_pair("11", "Hello"),
@@ -53,7 +53,7 @@ TEST_CASE("Filter between versions and not versions",
 
 		std::string path =
 		    (notValid.getRootDirectory() / versionPlaceholder).string();
-		auto filtered = Helpers::filterExistingPathsWithLatestVersion(
+		auto filtered = Parser::Windows::filterExistingPathsWithLatestVersion(
 		    {path}, versionPlaceholder);
 
 		REQUIRE(filtered.size() == 1);
@@ -62,7 +62,7 @@ TEST_CASE("Filter between versions and not versions",
 }
 
 TEST_CASE("Filter between versions of just numbers finds the latest version",
-          "[windowsPathExtraction]") {
+          "[WindowsSystemIncludeHelper]") {
 	std::string versionPlaceholder = "{LATEST_VERSION}";
 	for (auto const& [latest, old] :
 	     {std::make_pair("11", "10"),
@@ -78,7 +78,7 @@ TEST_CASE("Filter between versions of just numbers finds the latest version",
 
 		std::string path =
 		    (oldVersion.getRootDirectory() / versionPlaceholder).string();
-		auto filtered = Helpers::filterExistingPathsWithLatestVersion(
+		auto filtered = Parser::Windows::filterExistingPathsWithLatestVersion(
 		    {path}, versionPlaceholder);
 
 		REQUIRE(filtered.size() == 1);
