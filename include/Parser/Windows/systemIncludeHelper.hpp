@@ -15,16 +15,16 @@ namespace Parser::Windows {
 *           versionPlaceholper = {LATEST_VERSION}
 *           potentialPaths = {C:\Program Files\MSVC\{LATEST_VERSION}\include}
 *           On the filesystem there exists: C:\Program Files\MSVC\10 and C:\Program Files\MSVC\11
-*           So the return will be {C:\Program Files\MSVC\10 and C:\Program Files\MSVC\11}
+*           So the return will be {C:\Program Files\MSVC\11}
 *
 * @param: std::vector<std::string> const& potentialPaths,
 *         std::string_view versionPlaceholder);
 *
 * @return: std::vector<std::string>
 */
-std::vector<std::string> filterExistingPathsWithLatestVersion(
-    std::vector<std::string> const& potentialPaths,
-    std::string_view versionPlaceholder);
+std::vector<std::string>
+filterPathsWithLatestVersion(std::vector<std::string> const& potentialPaths,
+                             std::string_view versionPlaceholder);
 
 /**
 * @brief: Go through paths and append "-isystem" before each string
@@ -35,4 +35,4 @@ std::vector<std::string> filterExistingPathsWithLatestVersion(
 */
 std::vector<std::string>
 appendSystemIncludes(std::vector<std::string> const& paths);
-}    // namespace Helpers
+}    // namespace Parser::Windows

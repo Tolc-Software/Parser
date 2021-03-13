@@ -15,21 +15,6 @@ std::string removeSubstring(std::string str, std::string const& subString) {
 }
 }    // namespace
 
-TEST_CASE("getCommandLineArgs returns include paths that exists that exists",
-          "[commandLineArgs]") {
-	auto args = Helpers::getCommandLineArgs();
-	REQUIRE(!args.empty());
-	std::string systemInclude = "-isystem";
-	for (auto arg : args) {
-		CAPTURE(arg);
-		if (auto path = removeSubstring(arg, systemInclude); path != arg) {
-			CAPTURE(path);
-			// This is a system include path
-			CHECK(std::filesystem::exists(path));
-		}
-	}
-}
-
 TEST_CASE("getCommandLineArgs returns a custom system include path",
           "[commandLineArgs]") {
 	using path = std::filesystem::path;
