@@ -9,16 +9,47 @@ namespace Helpers::Type {
 
 std::optional<IR::BaseType> getBaseType(std::string_view type) {
 	using IR::BaseType;
-	if (type == "char") {
+	// Types and alternate types are listed in https://en.cppreference.com/w/cpp/language/types
+	if (type == "bool" || type == "_Bool") {
+		return BaseType::Bool;
+	} else if (type == "char16_t") {
+		return BaseType::Char16_t;
+	} else if (type == "char32_t") {
+		return BaseType::Char32_t;
+	} else if (type == "signed char") {
+		return BaseType::SignedChar;
+	} else if (type == "unsigned char") {
+		return BaseType::UnsignedChar;
+	} else if (type == "wchar_t") {
+		return BaseType::Wchar_t;
+	} else if (type == "char") {
 		return BaseType::Char;
 	} else if (type == "double") {
 		return BaseType::Double;
+	} else if (type == "long double") {
+		return BaseType::LongDouble;
 	} else if (type == "float") {
 		return BaseType::Float;
-	} else if (type == "int") {
+	} else if (type == "int" || type == "signed int" || type == "signed") {
 		return BaseType::Int;
-	} else if (type == "long") {
-		return BaseType::Long;
+	} else if (type == "long" || type == "long int" || type == "signed long" ||
+	           type == "signed long int") {
+		return BaseType::LongInt;
+	} else if (type == "long long" || type == "long long int" ||
+	           type == "signed long long" || type == "signed long long int") {
+		return BaseType::LongLongInt;
+	} else if (type == "short" || type == "short int" ||
+	           type == "signed short" || type == "signed short int") {
+		return BaseType::ShortInt;
+	} else if (type == "unsigned long" || type == "unsigned long int") {
+		return BaseType::UnsignedLongInt;
+	} else if (type == "unsigned long long" ||
+	           type == "unsigned long long int") {
+		return BaseType::UnsignedLongLongInt;
+	} else if (type == "unsigned short" || type == "unsigned short int") {
+		return BaseType::UnsignedShortInt;
+	} else if (type == "unsigned" || type == "unsigned int") {
+		return BaseType::UnsignedInt;
 		// Either in LLVM lib, the one provided by Apple, or on Windows
 	} else if (
 	    type == "class std::__cxx11::basic_string<char>" ||

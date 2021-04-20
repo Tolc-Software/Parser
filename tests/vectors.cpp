@@ -23,7 +23,8 @@ std::vector<std::vector<int>> f();
 	REQUIRE(vectorType->m_containedTypes.size() == 2);
 
 	auto& nestedVector = vectorType->m_containedTypes[0];
-	auto nestedVectorType = std::get_if<IR::Type::Container>(&nestedVector.m_type);
+	auto nestedVectorType =
+	    std::get_if<IR::Type::Container>(&nestedVector.m_type);
 	REQUIRE(nestedVectorType != nullptr);
 	REQUIRE(nestedVectorType->m_container == IR::ContainerType::Vector);
 	// NOTE: Also has an allocator
@@ -32,8 +33,8 @@ std::vector<std::vector<int>> f();
 }
 
 TEST_CASE("std::vector<baseType>", "[vector]") {
-	for (auto baseType :
-	     TestUtil::getBaseTypes(/* excluding */ {"std::string", "void"})) {
+	for (auto baseType : TestUtil::getBaseTypes(
+	         /* excluding */ {"std::string", "void", "bool"})) {
 		auto code = R"(
 #include <vector>
 
