@@ -67,9 +67,9 @@ jobs:
         cd build
         ctest --cores 4 --output-on-failure
 
-    - name: Build the release tar.gzip package
+    - name: Build the release tar.xz package
       if: github.ref == 'refs/heads/master'
-      run: cpack -G TGZ --config build/CPackConfig.cmake
+      run: cpack -G TXZ --config build/CPackConfig.cmake
 
     - name: Setup go
       if: github.ref == 'refs/heads/master'
@@ -95,5 +95,5 @@ jobs:
         echo "Checking if a new release is needed"
         github-release release --user srydell --repo Parser --tag master-release --name "Head release" --description "This release gets updated with each commit to master" || true
         echo "Pushing the release"
-        github-release upload --user srydell --repo Parser --tag master-release --name "Parser-$(uname)-master.tar.gz" --file Parser-*.tar.gz --replace
+        github-release upload --user srydell --repo Parser --tag master-release --name "Parser-$(uname)-master.tar.xz" --file Parser-*.tar.xz --replace
 
