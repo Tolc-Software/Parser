@@ -5,8 +5,8 @@
 #include <variant>
 
 TEST_CASE("std::unordered_map of base types", "[unordered_map]") {
-	for (auto baseType :
-	     TestUtil::getBaseTypes(/* excluding */ {"std::string", "void"})) {
+	for (auto baseType : TestUtil::getBaseTypes(
+	         /* excluding */ {"std::string", "void", "bool"})) {
 		auto code = R"(
 #include <unordered_map>
 
@@ -32,7 +32,7 @@ struct MyClass {
 		auto mapType = std::get_if<IR::Type::Container>(&m_v.m_type.m_type);
 		REQUIRE(mapType != nullptr);
 
-		REQUIRE(mapType->m_container == IR::ContainerType::Unordered_map);
+		REQUIRE(mapType->m_container == IR::ContainerType::UnorderedMap);
 		// class std::unordered_map<{baseType}, {baseType}, struct std::hash<{baseType}>, struct std::equal_to<{baseType}>, class std::allocator<struct std::pair<const {baseType}, {baseType}> > >
 		REQUIRE(mapType->m_containedTypes.size() == 5);
 		for (auto const& type : mapType->m_containedTypes) {
@@ -47,7 +47,7 @@ struct MyClass {
 			               std::get_if<IR::Type::Container>(&type.m_type)) {
 				auto cType = container->m_container;
 				REQUIRE((cType == IR::ContainerType::Hash ||
-				         cType == IR::ContainerType::Equal_to ||
+				         cType == IR::ContainerType::EqualTo ||
 				         cType == IR::ContainerType::Allocator));
 				REQUIRE(container->m_containedTypes.size() == 1);
 			} else {

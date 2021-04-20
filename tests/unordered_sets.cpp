@@ -5,9 +5,8 @@
 #include <variant>
 
 TEST_CASE("std::unordered_set of base type", "[unordered_sets]") {
-	// TODO: There is a bug with std::string within containers where the representation get garbled
 	for (auto baseType : TestUtil::getBaseTypes(
-	         /* excluding */ {"std::string", "void"})) {
+	         /* excluding */ {"std::string", "void", "bool"})) {
 		auto code =
 		    R"(
 #include <unordered_set>
@@ -34,7 +33,7 @@ struct MyClass {
 		auto arrayType = std::get_if<IR::Type::Container>(&m_v.m_type.m_type);
 		REQUIRE(arrayType != nullptr);
 
-		REQUIRE(arrayType->m_container == IR::ContainerType::Unordered_set);
+		REQUIRE(arrayType->m_container == IR::ContainerType::UnorderedSet);
 		// class std::unordered_set<{baseType}, struct std::hash<{baseType}>, struct std::equal_to<{baseType}>, class std::allocator<{baseType}> >
 		REQUIRE(arrayType->m_containedTypes.size() == 4);
 
@@ -51,7 +50,7 @@ struct MyClass {
 				REQUIRE(container->m_containedTypes.size() == 1);
 				auto containerType = container->m_container;
 				REQUIRE((containerType == IR::ContainerType::Hash ||
-				         containerType == IR::ContainerType::Equal_to ||
+				         containerType == IR::ContainerType::EqualTo ||
 				         containerType == IR::ContainerType::Allocator));
 			} else {
 				INFO(

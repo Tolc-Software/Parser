@@ -6,6 +6,22 @@
 #include <catch2/catch.hpp>
 #include <variant>
 
+TEST_CASE("Function that returns base types", "[functions]") {
+	// String requires an include
+	for (auto baseType : TestUtil::getBaseTypes({"std::string"})) {
+		auto globalNS = TestUtil::parseString(baseType + " fun();");
+		SECTION("Parser finds the function") {
+			REQUIRE(globalNS.m_functions.size() == 1);
+			auto fun = globalNS.m_functions[0];
+			CHECK(fun.m_name == "fun");
+			CHECK(fun.m_arguments.size() == 0);
+			auto irType = TestUtil::getIRFromString(baseType);
+			REQUIRE(irType.has_value());
+			TestUtil::compare(fun.m_returnType, irType.value());
+		}
+	}
+}
+
 TEST_CASE("Function works with default modifier", "[functions]") {
 	using IR::AccessModifier;
 	for (auto [accessModifier, structure] :
@@ -139,7 +155,6 @@ TEST_CASE("Function with arguments not requiring includes", "[functions]") {
 				TestUtil::compare(fun.m_returnType, IR::BaseType::Void);
 
 				SECTION("with correct argument") {
-
 					REQUIRE(fun.m_arguments.size() == 1);
 					auto& arg = fun.m_arguments.back();
 					CHECK(arg.m_name == "myArg");

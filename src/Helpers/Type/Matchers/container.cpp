@@ -116,13 +116,13 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 	} else if (match_pair(type)) {
 		return ContainerType::Pair;
 	} else if (match_equal_to(type)) {
-		return ContainerType::Equal_to;
+		return ContainerType::EqualTo;
 	} else if (match_hash(type)) {
 		return ContainerType::Hash;
 	} else if (match_unordered_map(type)) {
-		return ContainerType::Unordered_map;
+		return ContainerType::UnorderedMap;
 	} else if (match_unordered_set(type)) {
-		return ContainerType::Unordered_set;
+		return ContainerType::UnorderedSet;
 	} else if (match_tuple(type)) {
 		return ContainerType::Tuple;
 	}

@@ -85,7 +85,7 @@ TEST_CASE("std::unordered_map", "[container]") {
 
 	auto ir = getContainerType(unordered_map);
 	REQUIRE(ir.has_value());
-	REQUIRE(ir.value() == IR::ContainerType::Unordered_map);
+	REQUIRE(ir.value() == IR::ContainerType::UnorderedMap);
 }
 
 TEST_CASE("std::equal_to", "[container]") {
@@ -95,7 +95,7 @@ TEST_CASE("std::equal_to", "[container]") {
 
 	auto ir = getContainerType(equal_to);
 	REQUIRE(ir.has_value());
-	REQUIRE(ir.value() == IR::ContainerType::Equal_to);
+	REQUIRE(ir.value() == IR::ContainerType::EqualTo);
 }
 
 TEST_CASE("std::hash", "[container]") {
@@ -116,6 +116,5 @@ TEST_CASE("std::unordered_set", "[container]") {
 
 	auto ir = getContainerType(unordered_set);
 	REQUIRE(ir.has_value());
-	REQUIRE(ir.value() == IR::ContainerType::Unordered_set);
+	REQUIRE(ir.value() == IR::ContainerType::UnorderedSet);
 }
-
