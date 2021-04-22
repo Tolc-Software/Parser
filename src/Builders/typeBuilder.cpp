@@ -5,10 +5,11 @@
 #include "IRProxy/IRData.hpp"
 #include <clang/AST/Decl.h>
 #include <clang/AST/DeclTemplate.h>
+#include <clang/AST/PrettyPrinter.h>
 #include <clang/AST/Type.h>
 #include <llvm/Support/Casting.h>
-#include <spdlog/spdlog.h>
 #include <queue>
+#include <spdlog/spdlog.h>
 #include <variant>
 #include <vector>
 
@@ -65,9 +66,10 @@ bool isTemplateSpecialization(IR::Type const& type) {
 * Builds a shallow type. This does not include template arguments.
 * Note that this is the complete type if the input is 'simple' as say 'int const*'
 */
-std::optional<IR::Type> buildOneLevelIRType(clang::QualType type) {
+std::optional<IR::Type> buildOneLevelIRType(clang::QualType type,
+                                            clang::PrintingPolicy policy) {
 	// What the user wrote
-	auto representation = type.getAsString();
+	auto representation = type.getAsString(policy);
 
 	// Remove using aliases
 	type = type.getCanonicalType();
@@ -85,7 +87,8 @@ std::optional<IR::Type> buildOneLevelIRType(clang::QualType type) {
 	bool hasConst = Helpers::Type::isConst(type);
 	type = type.getUnqualifiedType();
 
-	spdlog::debug("Trying to build IR type from string: {}", type.getAsString());
+	spdlog::debug("Trying to build IR type from string: {}",
+	              type.getAsString());
 
 	if (auto maybeIrType = Helpers::Type::getIRType(type.getAsString())) {
 		auto irType = maybeIrType.value();
@@ -117,13 +120,15 @@ struct ProxyType {
 /**
 * Builds a ProxyType that contains template arguments of irType
 */
-ProxyType buildProxyType(IR::Type& irType, clang::QualType type) {
+ProxyType buildProxyType(IR::Type& irType,
+                         clang::QualType type,
+                         clang::PrintingPolicy policy) {
 	ProxyType p;
 	p.m_type = &irType;
 	// Check if we need to go even further
 	if (isTemplateSpecialization(irType) && isTemplateSpecialization(type)) {
 		for (auto templateArg : getTemplateArgs(type)) {
-			if (auto irTemplateArg = buildOneLevelIRType(templateArg)) {
+			if (auto irTemplateArg = buildOneLevelIRType(templateArg, policy)) {
 				p.m_templateArgs.emplace_back(
 				    std::make_pair(irTemplateArg.value(), templateArg));
 			}
@@ -139,12 +144,13 @@ IR::Type::Container* getContainer(IR::Type* type) {
 	return std::get_if<IR::Type::Container>(&type->m_type);
 }
 
-std::optional<IR::Type> buildType(clang::QualType type) {
+std::optional<IR::Type> buildType(clang::QualType type,
+                                  clang::PrintingPolicy policy) {
 	std::optional<IR::Type> topLevelType = std::nullopt;
 	std::queue<ProxyType> typesToProcess;
-	if (auto irType = buildOneLevelIRType(type)) {
+	if (auto irType = buildOneLevelIRType(type, policy)) {
 		topLevelType = irType.value();
-		typesToProcess.push(buildProxyType(topLevelType.value(), type));
+		typesToProcess.push(buildProxyType(topLevelType.value(), type, policy));
 	}
 
 	// Process template arguments
@@ -159,8 +165,10 @@ std::optional<IR::Type> buildType(clang::QualType type) {
 			     currentType.m_templateArgs) {
 				container->m_containedTypes.push_back(irTemplateArg);
 
-				typesToProcess.push(buildProxyType(
-				    container->m_containedTypes.back(), clangTemplateArg));
+				typesToProcess.push(
+				    buildProxyType(container->m_containedTypes.back(),
+				                   clangTemplateArg,
+				                   policy));
 			}
 		}
 

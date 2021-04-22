@@ -6,7 +6,7 @@
 
 TEST_CASE("std::unordered_set of base type", "[unordered_sets]") {
 	for (auto baseType : TestUtil::getBaseTypes(
-	         /* excluding */ {"std::string", "void", "bool"})) {
+	         /* excluding */ {"std::string", "void"})) {
 		auto code =
 		    R"(
 #include <unordered_set>

@@ -47,6 +47,7 @@ foreach(
   dataStructs.cpp
   representation.cpp
   sets.cpp
+  strings.cpp
   unordered_maps.cpp
   unordered_sets.cpp
   userDefined.cpp

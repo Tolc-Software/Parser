@@ -80,11 +80,7 @@ int getNumberOfPointers(clang::QualType type) {
 	return numPointers;
 }
 
-/**
-* Checks if type is const
-*/
 bool isConst(clang::QualType const& type) {
 	return type.split().Quals.hasConst();
 }
-
 }    // namespace Helpers::Type

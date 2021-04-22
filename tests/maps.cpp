@@ -6,7 +6,7 @@
 
 TEST_CASE("std::map of base type", "[maps]") {
 	for (auto baseType : TestUtil::getBaseTypes(
-	         /* excluding */ {"std::string", "void", "bool"})) {
+	         /* excluding */ {"std::string", "void"})) {
 		auto code = R"(
 #include <map>
 

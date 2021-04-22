@@ -28,5 +28,4 @@ int getNumberOfPointers(clang::QualType type);
 * Checks if type is const
 */
 bool isConst(clang::QualType const& type);
-
 }    // namespace Helpers::Type

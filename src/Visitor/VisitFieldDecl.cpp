@@ -1,5 +1,6 @@
 #include "Builders/commonBuilder.hpp"
 #include "Builders/typeBuilder.hpp"
+#include "Helpers/Type/utilities.hpp"
 #include "IRProxy/IRData.hpp"
 #include "Visitor/ParserVisitor.hpp"
 #include <spdlog/spdlog.h>
@@ -17,12 +18,16 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 
 	IR::Variable variable;
 	variable.m_name = fieldDecl->getName();
-	// TODO: Handle type not being converted
-	if (auto type = Builders::buildType(fieldDecl->getType())) {
+
+	// This is passed so that while extracting text from types it is exactly what the user wrote
+	auto policy =
+	    clang::PrintingPolicy(fieldDecl->getASTContext().getLangOpts());
+
+	if (auto type = Builders::buildType(fieldDecl->getType(), policy)) {
 		variable.m_type = type.value();
 	} else {
 		spdlog::error("Failed to parse type {} for member variable {}",
-		              fieldDecl->getType().getAsString(),
+		              fieldDecl->getType().getAsString(policy),
 		              fieldDecl->getQualifiedNameAsString());
 		m_parsedSuccessfully = false;
 		// Stop parsing
@@ -49,5 +54,5 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 
 	// Continue the AST search
 	return true;
-    }
-    }    // namespace Visitor
+}
+}    // namespace Visitor
