@@ -6,7 +6,7 @@
 
 TEST_CASE("std::unordered_map of base types", "[unordered_map]") {
 	for (auto baseType : TestUtil::getBaseTypes(
-	         /* excluding */ {"std::string", "void", "bool"})) {
+	         /* excluding */ {"std::string", "void"})) {
 		auto code = R"(
 #include <unordered_map>
 

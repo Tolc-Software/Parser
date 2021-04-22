@@ -5,7 +5,6 @@
 #include <spdlog/spdlog.h>
 
 namespace Visitor {
-
 bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	if (isInSystemHeader(functionDecl)) {
 		// Continue the AST search
@@ -19,11 +18,16 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	parsedFunc.m_path =
 	    Builders::buildStructure(functionDecl, IRProxy::Structure::Function);
 
-	if (auto returnType = Builders::buildType(functionDecl->getReturnType())) {
+	// This is passed so that while extracting text from types it is exactly what the user wrote
+	auto policy =
+	    clang::PrintingPolicy(functionDecl->getASTContext().getLangOpts());
+
+	if (auto returnType =
+	        Builders::buildType(functionDecl->getReturnType(), policy)) {
 		parsedFunc.m_returnType = returnType.value();
 	} else {
 		spdlog::error("Failed to parse return type {} for function {}",
-		              functionDecl->getReturnType().getAsString(),
+		              functionDecl->getReturnType().getAsString(policy),
 		              functionDecl->getQualifiedNameAsString());
 		m_parsedSuccessfully = false;
 		// Stop parsing
@@ -32,7 +36,7 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 
 	for (auto& p : functionDecl->parameters()) {
 		// TODO: Handle unsupported types
-		if (auto argType = Builders::buildType(p->getType())) {
+		if (auto argType = Builders::buildType(p->getType(), policy)) {
 			IR::Variable arg;
 			arg.m_name = p->getName();
 			arg.m_type = argType.value();
@@ -40,7 +44,7 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		} else {
 			spdlog::error("Failed to parse argument type {} for function {}",
 			              functionDecl->getReturnType().getAsString(),
-			              p->getType().getAsString());
+			              p->getType().getAsString(policy));
 			m_parsedSuccessfully = false;
 			// Stop parsing
 			return false;
@@ -48,7 +52,8 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	}
 
 	// Check for access modifiers (public, private, ...)
-	parsedFunc.m_modifier = Builders::convertToIRAccess(functionDecl->getAccess());
+	parsedFunc.m_modifier =
+	    Builders::convertToIRAccess(functionDecl->getAccess());
 
 	m_irData.m_functions.push_back(parsedFunc);
 
@@ -56,4 +61,4 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	return true;
 }
 
-}
+}    // namespace Visitor

@@ -34,7 +34,7 @@ std::vector<std::vector<int>> f();
 
 TEST_CASE("std::vector<baseType>", "[vector]") {
 	for (auto baseType : TestUtil::getBaseTypes(
-	         /* excluding */ {"std::string", "void", "bool"})) {
+	         /* excluding */ {"std::string", "void"})) {
 		auto code = R"(
 #include <vector>
 
