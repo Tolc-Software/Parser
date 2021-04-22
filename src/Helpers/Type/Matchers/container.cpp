@@ -13,6 +13,48 @@ constexpr auto match_vector(std::string_view sv) noexcept {
 	return ctre::match<vector_pattern>(sv);
 }
 
+static constexpr auto stack_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::stack<.*?>"};
+
+constexpr auto match_stack(std::string_view sv) noexcept {
+	return ctre::match<stack_pattern>(sv);
+}
+
+static constexpr auto queue_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::queue<.*?>"};
+
+constexpr auto match_queue(std::string_view sv) noexcept {
+	return ctre::match<queue_pattern>(sv);
+}
+
+static constexpr auto priority_queue_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::priority_queue<.*?>"};
+
+constexpr auto match_priority_queue(std::string_view sv) noexcept {
+	return ctre::match<priority_queue_pattern>(sv);
+}
+
+static constexpr auto deque_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::deque<.*?>"};
+
+constexpr auto match_deque(std::string_view sv) noexcept {
+	return ctre::match<deque_pattern>(sv);
+}
+
+static constexpr auto list_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::list<.*?>"};
+
+constexpr auto match_list(std::string_view sv) noexcept {
+	return ctre::match<list_pattern>(sv);
+}
+
+static constexpr auto forward_list_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::forward_list<.*?>"};
+
+constexpr auto match_forward_list(std::string_view sv) noexcept {
+	return ctre::match<forward_list_pattern>(sv);
+}
+
 static constexpr auto array_pattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::array<.*?>"};
 
@@ -34,6 +76,27 @@ constexpr auto match_unordered_map(std::string_view sv) noexcept {
 	return ctre::match<unordered_map_pattern>(sv);
 }
 
+static constexpr auto unordered_multimap_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::unordered_multimap<.*?>"};
+
+constexpr auto match_unordered_multimap(std::string_view sv) noexcept {
+	return ctre::match<unordered_multimap_pattern>(sv);
+}
+
+static constexpr auto multimap_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::multimap<.*?>"};
+
+constexpr auto match_multimap(std::string_view sv) noexcept {
+	return ctre::match<multimap_pattern>(sv);
+}
+
+static constexpr auto multiset_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::multiset<.*?>"};
+
+constexpr auto match_multiset(std::string_view sv) noexcept {
+	return ctre::match<multiset_pattern>(sv);
+}
+
 static constexpr auto set_pattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::set<.*?>"};
 
@@ -46,6 +109,13 @@ static constexpr auto unordered_set_pattern =
 
 constexpr auto match_unordered_set(std::string_view sv) noexcept {
 	return ctre::match<unordered_set_pattern>(sv);
+}
+
+static constexpr auto unordered_multiset_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::unordered_multiset<.*?>"};
+
+constexpr auto match_unordered_multiset(std::string_view sv) noexcept {
+	return ctre::match<unordered_multiset_pattern>(sv);
 }
 
 static constexpr auto allocator_pattern =
@@ -107,6 +177,8 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::Array;
 	} else if (match_greater(type)) {
 		return ContainerType::Greater;
+	} else if (match_deque(type)) {
+		return ContainerType::Deque;
 	} else if (match_less(type)) {
 		return ContainerType::Less;
 	} else if (match_set(type)) {
@@ -117,6 +189,10 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::Pair;
 	} else if (match_equal_to(type)) {
 		return ContainerType::EqualTo;
+	} else if (match_queue(type)) {
+		return ContainerType::Queue;
+	} else if (match_stack(type)) {
+		return ContainerType::Stack;
 	} else if (match_hash(type)) {
 		return ContainerType::Hash;
 	} else if (match_unordered_map(type)) {
@@ -125,6 +201,20 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::UnorderedSet;
 	} else if (match_tuple(type)) {
 		return ContainerType::Tuple;
+	} else if (match_multiset(type)) {
+		return ContainerType::MultiSet;
+	} else if (match_multimap(type)) {
+		return ContainerType::MultiMap;
+	} else if (match_list(type)) {
+		return ContainerType::List;
+	} else if (match_priority_queue(type)) {
+		return ContainerType::PriorityQueue;
+	} else if (match_unordered_multimap(type)) {
+		return ContainerType::UnorderedMultiMap;
+	} else if (match_unordered_multiset(type)) {
+		return ContainerType::UnorderedMultiSet;
+	} else if (match_forward_list(type)) {
+		return ContainerType::ForwardList;
 	}
 	return {};
 }
