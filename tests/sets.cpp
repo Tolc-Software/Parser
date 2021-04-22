@@ -5,56 +5,45 @@
 #include <variant>
 
 TEST_CASE("std::set of base type", "[sets]") {
-	for (auto baseType : TestUtil::getBaseTypes(
-	         /* excluding */ {"std::string", "void", "bool"})) {
-		auto code = R"(
+	auto code = R"(
 #include <set>
 
 struct MyClass {
-)" +
-		            fmt::format(R"(
-	std::set<{baseType}> m_v;)",
-		                        fmt::arg("baseType", baseType)) +
-		            R"(
+	std::set<int> m_v;
 };
 
 )";
-		CAPTURE(code);
-		auto globalNS = TestUtil::parseString(code);
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto& myClass = globalNS.m_structs.back();
-		REQUIRE(myClass.m_memberVariables.size() == 1);
-		auto& [am, m_v] = myClass.m_memberVariables.back();
-		REQUIRE(am == IR::AccessModifier::Public);
-		REQUIRE(m_v.m_type.m_representation ==
-		        fmt::format("std::set<{baseType}>",
-		                    fmt::arg("baseType", baseType)));
-		auto arrayType = std::get_if<IR::Type::Container>(&m_v.m_type.m_type);
-		REQUIRE(arrayType != nullptr);
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto& myClass = globalNS.m_structs.back();
+	REQUIRE(myClass.m_memberVariables.size() == 1);
+	auto& [am, m_v] = myClass.m_memberVariables.back();
+	REQUIRE(am == IR::AccessModifier::Public);
+	REQUIRE(m_v.m_type.m_representation == "std::set<int>");
+	auto arrayType = std::get_if<IR::Type::Container>(&m_v.m_type.m_type);
+	REQUIRE(arrayType != nullptr);
 
-		REQUIRE(arrayType->m_container == IR::ContainerType::Set);
-		// std::set<{baseType}, struct std::less<{baseType}>, class std::allocator<{baseType}> >
-		REQUIRE(arrayType->m_containedTypes.size() == 3);
+	REQUIRE(arrayType->m_container == IR::ContainerType::Set);
+	// std::set<int, struct std::less<int>, class std::allocator<int> >
+	REQUIRE(arrayType->m_containedTypes.size() == 3);
 
-		for (auto const& type : arrayType->m_containedTypes) {
-			if (auto value = std::get_if<IR::Type::Value>(&type.m_type)) {
-				auto base = TestUtil::getIRFromString(baseType);
-				REQUIRE(base.has_value());
-				REQUIRE(value->m_base == base.value());
-				REQUIRE(type.m_isConst == false);
-				REQUIRE(type.m_isReference == false);
-				REQUIRE(type.m_representation == baseType);
-			} else if (auto container =
-			               std::get_if<IR::Type::Container>(&type.m_type)) {
-				REQUIRE(container->m_containedTypes.size() == 1);
-				auto containerType = container->m_container;
-				REQUIRE((containerType == IR::ContainerType::Less ||
-				         containerType == IR::ContainerType::Allocator));
-			} else {
-				INFO(
-				    "The set does not contain expected templated values. Something must have gone wrong.");
-				REQUIRE(false);
-			}
+	for (auto const& type : arrayType->m_containedTypes) {
+		if (auto value = std::get_if<IR::Type::Value>(&type.m_type)) {
+			REQUIRE(value->m_base == IR::BaseType::Int);
+			REQUIRE(type.m_isConst == false);
+			REQUIRE(type.m_isReference == false);
+			REQUIRE(type.m_representation == "int");
+		} else if (auto container =
+		               std::get_if<IR::Type::Container>(&type.m_type)) {
+			REQUIRE(container->m_containedTypes.size() == 1);
+			auto containerType = container->m_container;
+			REQUIRE((containerType == IR::ContainerType::Less ||
+			         containerType == IR::ContainerType::Allocator));
+		} else {
+			INFO(
+			    "The set does not contain expected templated values. Something must have gone wrong.");
+			REQUIRE(false);
 		}
 	}
 }

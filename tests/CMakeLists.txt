@@ -33,32 +33,46 @@ endif()
 
 foreach(
   test
-  arrays.cpp
-  classes.cpp
-  enums.cpp
-  fields.cpp
-  files.cpp
-  tuples.cpp
-  functions.cpp
-  maps.cpp
-  multipleClasses.cpp
-  namespaces.cpp
-  references.cpp
-  dataStructs.cpp
-  representation.cpp
-  sets.cpp
-  strings.cpp
-  unordered_maps.cpp
-  unordered_sets.cpp
-  userDefined.cpp
-  vectors.cpp
-  Parser/Parse.cpp
+
   Helpers/Type/Matchers/container.cpp
   Helpers/Type/matchers.cpp
   Helpers/Utils/split.cpp
   Helpers/Utils/string.cpp
   Helpers/commandLineArgs.cpp
-  Parser/Windows/systemIncludeHelper.cpp)
+  Parser/Parse.cpp
+  Parser/Windows/systemIncludeHelper.cpp
+  arrays.cpp
+  classes.cpp
+  dataStructs.cpp
+  deques.cpp
+  enums.cpp
+  fields.cpp
+  files.cpp
+  forward_lists.cpp
+  functions.cpp
+  lists.cpp
+  maps.cpp
+  multipleClasses.cpp
+  multisets.cpp
+  multimaps.cpp
+  namespaces.cpp
+  references.cpp
+  representation.cpp
+  sets.cpp
+  strings.cpp
+  tuples.cpp
+  unordered_maps.cpp
+  unordered_multimaps.cpp
+  unordered_sets.cpp
+  unordered_multisets.cpp
+  userDefined.cpp
+  vectors.cpp
+  queues.cpp
+  priority_queues.cpp
+  stacks.cpp
+  
+  )
+
   # Ex: PybindProxy/moduleFile.cpp -> moduleFile
   get_filename_component(testName ${test} NAME_WLE)
 
