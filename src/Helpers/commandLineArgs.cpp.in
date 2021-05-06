@@ -18,7 +18,7 @@ getCommandLineArgs(std::vector<std::string> const& configIncludes) {
 	auto systemIncludes =
 	    configIncludes.empty() ? Helpers::getSystemIncludes() : configIncludes;
 	return Helpers::Utils::combine(systemIncludes,
-	                               {"-nostdinc++", "--language", "c++"});
+	                               {"-nostdinc++", "--language", "c++", "-std=c++17"});
 }
 
 }    // namespace Helpers

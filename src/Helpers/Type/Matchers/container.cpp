@@ -118,6 +118,20 @@ constexpr auto match_unordered_multiset(std::string_view sv) noexcept {
 	return ctre::match<unordered_multiset_pattern>(sv);
 }
 
+static constexpr auto optional_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::optional<.*?>"};
+
+constexpr auto match_optional(std::string_view sv) noexcept {
+	return ctre::match<optional_pattern>(sv);
+}
+
+static constexpr auto variant_pattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::variant<.*?>"};
+
+constexpr auto match_variant(std::string_view sv) noexcept {
+	return ctre::match<variant_pattern>(sv);
+}
+
 static constexpr auto allocator_pattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::allocator<.*?>"};
 
@@ -191,6 +205,10 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::EqualTo;
 	} else if (match_queue(type)) {
 		return ContainerType::Queue;
+	} else if (match_optional(type)) {
+		return ContainerType::Optional;
+	} else if (match_variant(type)) {
+		return ContainerType::Variant;
 	} else if (match_stack(type)) {
 		return ContainerType::Stack;
 	} else if (match_hash(type)) {
