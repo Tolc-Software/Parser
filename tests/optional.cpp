@@ -1,0 +1,35 @@
+#include "TestUtil/parse.hpp"
+#include "TestUtil/types.hpp"
+#include <catch2/catch.hpp>
+#include <variant>
+
+TEST_CASE("std::optional of base type", "[optionals]") {
+	auto code = R"(
+#include <optional>
+
+struct MyClass {
+	std::optional<int> m_d;
+};
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto& myClass = globalNS.m_structs.back();
+	REQUIRE(myClass.m_memberVariables.size() == 1);
+
+	auto& [am, m_d] = myClass.m_memberVariables.back();
+	REQUIRE(am == IR::AccessModifier::Public);
+	REQUIRE(m_d.m_type.m_representation == "std::optional<int>");
+	auto optionalType = std::get_if<IR::Type::Container>(&m_d.m_type.m_type);
+	REQUIRE(optionalType != nullptr);
+
+	REQUIRE(optionalType->m_container == IR::ContainerType::Optional);
+	// NOTE: Second arg is the allocator
+	REQUIRE(optionalType->m_containedTypes.size() == 1);
+	auto& type = optionalType->m_containedTypes.front();
+
+	auto value = std::get_if<IR::Type::Value>(&type.m_type);
+	REQUIRE(value != nullptr);
+	REQUIRE(value->m_base == IR::BaseType::Int);
+	REQUIRE(type.m_representation == "int");
+}

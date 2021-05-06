@@ -52,25 +52,27 @@ foreach(
   functions.cpp
   lists.cpp
   maps.cpp
+  multimaps.cpp
   multipleClasses.cpp
   multisets.cpp
-  multimaps.cpp
   namespaces.cpp
+  optional.cpp
+  priority_queues.cpp
+  queues.cpp
   references.cpp
   representation.cpp
   sets.cpp
+  stacks.cpp
   strings.cpp
   tuples.cpp
   unordered_maps.cpp
   unordered_multimaps.cpp
-  unordered_sets.cpp
   unordered_multisets.cpp
+  unordered_sets.cpp
   userDefined.cpp
+  variant.cpp
   vectors.cpp
-  queues.cpp
-  priority_queues.cpp
-  stacks.cpp
-  
+
   )
 
   # Ex: PybindProxy/moduleFile.cpp -> moduleFile
