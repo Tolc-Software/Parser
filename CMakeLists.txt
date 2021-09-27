@@ -25,15 +25,20 @@ FetchContent_Declare(
   IRSpecification
   GIT_REPOSITORY git@github.com:srydell/IntermediateRepresentation.git
   GIT_TAG master)
-
 FetchContent_MakeAvailable(IRSpecification)
+
+FetchContent_Declare(
+  ctre_content
+  GIT_REPOSITORY https://github.com/hanickadot/compile-time-regular-expressions.git
+  GIT_TAG v3.4.1)
+FetchContent_Populate(ctre_content)
 
 # Define run_conan
 include(cmake/ConanHelpers.cmake)
 # Create the profile from variables known during configure
 setup_conan_profile(VARIABLE parser_conan_profile)
 # This helps with packaging
-set(CONAN_REQUIRES_PACKAGES CTRE/v2.8.2@ctre/stable spdlog/1.8.0 fmt/7.1.3)
+set(CONAN_REQUIRES_PACKAGES spdlog/1.8.0 fmt/7.1.3)
 find_conan_packages(
   REQUIRES ${CONAN_REQUIRES_PACKAGES} PROFILE
   ${parser_conan_profile})
@@ -58,18 +63,7 @@ include(cmake/IncludePathHelpers.cmake)
 get_system_include(VARIABLE platform_include LLVM_DIRECTORY
                    ${llvm_entry_SOURCE_DIR} LLVM_VERSION ${llvm_entry_version})
 
-# if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
-  # set(temp "")
-  # foreach(include ${platform_include})
-    # if(NOT temp)
-      # set(temp "\"-isystem${include}\"")
-    # else()
-      # string(APPEND temp ", \"-isystem${include}\"")
-    # endif()
-  # endforeach()
-# else()
-  format_includes(VARIABLE INCLUDE_PATH INCLUDES ${platform_include} SYSTEM)
-# endif()
+format_includes(VARIABLE INCLUDE_PATH INCLUDES ${platform_include} SYSTEM)
 
 configure_file(src/Helpers/commandLineArgs.cpp.in
                ${CMAKE_CURRENT_LIST_DIR}/src/Helpers/commandLineArgs.cpp @ONLY)
@@ -104,7 +98,7 @@ add_llvm_library(
 target_link_libraries(
   Parser
   PUBLIC IR::IR
-  PRIVATE clangASTMatchers clangBasic clangTooling CTRE::CTRE spdlog::spdlog fmt::fmt)
+  PRIVATE clangASTMatchers clangBasic clangTooling spdlog::spdlog fmt::fmt)
 
 add_warnings(TARGET Parser)
 add_options(TARGET Parser)
@@ -112,8 +106,9 @@ add_options(TARGET Parser)
 # Set sanitizer options on Parser if options defined
 enable_sanitizers(Parser)
 
-# Ignore warnings from clang/ as if they were system headers.
+# Ignore warnings from {clang,ctre} as if they were system headers.
 target_include_directories(Parser SYSTEM PRIVATE ${llvm_entry_INCLUDE_DIR})
+target_include_directories(Parser SYSTEM PRIVATE ${ctre_content_SOURCE_DIR}/single-header)
 target_include_directories(Parser PRIVATE src)
 target_include_directories(
   Parser PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
