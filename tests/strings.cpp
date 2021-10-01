@@ -24,6 +24,26 @@ std::string f();
 	REQUIRE(stringType->m_base == IR::BaseType::String);
 }
 
+TEST_CASE("Function returning a string_view", "[strings]") {
+	auto code = R"(
+#include <string_view>
+
+std::string_view f();
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	REQUIRE(globalNS.m_functions.size() == 1);
+	auto& f = globalNS.m_functions.back();
+	auto& returnType = f.m_returnType;
+	REQUIRE(returnType.m_representation == "std::string_view");
+
+	auto& str = returnType.m_type;
+	auto stringType = std::get_if<IR::Type::Value>(&str);
+	REQUIRE(stringType != nullptr);
+
+	REQUIRE(stringType->m_base == IR::BaseType::StringView);
+}
+
 TEST_CASE("String nested in a container", "[strings]") {
 	auto code = R"(
 #include <string>

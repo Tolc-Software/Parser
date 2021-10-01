@@ -16,6 +16,13 @@ constexpr auto matchString(std::string_view sv) noexcept {
 	return ctre::match<stringPattern>(sv);
 }
 
+static constexpr auto stringViewPattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::basic_string_view<.*?>"};
+
+constexpr auto matchStringView(std::string_view sv) noexcept {
+	return ctre::match<stringViewPattern>(sv);
+}
+
 std::optional<IR::BaseType> getBaseType(std::string_view type) {
 	using IR::BaseType;
 	// Types and alternate types are listed in https://en.cppreference.com/w/cpp/language/types
@@ -61,6 +68,8 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 		return BaseType::UnsignedInt;
 	} else if (matchString(type)) {
 		return BaseType::String;
+	} else if (matchStringView(type)) {
+		return BaseType::StringView;
 	} else if (type == "void") {
 		return BaseType::Void;
 	}

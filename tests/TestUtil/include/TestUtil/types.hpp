@@ -69,6 +69,7 @@ std::string getAsString(IR::BaseType type) {
 		case BaseType::ShortInt: return "short int";
 		case BaseType::SignedChar: return "signed char";
 		case BaseType::String: return "std::string";
+		case BaseType::StringView: return "std::string_view";
 		case BaseType::UnsignedChar: return "unsigned char";
 		case BaseType::UnsignedInt: return "unsigned int";
 		case BaseType::UnsignedLongInt: return "unsigned long int";
@@ -169,7 +170,8 @@ std::string getValidReturnForType(IR::BaseType type) {
 		case BaseType::UnsignedLongLongInt:
 		case BaseType::UnsignedShortInt:
 		case BaseType::UnsignedInt: return "0";
-		case BaseType::String: return "\"HelloWorld\"";
+		case BaseType::String:
+		case BaseType::StringView: return "\"HelloWorld\"";
 		case BaseType::Void: return "";
 	}
 	return "";
