@@ -27,7 +27,7 @@ function(_get_llvm_download_url)
       )
     else()
       set(download_url
-          https://github.com/Tolc-Software/custom-llvm/releases/download/${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-windows-Release.tar.gz
+          https://github.com/Tolc-Software/custom-llvm/releases/download/${ARG_VERSION}/clang+llvm-${ARG_VERSION}-x86_64-windows-Release.tar.xz
       )
     endif()
   else()
