@@ -66,9 +66,9 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 		return BaseType::UnsignedShortInt;
 	} else if (type == "unsigned" || type == "unsigned int") {
 		return BaseType::UnsignedInt;
-	} else if (matchString(type)) {
+	} else if (type == "std::string" || matchString(type)) {
 		return BaseType::String;
-	} else if (matchStringView(type)) {
+	} else if (type == "std::string_view" || matchStringView(type)) {
 		return BaseType::StringView;
 	} else if (type == "void") {
 		return BaseType::Void;

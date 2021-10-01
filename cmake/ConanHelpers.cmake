@@ -63,9 +63,6 @@ function(conan_setup_remotes)
   conan_add_remote(NAME bincrafters URL
                    https://api.bintray.com/conan/bincrafters/public-conan)
 
-  # For google benchmark
-  conan_add_remote(NAME conan-mpusz URL
-                   https://api.bintray.com/conan/mpusz/conan-mpusz)
   set(_conan_has_set_remotes
       TRUE
       CACHE INTERNAL
