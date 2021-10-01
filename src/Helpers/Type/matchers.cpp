@@ -1,11 +1,20 @@
 #include "Helpers/Type/matchers.hpp"
 #include <IR/ir.hpp>
 #include <array>
+#include <ctre.hpp>
 #include <optional>
 #include <string>
 #include <string_view>
 
 namespace Helpers::Type {
+
+// Either in LLVM lib, the one provided by Apple, or on Windows
+static constexpr auto stringPattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::basic_string<.*?>"};
+
+constexpr auto matchString(std::string_view sv) noexcept {
+	return ctre::match<stringPattern>(sv);
+}
 
 std::optional<IR::BaseType> getBaseType(std::string_view type) {
 	using IR::BaseType;
@@ -50,13 +59,7 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 		return BaseType::UnsignedShortInt;
 	} else if (type == "unsigned" || type == "unsigned int") {
 		return BaseType::UnsignedInt;
-		// Either in LLVM lib, the one provided by Apple, or on Windows
-	} else if (
-	    type == "class std::__cxx11::basic_string<char>" ||
-	    type ==
-	        "class std::__1::basic_string<char, struct std::__1::char_traits<char>, class std::__1::allocator<char> >" ||
-	    type ==
-	        "class std::basic_string<char, struct std::char_traits<char>, class std::allocator<char> >") {
+	} else if (matchString(type)) {
 		return BaseType::String;
 	} else if (type == "void") {
 		return BaseType::Void;

@@ -6,232 +6,232 @@
 
 namespace Helpers::Type::Matchers {
 
-static constexpr auto vector_pattern =
+static constexpr auto vectorPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::vector<.*?>"};
 
-constexpr auto match_vector(std::string_view sv) noexcept {
-	return ctre::match<vector_pattern>(sv);
+constexpr auto matchVector(std::string_view sv) noexcept {
+	return ctre::match<vectorPattern>(sv);
 }
 
-static constexpr auto stack_pattern =
+static constexpr auto stackPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::stack<.*?>"};
 
-constexpr auto match_stack(std::string_view sv) noexcept {
-	return ctre::match<stack_pattern>(sv);
+constexpr auto matchStack(std::string_view sv) noexcept {
+	return ctre::match<stackPattern>(sv);
 }
 
-static constexpr auto queue_pattern =
+static constexpr auto queuePattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::queue<.*?>"};
 
-constexpr auto match_queue(std::string_view sv) noexcept {
-	return ctre::match<queue_pattern>(sv);
+constexpr auto matchQueue(std::string_view sv) noexcept {
+	return ctre::match<queuePattern>(sv);
 }
 
-static constexpr auto priority_queue_pattern =
+static constexpr auto priorityQueuePattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::priority_queue<.*?>"};
 
-constexpr auto match_priority_queue(std::string_view sv) noexcept {
-	return ctre::match<priority_queue_pattern>(sv);
+constexpr auto matchPriorityQueue(std::string_view sv) noexcept {
+	return ctre::match<priorityQueuePattern>(sv);
 }
 
-static constexpr auto deque_pattern =
+static constexpr auto dequePattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::deque<.*?>"};
 
-constexpr auto match_deque(std::string_view sv) noexcept {
-	return ctre::match<deque_pattern>(sv);
+constexpr auto matchDeque(std::string_view sv) noexcept {
+	return ctre::match<dequePattern>(sv);
 }
 
-static constexpr auto list_pattern =
+static constexpr auto listPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::list<.*?>"};
 
-constexpr auto match_list(std::string_view sv) noexcept {
-	return ctre::match<list_pattern>(sv);
+constexpr auto matchList(std::string_view sv) noexcept {
+	return ctre::match<listPattern>(sv);
 }
 
-static constexpr auto forward_list_pattern =
+static constexpr auto forwardListPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::forward_list<.*?>"};
 
-constexpr auto match_forward_list(std::string_view sv) noexcept {
-	return ctre::match<forward_list_pattern>(sv);
+constexpr auto matchForwardList(std::string_view sv) noexcept {
+	return ctre::match<forwardListPattern>(sv);
 }
 
-static constexpr auto array_pattern =
+static constexpr auto arrayPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::array<.*?>"};
 
-constexpr auto match_array(std::string_view sv) noexcept {
-	return ctre::match<array_pattern>(sv);
+constexpr auto matchArray(std::string_view sv) noexcept {
+	return ctre::match<arrayPattern>(sv);
 }
 
-static constexpr auto map_pattern =
+static constexpr auto mapPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::map<.*?>"};
 
-constexpr auto match_map(std::string_view sv) noexcept {
-	return ctre::match<map_pattern>(sv);
+constexpr auto matchMap(std::string_view sv) noexcept {
+	return ctre::match<mapPattern>(sv);
 }
 
-static constexpr auto unordered_map_pattern =
+static constexpr auto unorderedMapPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::unordered_map<.*?>"};
 
-constexpr auto match_unordered_map(std::string_view sv) noexcept {
-	return ctre::match<unordered_map_pattern>(sv);
+constexpr auto matchUnorderedMap(std::string_view sv) noexcept {
+	return ctre::match<unorderedMapPattern>(sv);
 }
 
-static constexpr auto unordered_multimap_pattern =
+static constexpr auto unorderedMultimapPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::unordered_multimap<.*?>"};
 
-constexpr auto match_unordered_multimap(std::string_view sv) noexcept {
-	return ctre::match<unordered_multimap_pattern>(sv);
+constexpr auto matchUnorderedMultimap(std::string_view sv) noexcept {
+	return ctre::match<unorderedMultimapPattern>(sv);
 }
 
-static constexpr auto multimap_pattern =
+static constexpr auto multimapPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::multimap<.*?>"};
 
-constexpr auto match_multimap(std::string_view sv) noexcept {
-	return ctre::match<multimap_pattern>(sv);
+constexpr auto matchMultimap(std::string_view sv) noexcept {
+	return ctre::match<multimapPattern>(sv);
 }
 
-static constexpr auto multiset_pattern =
+static constexpr auto multisetPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::multiset<.*?>"};
 
-constexpr auto match_multiset(std::string_view sv) noexcept {
-	return ctre::match<multiset_pattern>(sv);
+constexpr auto matchMultiset(std::string_view sv) noexcept {
+	return ctre::match<multisetPattern>(sv);
 }
 
-static constexpr auto set_pattern =
+static constexpr auto setPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::set<.*?>"};
 
-constexpr auto match_set(std::string_view sv) noexcept {
-	return ctre::match<set_pattern>(sv);
+constexpr auto matchSet(std::string_view sv) noexcept {
+	return ctre::match<setPattern>(sv);
 }
 
-static constexpr auto unordered_set_pattern =
+static constexpr auto unorderedSetPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::unordered_set<.*?>"};
 
-constexpr auto match_unordered_set(std::string_view sv) noexcept {
-	return ctre::match<unordered_set_pattern>(sv);
+constexpr auto matchUnorderedSet(std::string_view sv) noexcept {
+	return ctre::match<unorderedSetPattern>(sv);
 }
 
-static constexpr auto unordered_multiset_pattern =
+static constexpr auto unorderedMultisetPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::unordered_multiset<.*?>"};
 
-constexpr auto match_unordered_multiset(std::string_view sv) noexcept {
-	return ctre::match<unordered_multiset_pattern>(sv);
+constexpr auto matchUnorderedMultiset(std::string_view sv) noexcept {
+	return ctre::match<unorderedMultisetPattern>(sv);
 }
 
-static constexpr auto optional_pattern =
+static constexpr auto optionalPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::optional<.*?>"};
 
-constexpr auto match_optional(std::string_view sv) noexcept {
-	return ctre::match<optional_pattern>(sv);
+constexpr auto matchOptional(std::string_view sv) noexcept {
+	return ctre::match<optionalPattern>(sv);
 }
 
-static constexpr auto variant_pattern =
+static constexpr auto variantPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::variant<.*?>"};
 
-constexpr auto match_variant(std::string_view sv) noexcept {
-	return ctre::match<variant_pattern>(sv);
+constexpr auto matchVariant(std::string_view sv) noexcept {
+	return ctre::match<variantPattern>(sv);
 }
 
-static constexpr auto allocator_pattern =
+static constexpr auto allocatorPattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::allocator<.*?>"};
 
-constexpr auto match_allocator(std::string_view sv) noexcept {
-	return ctre::match<allocator_pattern>(sv);
+constexpr auto matchAllocator(std::string_view sv) noexcept {
+	return ctre::match<allocatorPattern>(sv);
 }
 
-static constexpr auto pair_pattern =
+static constexpr auto pairPattern =
     ctll::fixed_string {"struct std(::__1)?::pair<.*?>"};
 
-constexpr auto match_pair(std::string_view sv) noexcept {
-	return ctre::match<pair_pattern>(sv);
+constexpr auto matchPair(std::string_view sv) noexcept {
+	return ctre::match<pairPattern>(sv);
 }
 
-static constexpr auto tuple_pattern =
+static constexpr auto tuplePattern =
     ctll::fixed_string {"(struct|class) std(::__1)?::tuple<.*?>"};
 
-constexpr auto match_tuple(std::string_view sv) noexcept {
-	return ctre::match<tuple_pattern>(sv);
+constexpr auto matchTuple(std::string_view sv) noexcept {
+	return ctre::match<tuplePattern>(sv);
 }
 
-static constexpr auto greater_pattern =
+static constexpr auto greaterPattern =
     ctll::fixed_string {"struct std(::__1)?::greater<.*?>"};
 
-constexpr auto match_greater(std::string_view sv) noexcept {
-	return ctre::match<greater_pattern>(sv);
+constexpr auto matchGreater(std::string_view sv) noexcept {
+	return ctre::match<greaterPattern>(sv);
 }
 
-static constexpr auto less_pattern =
+static constexpr auto lessPattern =
     ctll::fixed_string {"struct std(::__1)?::less<.*?>"};
 
-constexpr auto match_less(std::string_view sv) noexcept {
-	return ctre::match<less_pattern>(sv);
+constexpr auto matchLess(std::string_view sv) noexcept {
+	return ctre::match<lessPattern>(sv);
 }
 
-static constexpr auto hash_pattern =
+static constexpr auto hashPattern =
     ctll::fixed_string {"struct std(::__1)?::hash<.*?>"};
 
-constexpr auto match_hash(std::string_view sv) noexcept {
-	return ctre::match<hash_pattern>(sv);
+constexpr auto matchHash(std::string_view sv) noexcept {
+	return ctre::match<hashPattern>(sv);
 }
 
-static constexpr auto equal_to_pattern =
+static constexpr auto equalToPattern =
     ctll::fixed_string {"struct std(::__1)?::equal_to<.*?>"};
 
-constexpr auto match_equal_to(std::string_view sv) noexcept {
-	return ctre::match<equal_to_pattern>(sv);
+constexpr auto matchEqualTo(std::string_view sv) noexcept {
+	return ctre::match<equalToPattern>(sv);
 }
 
 std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 	using IR::ContainerType;
-	if (match_vector(type)) {
+	if (matchVector(type)) {
 		return ContainerType::Vector;
-	} else if (match_allocator(type)) {
+	} else if (matchAllocator(type)) {
 		return ContainerType::Allocator;
-	} else if (match_array(type)) {
+	} else if (matchArray(type)) {
 		return ContainerType::Array;
-	} else if (match_greater(type)) {
+	} else if (matchGreater(type)) {
 		return ContainerType::Greater;
-	} else if (match_deque(type)) {
+	} else if (matchDeque(type)) {
 		return ContainerType::Deque;
-	} else if (match_less(type)) {
+	} else if (matchLess(type)) {
 		return ContainerType::Less;
-	} else if (match_set(type)) {
+	} else if (matchSet(type)) {
 		return ContainerType::Set;
-	} else if (match_map(type)) {
+	} else if (matchMap(type)) {
 		return ContainerType::Map;
-	} else if (match_pair(type)) {
+	} else if (matchPair(type)) {
 		return ContainerType::Pair;
-	} else if (match_equal_to(type)) {
+	} else if (matchEqualTo(type)) {
 		return ContainerType::EqualTo;
-	} else if (match_queue(type)) {
+	} else if (matchQueue(type)) {
 		return ContainerType::Queue;
-	} else if (match_optional(type)) {
+	} else if (matchOptional(type)) {
 		return ContainerType::Optional;
-	} else if (match_variant(type)) {
+	} else if (matchVariant(type)) {
 		return ContainerType::Variant;
-	} else if (match_stack(type)) {
+	} else if (matchStack(type)) {
 		return ContainerType::Stack;
-	} else if (match_hash(type)) {
+	} else if (matchHash(type)) {
 		return ContainerType::Hash;
-	} else if (match_unordered_map(type)) {
+	} else if (matchUnorderedMap(type)) {
 		return ContainerType::UnorderedMap;
-	} else if (match_unordered_set(type)) {
+	} else if (matchUnorderedSet(type)) {
 		return ContainerType::UnorderedSet;
-	} else if (match_tuple(type)) {
+	} else if (matchTuple(type)) {
 		return ContainerType::Tuple;
-	} else if (match_multiset(type)) {
+	} else if (matchMultiset(type)) {
 		return ContainerType::MultiSet;
-	} else if (match_multimap(type)) {
+	} else if (matchMultimap(type)) {
 		return ContainerType::MultiMap;
-	} else if (match_list(type)) {
+	} else if (matchList(type)) {
 		return ContainerType::List;
-	} else if (match_priority_queue(type)) {
+	} else if (matchPriorityQueue(type)) {
 		return ContainerType::PriorityQueue;
-	} else if (match_unordered_multimap(type)) {
+	} else if (matchUnorderedMultimap(type)) {
 		return ContainerType::UnorderedMultiMap;
-	} else if (match_unordered_multiset(type)) {
+	} else if (matchUnorderedMultiset(type)) {
 		return ContainerType::UnorderedMultiSet;
-	} else if (match_forward_list(type)) {
+	} else if (matchForwardList(type)) {
 		return ContainerType::ForwardList;
 	}
 	return {};
