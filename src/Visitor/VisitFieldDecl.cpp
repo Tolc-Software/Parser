@@ -11,7 +11,7 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 		// Continue the AST search
 		return true;
 	}
-	spdlog::debug("Parsing member variable: {}",
+	spdlog::debug(R"(Parsing member variable: "{}")",
 	              fieldDecl->getQualifiedNameAsString());
 
 	IRProxy::MemberVariable proxyVariable;
@@ -26,7 +26,7 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 	if (auto type = Builders::buildType(fieldDecl->getType(), policy)) {
 		variable.m_type = type.value();
 	} else {
-		spdlog::error("Failed to parse type {} for member variable {}",
+		spdlog::error(R"(Failed to parse type "{}" for member variable "{}")",
 		              fieldDecl->getType().getAsString(policy),
 		              fieldDecl->getQualifiedNameAsString());
 		m_parsedSuccessfully = false;
@@ -41,8 +41,9 @@ bool ParserVisitor::VisitFieldDecl(clang::FieldDecl* fieldDecl) {
 	        Builders::convertToIRAccess(fieldDecl->getAccess())) {
 		proxyVariable.m_modifier = accessModifier.value();
 	} else {
-		spdlog::error("Failed to parse access modifier for member variable {}",
-		              fieldDecl->getQualifiedNameAsString());
+		spdlog::error(
+		    R"(Failed to parse access modifier for member variable "{}")",
+		    fieldDecl->getQualifiedNameAsString());
 		m_parsedSuccessfully = false;
 		// Stop parsing
 		return false;

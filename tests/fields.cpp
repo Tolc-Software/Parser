@@ -13,7 +13,7 @@ TEST_CASE("Simple string member variable", "[fields]") {
 class MyClass {
 	std::string s;
 };
-		)", spdlog::level::debug);
+		)");
 	SECTION("Parser finds the variable") {
 		REQUIRE(globalNS.m_structs.size() == 1);
 		auto myClass = globalNS.m_structs[0];

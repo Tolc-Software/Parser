@@ -87,9 +87,9 @@ std::optional<IR::Type> buildOneLevelIRType(clang::QualType type,
 	bool hasConst = Helpers::Type::isConst(type);
 	type = type.getUnqualifiedType();
 
-	spdlog::debug("Trying to build IR type from string: {}",
-	              type.getAsString());
-
+	spdlog::debug(R"(Trying to build IR type from "{}")", representation);
+	// NOTE: Here we are not including the policy since we want the actual type,
+	//       and not what the user wrote
 	if (auto maybeIrType = Helpers::Type::getIRType(type.getAsString())) {
 		auto irType = maybeIrType.value();
 

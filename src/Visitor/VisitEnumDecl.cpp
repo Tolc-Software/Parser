@@ -11,7 +11,8 @@ bool ParserVisitor::VisitEnumDecl(clang::EnumDecl* enumDecl) {
 		return true;
 	}
 
-	spdlog::debug("Parsing enum: {}", enumDecl->getQualifiedNameAsString());
+	spdlog::debug(R"(Parsing enum: "{}")",
+	              enumDecl->getQualifiedNameAsString());
 
 	// Build the final parsedEnum
 	IRProxy::Enum parsedEnum;

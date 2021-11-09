@@ -10,7 +10,7 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 		// Continue the AST search
 		return true;
 	}
-	spdlog::debug("Parsing function: {}",
+	spdlog::debug(R"(Parsing function: "{}")",
 	              functionDecl->getQualifiedNameAsString());
 
 	IRProxy::Function parsedFunc;
@@ -26,7 +26,7 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	        Builders::buildType(functionDecl->getReturnType(), policy)) {
 		parsedFunc.m_returnType = returnType.value();
 	} else {
-		spdlog::error("Failed to parse return type {} for function {}",
+		spdlog::error(R"(Failed to parse return type "{}" for function "{}")",
 		              functionDecl->getReturnType().getAsString(policy),
 		              functionDecl->getQualifiedNameAsString());
 		m_parsedSuccessfully = false;
@@ -42,9 +42,10 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 			arg.m_type = argType.value();
 			parsedFunc.m_arguments.push_back(arg);
 		} else {
-			spdlog::error("Failed to parse argument type {} for function {}",
-			              functionDecl->getReturnType().getAsString(),
-			              p->getType().getAsString(policy));
+			spdlog::error(
+			    R"(Failed to parse argument type "{}" for function "{}")",
+			    p->getType().getAsString(policy),
+			    functionDecl->getQualifiedNameAsString());
 			m_parsedSuccessfully = false;
 			// Stop parsing
 			return false;
