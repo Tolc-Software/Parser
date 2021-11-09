@@ -50,6 +50,7 @@ foreach(
   files.cpp
   forward_lists.cpp
   functions.cpp
+  functionTypes.cpp
   lists.cpp
   maps.cpp
   multimaps.cpp

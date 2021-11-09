@@ -36,6 +36,7 @@ struct MyClass {
 			REQUIRE(type.m_representation == "int");
 		} else if (auto container =
 		               std::get_if<IR::Type::Container>(&type.m_type)) {
+			spdlog::debug("{}", container->m_container);
 			REQUIRE(container->m_containedTypes.size() == 1);
 			auto containerType = container->m_container;
 			REQUIRE((containerType == IR::ContainerType::Less ||

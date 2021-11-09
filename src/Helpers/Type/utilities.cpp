@@ -4,6 +4,7 @@
 #include <IR/ir.hpp>
 #include <clang/AST/Type.h>
 #include <optional>
+#include <spdlog/spdlog.h>
 #include <string_view>
 
 namespace Helpers::Type {
@@ -29,6 +30,15 @@ IR::Type buildTypeFromValue(IR::Type::Value value) {
 IR::Type buildTypeFromEnum(IR::Type::EnumValue enumValue) {
 	IR::Type type;
 	type.m_type = enumValue;
+	return type;
+}
+
+/**
+* Take a enum type and create a full type
+*/
+IR::Type buildTypeFromFunction(IR::Type::Function f) {
+	IR::Type type;
+	type.m_type = f;
 	return type;
 }
 
@@ -65,6 +75,8 @@ std::optional<IR::Type> getIRType(std::string_view type) {
 		return buildTypeFromContainer(containerType.value());
 	} else if (auto enumType = getEnumType(type)) {
 		return buildTypeFromEnum(enumType.value());
+	} else if (auto functionType = getFunctionMetaType(type)) {
+		return buildTypeFromFunction(functionType.value());
 	} else if (auto userDefined = getUserDefinedType(type)) {
 		return buildTypeFromUserDefined(userDefined.value());
 	}

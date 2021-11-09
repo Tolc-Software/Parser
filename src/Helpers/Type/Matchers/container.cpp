@@ -154,28 +154,28 @@ constexpr auto matchTuple(std::string_view sv) noexcept {
 }
 
 static constexpr auto greaterPattern =
-    ctll::fixed_string {"struct std(::__1)?::greater<.*?>"};
+    ctll::fixed_string {"(struct|class) std(::__1)?::greater<.*?>"};
 
 constexpr auto matchGreater(std::string_view sv) noexcept {
 	return ctre::match<greaterPattern>(sv);
 }
 
 static constexpr auto lessPattern =
-    ctll::fixed_string {"struct std(::__1)?::less<.*?>"};
+    ctll::fixed_string {"(struct|class) std(::__1)?::less<.*?>"};
 
 constexpr auto matchLess(std::string_view sv) noexcept {
 	return ctre::match<lessPattern>(sv);
 }
 
 static constexpr auto hashPattern =
-    ctll::fixed_string {"struct std(::__1)?::hash<.*?>"};
+    ctll::fixed_string {"(struct|class) std(::__1)?::hash<.*?>"};
 
 constexpr auto matchHash(std::string_view sv) noexcept {
 	return ctre::match<hashPattern>(sv);
 }
 
 static constexpr auto equalToPattern =
-    ctll::fixed_string {"struct std(::__1)?::equal_to<.*?>"};
+    ctll::fixed_string {"(struct|class) std(::__1)?::equal_to<.*?>"};
 
 constexpr auto matchEqualTo(std::string_view sv) noexcept {
 	return ctre::match<equalToPattern>(sv);

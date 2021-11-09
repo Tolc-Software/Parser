@@ -10,7 +10,7 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 		// Continue the AST search
 		return true;
 	}
-	spdlog::debug("Parsing class/struct: {}",
+	spdlog::debug(R"(Parsing class/struct: "{}")",
 	              classDecl->getQualifiedNameAsString());
 
 	// Build the final parsedStruct

@@ -10,7 +10,7 @@ bool ParserVisitor::VisitNamespaceDecl(clang::NamespaceDecl* namespaceDecl) {
 		// Continue the AST search
 		return true;
 	}
-	spdlog::debug("Parsing namespace: {}",
+	spdlog::debug(R"(Parsing namespace: "{}")",
 	              namespaceDecl->getQualifiedNameAsString());
 
 	// Export our parsed namespace
