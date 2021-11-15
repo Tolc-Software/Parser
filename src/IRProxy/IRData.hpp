@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IR/ir.hpp"
+#include <IR/ir.hpp>
 #include <deque>
 #include <string>
 #include <unordered_map>

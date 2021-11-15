@@ -65,6 +65,7 @@ foreach(
   sets.cpp
   stacks.cpp
   strings.cpp
+  templates.cpp
   tuples.cpp
   unordered_maps.cpp
   unordered_multimaps.cpp

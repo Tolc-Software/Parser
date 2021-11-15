@@ -48,8 +48,7 @@ std::vector<clang::QualType> getTemplateArgs(clang::QualType type) {
 */
 bool isTemplateSpecialization(clang::QualType type) {
 	if (auto classDecl = type->getAsCXXRecordDecl()) {
-		return llvm::dyn_cast<clang::ClassTemplateSpecializationDecl>(
-		           classDecl) != nullptr;
+		return llvm::isa<clang::ClassTemplateSpecializationDecl>(classDecl);
 	}
 	return false;
 }

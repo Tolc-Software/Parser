@@ -72,6 +72,7 @@ add_llvm_library(
   Parser
   src/Builders/commonBuilder.cpp
   src/Builders/enumBuilder.cpp
+  src/Builders/fieldBuilder.cpp
   src/Builders/functionBuilder.cpp
   src/Builders/namespaceBuilder.cpp
   src/Builders/structBuilder.cpp
@@ -90,8 +91,10 @@ add_llvm_library(
   src/Helpers/walkIRStructure.cpp
   src/Parser/Windows/systemIncludeHelper.cpp
   src/Parser/Parse.cpp
+  src/Template/cache.cpp
   src/Visitor/ParserVisitor.cpp
   src/Visitor/VisitCXXRecordDecl.cpp
+  src/Visitor/VisitClassTemplateSpecializationDecl.cpp
   src/Visitor/VisitEnumDecl.cpp
   src/Visitor/VisitFieldDecl.cpp
   src/Visitor/VisitFunctionDecl.cpp

@@ -6,7 +6,7 @@
 
 namespace Visitor {
 bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
-	if (isInSystemHeader(functionDecl)) {
+	if (isInSystemHeader(functionDecl) || isPureTemplate(functionDecl)) {
 		// Continue the AST search
 		return true;
 	}
@@ -35,7 +35,6 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	}
 
 	for (auto& p : functionDecl->parameters()) {
-		// TODO: Handle unsupported types
 		if (auto argType = Builders::buildType(p->getType(), policy)) {
 			IR::Variable arg;
 			arg.m_name = p->getName();

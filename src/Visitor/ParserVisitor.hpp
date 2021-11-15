@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IRProxy/IRData.hpp"
+#include "Template/cache.hpp"
 #include <IR/ir.hpp>
 #include <clang/AST/RecursiveASTVisitor.h>
 #include <clang/Basic/SourceManager.h>
@@ -24,25 +25,46 @@ public:
 
 	bool VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl);
 
+	bool VisitClassTemplateSpecializationDecl(
+	    clang::ClassTemplateSpecializationDecl* classDecl);
+
 	bool VisitFieldDecl(clang::FieldDecl* fieldDecl);
 
 	bool VisitEnumDecl(clang::EnumDecl* enumDecl);
 
+	// Return whether this visitor should recurse into
+	// template instantiations.
+	// Determines behaviour of the ASTVisitor
+	bool shouldVisitTemplateInstantiations() const;
+
 private:
 	clang::ASTContext* m_context;
 
-	// This is what the visitor functions need to fill
+	// Acts as a cache to build the IR
 	IRProxy::IRData m_irData;
 
+	// Used as a lookup for template instantiations
+	// NOTE: Requires templates to be specified before instantiations in the code
+	Template::Cache m_templateCache;
+
+	// The final IR AST
 	// This will get filled in the destructor of the visitor
 	IR::Namespace& m_parsedNamespaces;
 
 	// Set to false if any visitor found an unrecoverable error
 	bool& m_parsedSuccessfully;
 
-	bool isInSystemHeader(clang::Decl* decl) {
-		return m_context->getSourceManager().isInSystemHeader(
-		    decl->getLocation());
-	}
+	bool isInSystemHeader(clang::Decl* decl);
+
+	// Returns true iff functionDecl is a template (false if a specialization)
+	bool isPureTemplate(clang::FunctionDecl* functionDecl);
+
+	// Returns true iff fieldDecl is a template (false if a specialization)
+	bool isPureTemplate(clang::FieldDecl* fieldDecl);
+
+	// Returns true iff classDecl is a template (false if a specialization)
+	bool isPureTemplate(clang::CXXRecordDecl* classDecl);
+
+	bool isTemplateSpecialization(clang::CXXRecordDecl* classDecl);
 };
 }    // namespace Visitor
