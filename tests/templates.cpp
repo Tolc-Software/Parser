@@ -5,6 +5,64 @@
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
 
+TEST_CASE("Class with constructor", "[templates]") {
+	auto globalNS = TestUtil::parseString(R"(
+template <typename T>
+class MyClass {
+public:
+MyClass(T type);
+};
+
+template <>
+class MyClass<int>;
+	)");
+
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto myClass = globalNS.m_structs[0];
+	CHECK(myClass.m_name == "MyClass<int>");
+	CHECK(myClass.m_representation == "MyClass<int>");
+	REQUIRE(!myClass.m_hasImplicitDefaultConstructor);
+	REQUIRE(myClass.m_functions.size() == 1);
+	auto& [access, myFun] = myClass.m_functions.back();
+	REQUIRE(access == IR::AccessModifier::Public);
+	REQUIRE(myFun.m_name == "MyClass<int>");
+	REQUIRE(myFun.m_representation == "MyClass<int>::MyClass<int>");
+	REQUIRE(myFun.m_arguments.size() == 1);
+	auto& type = myFun.m_arguments.back();
+	REQUIRE(type.m_name == "type");
+	TestUtil::compare(type.m_type, IR::BaseType::Int);
+}
+TEST_CASE("Member function template parameters", "[templates]") {
+	auto globalNS = TestUtil::parseString(R"(
+template <typename T>
+class MyClass {
+public:
+T myFun(T type) {
+	return type;
+}
+};
+
+template <>
+class MyClass<int>;
+	)");
+
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto myClass = globalNS.m_structs[0];
+	CHECK(myClass.m_name == "MyClass<int>");
+	CHECK(myClass.m_representation == "MyClass<int>");
+	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
+	REQUIRE(myClass.m_functions.size() == 1);
+	auto& [access, myFun] = myClass.m_functions.back();
+	REQUIRE(access == IR::AccessModifier::Public);
+	REQUIRE(myFun.m_name == "myFun");
+	REQUIRE(myFun.m_representation == "MyClass<int>::myFun");
+	TestUtil::compare(myFun.m_returnType, IR::BaseType::Int);
+	REQUIRE(myFun.m_arguments.size() == 1);
+	auto& type = myFun.m_arguments.back();
+	REQUIRE(type.m_name == "type");
+	TestUtil::compare(type.m_type, IR::BaseType::Int);
+}
+
 TEST_CASE("Function template parameters", "[templates]") {
 	auto globalNS = TestUtil::parseString(R"(
 template <typename T>
@@ -44,6 +102,7 @@ class MyClass<int, double>;
 	CHECK(myClass.m_name == "MyClass<int, double>");
 	CHECK(myClass.m_representation == "MyClass<int, double>");
 	REQUIRE(myClass.m_memberVariables.size() == 2);
+	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
 	for (auto& [access, member] : myClass.m_memberVariables) {
 		if (member.m_name == "m_memberT") {
 			TestUtil::compare(member.m_type, IR::BaseType::Int);
@@ -76,6 +135,7 @@ class MyClass<int>;
 	auto& myNamespace = globalNS.m_namespaces[0];
 	REQUIRE(myNamespace.m_structs.size() == 1);
 	auto myClass = myNamespace.m_structs[0];
+	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
 	CHECK(myClass.m_name == "MyClass<int>");
 	CHECK(myClass.m_representation == "MyNamespace::MyClass<int>");
 	REQUIRE(myClass.m_memberVariables.size() == 1);
@@ -101,6 +161,7 @@ public:
 	)");
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto myClass = globalNS.m_structs[0];
+	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
 	CHECK(myClass.m_name == "MyClass<int>");
 	REQUIRE(myClass.m_memberVariables.size() == 1);
 	auto& [access, member] = myClass.m_memberVariables.back();

@@ -89,7 +89,6 @@ struct MemberVariable {
 	IR::AccessModifier m_modifier;
 };
 
-
 /**
   * Contains partially parsed code to IR on the form
   *     m_something = vector<[parent context, IR::something]>
@@ -113,7 +112,7 @@ struct IRData {
 	std::vector<Enum> m_enums;
 
 	// {Fully qualified name of the owning class: variable}
-	std::unordered_map<std::string, std::vector<MemberVariable>> m_memberVariables;
+	std::unordered_map<std::string, std::vector<MemberVariable>>
+	    m_memberVariables;
 };
 }    // namespace IRProxy
-

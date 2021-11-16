@@ -124,20 +124,14 @@ bool ParserVisitor::isPureTemplate(clang::FunctionDecl* functionDecl) {
 	//   template <typename T>
 	//   class MyClass {
 	//     T f(T arg);
+	//     int fun();
 	//   };
+	//
+	//   Both f and fun are considered part of a class template
 	if (llvm::isa<clang::CXXMethodDecl>(functionDecl)) {
-		auto args = getTemplateArgs(
-		    llvm::cast<clang::CXXMethodDecl>(functionDecl)->getParent());
-		// Return value
-		isTemplate = isTemplate ||
-		             args.find(functionDecl->getReturnType().getAsString()) !=
-		                 args.end();
-
-		// Arguments
-		for (auto& p : functionDecl->parameters()) {
-			isTemplate = isTemplate ||
-			             args.find(p->getType().getAsString()) != args.end();
-		}
+		isTemplate = llvm::cast<clang::CXXMethodDecl>(functionDecl)
+		                 ->getParent()
+		                 ->getDescribedClassTemplate() != nullptr;
 	}
 
 	return isTemplate;
