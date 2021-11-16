@@ -19,7 +19,7 @@ jobs:
       working-directory: C:\Repo
       shell: cmd
       run: |
-        git clone ${{ github.repository }} C:\Repo
+        git clone https://srydell:${{ secrets.ACCESS_TOKEN }}@github.com/srydell/Parser.git C:\Repo
 
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
