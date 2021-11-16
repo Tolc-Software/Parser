@@ -10,6 +10,18 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 		// Continue the AST search
 		return true;
 	}
+
+	if (isPureTemplate(classDecl)) {
+		// Save for later parsing
+		m_templateCache.m_structs.push_back(classDecl);
+		// Continue the AST search
+		return true;
+	}
+	if (isTemplateSpecialization(classDecl)) {
+		// Continue the AST search
+		return true;
+	}
+
 	spdlog::debug(R"(Parsing class/struct: "{}")",
 	              classDecl->getQualifiedNameAsString());
 
@@ -29,4 +41,4 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 	return true;
 }
 
-}
+}    // namespace Visitor
