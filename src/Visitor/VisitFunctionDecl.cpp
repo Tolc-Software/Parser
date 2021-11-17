@@ -4,6 +4,23 @@
 #include "Visitor/ParserVisitor.hpp"
 #include <spdlog/spdlog.h>
 
+namespace {
+void adjustWithTemplateParams(IRProxy::Function& f,
+                              clang::FunctionDecl* fDecl) {
+	// Potentially add the template parameters to name/representation
+	std::vector<std::string> params;
+	for (auto param : fDecl->getTemplateSpecializationArgs()->asArray()) {
+		params.push_back(param.getAsType().getAsString());
+	}
+	if (!params.empty()) {
+		// <int, double>
+		std::string paramPack = fmt::format("<{}>", fmt::join(params, ", "));
+		f.m_fullyQualifiedName += paramPack;
+		f.m_path.back().first += paramPack;
+	}
+}
+}    // namespace
+
 namespace Visitor {
 bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	if (isInSystemHeader(functionDecl) || isPureTemplate(functionDecl)) {
@@ -15,6 +32,7 @@ bool ParserVisitor::VisitFunctionDecl(clang::FunctionDecl* functionDecl) {
 	auto [status, parsedFunc] = Builders::buildFunction(functionDecl);
 	switch (status) {
 		case (Builders::FunctionError::Ok):
+			adjustWithTemplateParams(parsedFunc.value(), functionDecl);
 
 			m_irData.m_functions.push_back(parsedFunc.value());
 			break;

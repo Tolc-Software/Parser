@@ -5,6 +5,49 @@
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
 
+TEST_CASE("Function template parameters", "[templates]") {
+	auto globalNS = TestUtil::parseString(R"(
+template <typename T, typename U>
+T myFun(U type) {
+	return static_cast<T>(type);
+}
+
+template <>
+int myFun(double type);
+	)");
+
+	REQUIRE(globalNS.m_functions.size() == 1);
+	auto myFun = globalNS.m_functions[0];
+	CHECK(myFun.m_name == "myFun<int, double>");
+	CHECK(myFun.m_representation == "myFun<int, double>");
+	TestUtil::compare(myFun.m_returnType, IR::BaseType::Int);
+	REQUIRE(myFun.m_arguments.size() == 1);
+	auto type = myFun.m_arguments[0];
+	CHECK(type.m_name == "type");
+	TestUtil::compare(type.m_type, IR::BaseType::Double);
+}
+
+TEST_CASE("Function template parameter", "[templates]") {
+	auto globalNS = TestUtil::parseString(R"(
+template <typename T>
+T myFun(T type) {
+	return type;
+}
+
+template <>
+int myFun(int type);
+	)");
+
+	REQUIRE(globalNS.m_functions.size() == 1);
+	auto myFun = globalNS.m_functions[0];
+	CHECK(myFun.m_name == "myFun<int>");
+	CHECK(myFun.m_representation == "myFun<int>");
+	REQUIRE(myFun.m_arguments.size() == 1);
+	auto type = myFun.m_arguments[0];
+	CHECK(type.m_name == "type");
+	TestUtil::compare(type.m_type, IR::BaseType::Int);
+}
+
 TEST_CASE("Class with constructor", "[templates]") {
 	auto globalNS = TestUtil::parseString(R"(
 template <typename T>
@@ -60,27 +103,6 @@ class MyClass<int>;
 	REQUIRE(myFun.m_arguments.size() == 1);
 	auto& type = myFun.m_arguments.back();
 	REQUIRE(type.m_name == "type");
-	TestUtil::compare(type.m_type, IR::BaseType::Int);
-}
-
-TEST_CASE("Function template parameters", "[templates]") {
-	auto globalNS = TestUtil::parseString(R"(
-template <typename T>
-T myFun(T type) {
-	return type;
-}
-
-template <>
-int myFun(int type);
-	)");
-
-	REQUIRE(globalNS.m_functions.size() == 1);
-	auto myFun = globalNS.m_functions[0];
-	CHECK(myFun.m_name == "myFun");
-	CHECK(myFun.m_representation == "myFun");
-	REQUIRE(myFun.m_arguments.size() == 1);
-	auto type = myFun.m_arguments[0];
-	CHECK(type.m_name == "type");
 	TestUtil::compare(type.m_type, IR::BaseType::Int);
 }
 
@@ -186,13 +208,14 @@ int getSomething(int i);
 	REQUIRE(globalNS.m_functions.size() == 2);
 	auto fun = globalNS.m_functions[0];
 	for (auto fun : globalNS.m_functions) {
-		CHECK(fun.m_name == "getSomething");
 		REQUIRE(fun.m_arguments.size() == 1);
 		if (fun.m_arguments.back().m_name == "d") {
+			REQUIRE(fun.m_name == "getSomething<double>");
 			TestUtil::compare(fun.m_returnType, IR::BaseType::Double);
 			TestUtil::compare(fun.m_arguments.back().m_type,
 			                  IR::BaseType::Double);
 		} else if (fun.m_arguments.back().m_name == "i") {
+			REQUIRE(fun.m_name == "getSomething<int>");
 			TestUtil::compare(fun.m_returnType, IR::BaseType::Int);
 			TestUtil::compare(fun.m_arguments.back().m_type, IR::BaseType::Int);
 		} else {
