@@ -9,8 +9,10 @@ void adjustWithTemplateParams(IRProxy::Function& f,
                               clang::FunctionDecl* fDecl) {
 	// Potentially add the template parameters to name/representation
 	std::vector<std::string> params;
-	for (auto param : fDecl->getTemplateSpecializationArgs()->asArray()) {
-		params.push_back(param.getAsType().getAsString());
+	if (auto templateArgs = fDecl->getTemplateSpecializationArgs()) {
+		for (auto param : templateArgs->asArray()) {
+			params.push_back(param.getAsType().getAsString());
+		}
 	}
 	if (!params.empty()) {
 		// <int, double>
