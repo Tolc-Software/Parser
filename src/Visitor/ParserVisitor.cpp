@@ -106,13 +106,13 @@ bool ParserVisitor::isPureTemplate(clang::FunctionDecl* functionDecl) {
 		// A non-template function that is an instantiation or explicit
 		// specialization of a member of a templated class.
 		case (FunctionDecl::TemplatedKind::TK_MemberSpecialization):
-			isTemplate = false;
+			isTemplate = true;
 			break;
 		// An instantiation or explicit specialization of a function template.
 		// Note: this might have been instantiated from a templated class if it
 		// is a class-scope explicit specialization.
 		case (FunctionDecl::TemplatedKind::TK_FunctionTemplateSpecialization):
-			isTemplate = false;
+			isTemplate = true;
 			break;
 		// A function template specialization that hasn't yet been resolved to a
 		// particular specialized function template.

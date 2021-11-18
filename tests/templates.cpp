@@ -86,6 +86,9 @@ T myFun(T type) {
 template class MyClass<int>;
 	)");
 
+	// Bug found while using this downstream
+	REQUIRE(globalNS.m_functions.empty());
+
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	CHECK(myClass.m_representation == "MyClass<int>");
 	REQUIRE(myClass.m_templateArguments.size() == 1);

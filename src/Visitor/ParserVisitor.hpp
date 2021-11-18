@@ -19,6 +19,8 @@ public:
 
 	bool VisitFunctionDecl(clang::FunctionDecl* functionDecl);
 
+	bool VisitFunctionTemplateDecl(clang::FunctionTemplateDecl* functionDecl);
+
 	bool VisitNamespaceDecl(clang::NamespaceDecl* namespaceDecl);
 
 	bool VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl);
