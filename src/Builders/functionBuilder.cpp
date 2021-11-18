@@ -37,6 +37,7 @@ IR::Function createFunction(std::string_view name,
 	f.m_representation = proxyF.m_fullyQualifiedName;
 	f.m_returnType = proxyF.m_returnType;
 	f.m_arguments = proxyF.m_arguments;
+	f.m_templateArguments = proxyF.m_templateArguments;
 	return f;
 }
 

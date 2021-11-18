@@ -35,6 +35,9 @@ struct Struct {
 	// The variables within the struct/class
 	std::vector<std::pair<IR::AccessModifier, IR::Variable>> m_variables;
 
+	// Empty if not a template
+	std::vector<IR::Type> m_templateArguments;
+
 	bool m_hasImplicitDefaultConstructor;
 };
 
@@ -51,6 +54,9 @@ struct Function {
 	std::deque<std::pair<std::string, Structure>> m_path;
 	// The arguments to the function
 	std::vector<IR::Variable> m_arguments;
+
+	// Empty if not a template
+	std::vector<IR::Type> m_templateArguments;
 
 	// public, private, protected
 	std::optional<IR::AccessModifier> m_modifier;

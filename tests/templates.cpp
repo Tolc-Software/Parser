@@ -12,14 +12,15 @@ T myFun(U type) {
 	return static_cast<T>(type);
 }
 
-template <>
-int myFun(double type);
+template int myFun<int, double>(double);
 	)");
 
-	REQUIRE(globalNS.m_functions.size() == 1);
-	auto myFun = globalNS.m_functions[0];
-	CHECK(myFun.m_name == "myFun<int, double>");
+	auto& myFun = TestUtil::findFunction(globalNS, "myFun");
 	CHECK(myFun.m_representation == "myFun<int, double>");
+	REQUIRE(myFun.m_templateArguments.size() == 2);
+	TestUtil::compare(myFun.m_templateArguments[0], IR::BaseType::Int);
+	TestUtil::compare(myFun.m_templateArguments[1], IR::BaseType::Double);
+
 	TestUtil::compare(myFun.m_returnType, IR::BaseType::Int);
 	REQUIRE(myFun.m_arguments.size() == 1);
 	auto type = myFun.m_arguments[0];
@@ -34,14 +35,14 @@ T myFun(T type) {
 	return type;
 }
 
-template <>
-int myFun(int type);
+template int myFun<int>(int);
 	)");
 
-	REQUIRE(globalNS.m_functions.size() == 1);
-	auto myFun = globalNS.m_functions[0];
-	CHECK(myFun.m_name == "myFun<int>");
+	auto& myFun = TestUtil::findFunction(globalNS, "myFun");
 	CHECK(myFun.m_representation == "myFun<int>");
+	REQUIRE(myFun.m_templateArguments.size() == 1);
+	TestUtil::compare(myFun.m_templateArguments[0], IR::BaseType::Int);
+
 	REQUIRE(myFun.m_arguments.size() == 1);
 	auto type = myFun.m_arguments[0];
 	CHECK(type.m_name == "type");
@@ -56,22 +57,19 @@ public:
 MyClass(T type);
 };
 
-template <>
-class MyClass<int>;
+template class MyClass<int>;
 	)");
 
-	REQUIRE(globalNS.m_structs.size() == 1);
-	auto myClass = globalNS.m_structs[0];
-	CHECK(myClass.m_name == "MyClass<int>");
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	CHECK(myClass.m_representation == "MyClass<int>");
+	REQUIRE(myClass.m_templateArguments.size() == 1);
+	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
 	REQUIRE(!myClass.m_hasImplicitDefaultConstructor);
-	REQUIRE(myClass.m_functions.size() == 1);
-	auto& [access, myFun] = myClass.m_functions.back();
-	REQUIRE(access == IR::AccessModifier::Public);
-	REQUIRE(myFun.m_name == "MyClass<int>");
-	REQUIRE(myFun.m_representation == "MyClass<int>::MyClass<int>");
-	REQUIRE(myFun.m_arguments.size() == 1);
-	auto& type = myFun.m_arguments.back();
+	auto& constructor =
+	    TestUtil::findFunction(myClass, "MyClass", IR::AccessModifier::Public);
+	REQUIRE(constructor.m_representation == "MyClass<int>::MyClass");
+	REQUIRE(constructor.m_arguments.size() == 1);
+	auto& type = constructor.m_arguments.back();
 	REQUIRE(type.m_name == "type");
 	TestUtil::compare(type.m_type, IR::BaseType::Int);
 }
@@ -85,19 +83,17 @@ T myFun(T type) {
 }
 };
 
-template <>
-class MyClass<int>;
+template class MyClass<int>;
 	)");
 
-	REQUIRE(globalNS.m_structs.size() == 1);
-	auto myClass = globalNS.m_structs[0];
-	CHECK(myClass.m_name == "MyClass<int>");
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	CHECK(myClass.m_representation == "MyClass<int>");
+	REQUIRE(myClass.m_templateArguments.size() == 1);
+	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
+
 	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
-	REQUIRE(myClass.m_functions.size() == 1);
-	auto& [access, myFun] = myClass.m_functions.back();
-	REQUIRE(access == IR::AccessModifier::Public);
-	REQUIRE(myFun.m_name == "myFun");
+	auto& myFun =
+	    TestUtil::findFunction(myClass, "myFun", IR::AccessModifier::Public);
 	REQUIRE(myFun.m_representation == "MyClass<int>::myFun");
 	TestUtil::compare(myFun.m_returnType, IR::BaseType::Int);
 	REQUIRE(myFun.m_arguments.size() == 1);
@@ -115,27 +111,23 @@ public:
   U m_memberU;
 };
 
-template <>
-class MyClass<int, double>;
+template class MyClass<int, double>;
 	)");
 
-	REQUIRE(globalNS.m_structs.size() == 1);
-	auto myClass = globalNS.m_structs[0];
-	CHECK(myClass.m_name == "MyClass<int, double>");
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	CHECK(myClass.m_representation == "MyClass<int, double>");
+	REQUIRE(myClass.m_templateArguments.size() == 2);
+	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
+	TestUtil::compare(myClass.m_templateArguments[1], IR::BaseType::Double);
 	REQUIRE(myClass.m_memberVariables.size() == 2);
 	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
-	for (auto& [access, member] : myClass.m_memberVariables) {
-		if (member.m_name == "m_memberT") {
-			TestUtil::compare(member.m_type, IR::BaseType::Int);
-		} else if (member.m_name == "m_memberU") {
-			TestUtil::compare(member.m_type, IR::BaseType::Double);
-		} else {
-			// Something went wrong
-			REQUIRE(false);
-		}
-		REQUIRE(access == IR::AccessModifier::Public);
-	}
+	auto& memberT =
+	    TestUtil::findMember(myClass, "m_memberT", IR::AccessModifier::Public);
+	TestUtil::compare(memberT.m_type, IR::BaseType::Int);
+
+	auto& memberU =
+	    TestUtil::findMember(myClass, "m_memberU", IR::AccessModifier::Public);
+	TestUtil::compare(memberU.m_type, IR::BaseType::Double);
 }
 
 TEST_CASE("Class function with declarative instantiation", "[templates]") {
@@ -148,23 +140,21 @@ public:
   T m_member;
 };
 
-template <>
-class MyClass<int>;
+template class MyClass<int>;
 }
 	)");
 
-	REQUIRE(globalNS.m_namespaces.size() == 1);
-	auto& myNamespace = globalNS.m_namespaces[0];
-	REQUIRE(myNamespace.m_structs.size() == 1);
-	auto myClass = myNamespace.m_structs[0];
+	auto& myNamespace = TestUtil::findNamespace(globalNS, "MyNamespace");
+
+	auto& myClass = TestUtil::findStruct(myNamespace, "MyClass");
 	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
-	CHECK(myClass.m_name == "MyClass<int>");
 	CHECK(myClass.m_representation == "MyNamespace::MyClass<int>");
-	REQUIRE(myClass.m_memberVariables.size() == 1);
-	auto& [access, member] = myClass.m_memberVariables.back();
-	REQUIRE(member.m_name == "m_member");
+	REQUIRE(myClass.m_templateArguments.size() == 1);
+	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
+
+	auto& member =
+	    TestUtil::findMember(myClass, "m_member", IR::AccessModifier::Public);
 	TestUtil::compare(member.m_type, IR::BaseType::Int);
-	REQUIRE(access == IR::AccessModifier::Public);
 }
 
 TEST_CASE("Class function with explicit instantiation", "[templates]") {
@@ -181,15 +171,14 @@ public:
   int m_member;
 };
 	)");
-	REQUIRE(globalNS.m_structs.size() == 1);
-	auto myClass = globalNS.m_structs[0];
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
-	CHECK(myClass.m_name == "MyClass<int>");
-	REQUIRE(myClass.m_memberVariables.size() == 1);
-	auto& [access, member] = myClass.m_memberVariables.back();
-	REQUIRE(member.m_name == "m_member");
+	REQUIRE(myClass.m_templateArguments.size() == 1);
+	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
+
+	auto& member =
+	    TestUtil::findMember(myClass, "m_member", IR::AccessModifier::Public);
 	TestUtil::compare(member.m_type, IR::BaseType::Int);
-	REQUIRE(access == IR::AccessModifier::Public);
 }
 
 TEST_CASE("Free function instantiations are parsed", "[templates]") {
@@ -199,25 +188,28 @@ T getSomething(T something) {
         return something;
 }
 
-template <>
-double getSomething(double d);
+template double getSomething(double d);
 
-template <>
-int getSomething(int i);
+template int getSomething(int i);
 	)");
 	REQUIRE(globalNS.m_functions.size() == 2);
-	auto fun = globalNS.m_functions[0];
 	for (auto fun : globalNS.m_functions) {
+		REQUIRE(fun.m_name == "getSomething");
 		REQUIRE(fun.m_arguments.size() == 1);
-		if (fun.m_arguments.back().m_name == "d") {
-			REQUIRE(fun.m_name == "getSomething<double>");
-			TestUtil::compare(fun.m_returnType, IR::BaseType::Double);
-			TestUtil::compare(fun.m_arguments.back().m_type,
-			                  IR::BaseType::Double);
-		} else if (fun.m_arguments.back().m_name == "i") {
-			REQUIRE(fun.m_name == "getSomething<int>");
-			TestUtil::compare(fun.m_returnType, IR::BaseType::Int);
-			TestUtil::compare(fun.m_arguments.back().m_type, IR::BaseType::Int);
+		REQUIRE(fun.m_arguments.back().m_name == "something");
+		REQUIRE(fun.m_templateArguments.size() == 1);
+		if (fun.m_representation == "getSomething<double>") {
+			for (auto t : {fun.m_returnType,
+			               fun.m_arguments.back().m_type,
+			               fun.m_templateArguments[0]}) {
+				TestUtil::compare(t, IR::BaseType::Double);
+			}
+		} else if (fun.m_representation == "getSomething<int>") {
+			for (auto t : {fun.m_returnType,
+			               fun.m_arguments.back().m_type,
+			               fun.m_templateArguments[0]}) {
+				TestUtil::compare(t, IR::BaseType::Int);
+			}
 		} else {
 			// Something went wrong
 			REQUIRE(false);

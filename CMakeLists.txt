@@ -89,9 +89,10 @@ add_llvm_library(
   src/Helpers/Utils/string.cpp
   src/Helpers/commandLineArgs.cpp
   src/Helpers/walkIRStructure.cpp
-  src/Parser/Windows/systemIncludeHelper.cpp
   src/Parser/Parse.cpp
+  src/Parser/Windows/systemIncludeHelper.cpp
   src/Template/cache.cpp
+  src/Visitor/Helpers/parseFunction.cpp
   src/Visitor/ParserVisitor.cpp
   src/Visitor/VisitCXXRecordDecl.cpp
   src/Visitor/VisitClassTemplateSpecializationDecl.cpp

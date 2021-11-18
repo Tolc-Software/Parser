@@ -3,6 +3,7 @@
 #include "Builders/functionBuilder.hpp"
 #include "Builders/typeBuilder.hpp"
 #include "IRProxy/IRData.hpp"
+#include "Visitor/Helpers/parseFunction.hpp"
 #include "Visitor/ParserVisitor.hpp"
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -70,10 +71,18 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 	IRProxy::Struct parsedStruct;
 
 	parsedStruct.m_fullyQualifiedName = classDecl->getQualifiedNameAsString();
+
+	// This is passed so that while extracting text from types it is exactly what the user wrote
+	auto policy =
+	    clang::PrintingPolicy(classDecl->getASTContext().getLangOpts());
+
 	TemplateHelper helper;
 	std::vector<std::string> templateStringArgs;
 	for (auto const& templateArg : classDecl->getTemplateArgs().asArray()) {
 		auto arg = templateArg.getAsType();
+		if (auto type = Builders::buildType(arg, policy)) {
+			parsedStruct.m_templateArguments.push_back(type.value());
+		}
 		helper.templateArgs.push_back(arg);
 		templateStringArgs.push_back(arg.getAsString());
 	}
@@ -83,7 +92,6 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 
 	parsedStruct.m_path =
 	    Builders::buildStructure(classDecl, IRProxy::Structure::Struct);
-	parsedStruct.m_path.back().first += templateParameters;
 
 	spdlog::debug(R"(Parsing template instantiated class/struct: "{}")",
 	              parsedStruct.m_fullyQualifiedName);
@@ -119,36 +127,19 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 		}
 
 		for (auto const& method : classTemplate->methods()) {
-			auto [status, parsedFunc] =
-			    Builders::buildFunction(method, [&helper](auto type) {
-				    return getTemplatedType(helper, type);
-			    });
-			switch (status) {
-				case (Builders::FunctionError::Ok): {
-					adjustWithTemplateParameters(parsedFunc.value(),
-					                             parsedStruct);
-					if (llvm::isa<clang::CXXConstructorDecl>(method)) {
-						adjustConstructorName(parsedFunc.value(), parsedStruct);
-					}
-					m_irData.m_functions.push_back(parsedFunc.value());
-					break;
+			if (auto parsedFunc = Visitor::Helpers::parseFunction(
+			        method, [&helper](auto type) {
+				        return getTemplatedType(helper, type);
+			        })) {
+				adjustWithTemplateParameters(parsedFunc.value(), parsedStruct);
+				if (llvm::isa<clang::CXXConstructorDecl>(method)) {
+					adjustConstructorName(parsedFunc.value(), parsedStruct);
 				}
-				case (Builders::FunctionError::ArgumentType): {
-					spdlog::error(
-					    R"(Failed to parse argument type for function "{}")",
-					    method->getQualifiedNameAsString());
-					m_parsedSuccessfully = false;
-					// Stop parsing
-					return false;
-				}
-				case (Builders::FunctionError::ReturnType): {
-					spdlog::error(
-					    R"(Failed to parse return type for function "{}")",
-					    method->getQualifiedNameAsString());
-					m_parsedSuccessfully = false;
-					// Stop parsing
-					return false;
-				}
+				m_irData.m_functions.push_back(parsedFunc.value());
+			} else {
+				m_parsedSuccessfully = false;
+				// Stop parsing
+				return false;
 			}
 		}
 

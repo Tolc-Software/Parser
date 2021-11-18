@@ -11,9 +11,7 @@ class ParserVisitor : public clang::RecursiveASTVisitor<ParserVisitor> {
 public:
 	explicit ParserVisitor(clang::ASTContext* context,
 	                       IR::Namespace& parsedNamespaces,
-	                       bool& parsedSuccessfully)
-	    : m_context(context), m_parsedNamespaces(parsedNamespaces),
-	      m_parsedSuccessfully(parsedSuccessfully) {}
+	                       bool& parsedSuccessfully);
 
 	// Will populate the m_parsedNamespaces
 	// since it is guaranteed that all visitors will have run by then

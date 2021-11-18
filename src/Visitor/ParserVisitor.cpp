@@ -12,6 +12,12 @@
 #include <string>
 
 namespace Visitor {
+ParserVisitor::ParserVisitor(clang::ASTContext* context,
+                             IR::Namespace& parsedNamespaces,
+                             bool& parsedSuccessfully)
+    : m_context(context), m_parsedNamespaces(parsedNamespaces),
+      m_parsedSuccessfully(parsedSuccessfully) {}
+
 ParserVisitor::~ParserVisitor() {
 	if (m_parsedSuccessfully) {
 		// Build empty namespaces and their relations
