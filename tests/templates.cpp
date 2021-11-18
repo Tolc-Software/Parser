@@ -73,6 +73,7 @@ template class MyClass<int>;
 	REQUIRE(type.m_name == "type");
 	TestUtil::compare(type.m_type, IR::BaseType::Int);
 }
+
 TEST_CASE("Member function template parameters", "[templates]") {
 	auto globalNS = TestUtil::parseString(R"(
 template <typename T>
