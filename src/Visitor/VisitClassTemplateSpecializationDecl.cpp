@@ -48,13 +48,17 @@ void adjustWithTemplateParameters(IRProxy::Function& f,
 
 void adjustConstructorName(IRProxy::Function& f, IRProxy::Struct const& s) {
 	// MyClass<int>
-	auto classInstantiation = s.m_path.back().first;
+	auto& classInstantiation = s.m_path.back().first;
+	// MyClass
+	auto constructorFunction =
+	    classInstantiation.substr(0, classInstantiation.find("<"));
 
 	// Adjust the path with the templated parent
-	f.m_path.back().first = classInstantiation;
+	f.m_path.back().first = constructorFunction;
 
 	// Adjust the fully qualified name
-	f.m_fullyQualifiedName = s.m_fullyQualifiedName + "::" + classInstantiation;
+	f.m_fullyQualifiedName =
+	    s.m_fullyQualifiedName + "::" + constructorFunction;
 }
 }    // namespace
 
@@ -92,6 +96,7 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 
 	parsedStruct.m_path =
 	    Builders::buildStructure(classDecl, IRProxy::Structure::Struct);
+	parsedStruct.m_path.back().first += templateParameters;
 
 	spdlog::debug(R"(Parsing template instantiated class/struct: "{}")",
 	              parsedStruct.m_fullyQualifiedName);

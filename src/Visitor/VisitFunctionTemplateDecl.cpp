@@ -26,6 +26,7 @@ void adjustWithTemplateParams(IRProxy::Function& f,
 			std::string paramPack =
 			    fmt::format("<{}>", fmt::join(params, ", "));
 			f.m_fullyQualifiedName += paramPack;
+			f.m_path.back().first += paramPack;
 		}
 	}
 }

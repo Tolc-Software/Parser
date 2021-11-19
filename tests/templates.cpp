@@ -5,6 +5,53 @@
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
 
+TEST_CASE("Classes with function", "[templates]") {
+	auto globalNS = TestUtil::parseString(R"(
+template <typename T>
+class MyClass {
+public:
+T myFun(T type) {
+	return type;
+}
+};
+
+template class MyClass<int>;
+template class MyClass<double>;
+	)");
+	auto& myClassI = TestUtil::findStruct(globalNS, "MyClass<int>");
+	// Bug found while using this downstream
+	REQUIRE(myClassI.m_functions.size() == 1);
+
+	REQUIRE(myClassI.m_templateArguments.size() == 1);
+	TestUtil::compare(myClassI.m_templateArguments[0], IR::BaseType::Int);
+
+	auto checkFun = [](auto& myFun, auto repr, IR::BaseType b) {
+		CHECK(myFun.m_representation == repr);
+
+		TestUtil::compare(myFun.m_returnType, b);
+		REQUIRE(myFun.m_arguments.size() == 1);
+		auto type = myFun.m_arguments[0];
+		CHECK(type.m_name == "type");
+		TestUtil::compare(type.m_type, b);
+	};
+	checkFun(
+	    TestUtil::findFunction(myClassI, "myFun", IR::AccessModifier::Public),
+	    "MyClass<int>::myFun",
+	    IR::BaseType::Int);
+
+	auto& myClassD = TestUtil::findStruct(globalNS, "MyClass<double>");
+	// Bug found while using this downstream
+	REQUIRE(myClassD.m_functions.size() == 1);
+
+	REQUIRE(myClassD.m_templateArguments.size() == 1);
+	TestUtil::compare(myClassD.m_templateArguments[0], IR::BaseType::Double);
+
+	checkFun(
+	    TestUtil::findFunction(myClassD, "myFun", IR::AccessModifier::Public),
+	    "MyClass<double>::myFun",
+	    IR::BaseType::Double);
+}
+
 TEST_CASE("Function template parameters", "[templates]") {
 	auto globalNS = TestUtil::parseString(R"(
 template <typename T, typename U>
@@ -15,7 +62,7 @@ T myFun(U type) {
 template int myFun<int, double>(double);
 	)");
 
-	auto& myFun = TestUtil::findFunction(globalNS, "myFun");
+	auto& myFun = TestUtil::findFunction(globalNS, "myFun<int, double>");
 	CHECK(myFun.m_representation == "myFun<int, double>");
 	REQUIRE(myFun.m_templateArguments.size() == 2);
 	TestUtil::compare(myFun.m_templateArguments[0], IR::BaseType::Int);
@@ -38,7 +85,7 @@ T myFun(T type) {
 template int myFun<int>(int);
 	)");
 
-	auto& myFun = TestUtil::findFunction(globalNS, "myFun");
+	auto& myFun = TestUtil::findFunction(globalNS, "myFun<int>");
 	CHECK(myFun.m_representation == "myFun<int>");
 	REQUIRE(myFun.m_templateArguments.size() == 1);
 	TestUtil::compare(myFun.m_templateArguments[0], IR::BaseType::Int);
@@ -60,7 +107,7 @@ MyClass(T type);
 template class MyClass<int>;
 	)");
 
-	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass<int>");
 	CHECK(myClass.m_representation == "MyClass<int>");
 	REQUIRE(myClass.m_templateArguments.size() == 1);
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
@@ -90,7 +137,7 @@ template class MyClass<int>;
 	// Bug found while using this downstream
 	REQUIRE(globalNS.m_functions.empty());
 
-	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass<int>");
 	CHECK(myClass.m_representation == "MyClass<int>");
 	REQUIRE(myClass.m_templateArguments.size() == 1);
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
@@ -118,7 +165,7 @@ public:
 template class MyClass<int, double>;
 	)");
 
-	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass<int, double>");
 	CHECK(myClass.m_representation == "MyClass<int, double>");
 	REQUIRE(myClass.m_templateArguments.size() == 2);
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
@@ -150,7 +197,7 @@ template class MyClass<int>;
 
 	auto& myNamespace = TestUtil::findNamespace(globalNS, "MyNamespace");
 
-	auto& myClass = TestUtil::findStruct(myNamespace, "MyClass");
+	auto& myClass = TestUtil::findStruct(myNamespace, "MyClass<int>");
 	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
 	CHECK(myClass.m_representation == "MyNamespace::MyClass<int>");
 	REQUIRE(myClass.m_templateArguments.size() == 1);
@@ -175,7 +222,7 @@ public:
   int m_member;
 };
 	)");
-	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass<int>");
 	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
 	REQUIRE(myClass.m_templateArguments.size() == 1);
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
@@ -198,17 +245,18 @@ template int getSomething(int i);
 	)");
 	REQUIRE(globalNS.m_functions.size() == 2);
 	for (auto fun : globalNS.m_functions) {
-		REQUIRE(fun.m_name == "getSomething");
 		REQUIRE(fun.m_arguments.size() == 1);
 		REQUIRE(fun.m_arguments.back().m_name == "something");
 		REQUIRE(fun.m_templateArguments.size() == 1);
 		if (fun.m_representation == "getSomething<double>") {
+			REQUIRE(fun.m_name == "getSomething<double>");
 			for (auto t : {fun.m_returnType,
 			               fun.m_arguments.back().m_type,
 			               fun.m_templateArguments[0]}) {
 				TestUtil::compare(t, IR::BaseType::Double);
 			}
 		} else if (fun.m_representation == "getSomething<int>") {
+			REQUIRE(fun.m_name == "getSomething<int>");
 			for (auto t : {fun.m_returnType,
 			               fun.m_arguments.back().m_type,
 			               fun.m_templateArguments[0]}) {

@@ -64,12 +64,15 @@ IR::Variable& findMember(IR::Struct& parent,
 	return member->second;
 }
 
-IR::Struct& findStruct(IR::Namespace& parent, std::string const& name) {
+IR::Struct& findStruct(IR::Namespace& parent,
+                       std::string const& name,
+                       bool representation = false) {
 	auto& structs = parent.m_structs;
 	REQUIRE(structs.size() >= 1);
-	auto strct =
-	    std::find_if(structs.begin(), structs.end(), [&name](auto const& s) {
-		    return s.m_name == name;
+	auto strct = std::find_if(
+	    structs.begin(), structs.end(), [&name, representation](auto const& s) {
+		    return representation ? s.m_representation == name :
+                                    s.m_name == name;
 	    });
 
 	REQUIRE(strct != structs.end());
