@@ -19,6 +19,13 @@ constexpr auto matchStringView(std::string_view sv) noexcept {
 	return ctre::match<stringViewPattern>(sv);
 }
 
+static constexpr auto filesystemPathPattern =
+    ctll::fixed_string {"(struct|class)? ?std(::__1)?::filesystem::path"};
+
+constexpr auto matchFilesystemPath(std::string_view sv) noexcept {
+	return ctre::match<filesystemPathPattern>(sv);
+}
+
 std::optional<IR::BaseType> getBaseType(std::string_view type) {
 	using IR::BaseType;
 	// Types and alternate types are listed in https://en.cppreference.com/w/cpp/language/types
@@ -66,6 +73,8 @@ std::optional<IR::BaseType> getBaseType(std::string_view type) {
 		return BaseType::String;
 	} else if (type == "std::string_view" || matchStringView(type)) {
 		return BaseType::StringView;
+	} else if (type == "std::filesystem::path" || matchFilesystemPath(type)) {
+		return BaseType::FilesystemPath;
 	} else if (type == "void") {
 		return BaseType::Void;
 	}

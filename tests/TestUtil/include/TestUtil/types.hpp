@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IR/ir.hpp"
-#include "Parser/Parse.hpp"
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -21,25 +20,27 @@ std::vector<IR::BaseType> getTypes() {
 	using IR::BaseType;
 	return {
 	    BaseType::Bool,
+	    BaseType::Char,
 	    BaseType::Char16_t,
 	    BaseType::Char32_t,
-	    BaseType::SignedChar,
-	    BaseType::UnsignedChar,
-	    BaseType::Wchar_t,
-	    BaseType::Char,
 	    BaseType::Double,
-	    BaseType::LongDouble,
+	    BaseType::FilesystemPath,
 	    BaseType::Float,
 	    BaseType::Int,
+	    BaseType::LongDouble,
 	    BaseType::LongInt,
 	    BaseType::LongLongInt,
 	    BaseType::ShortInt,
+	    BaseType::SignedChar,
+	    BaseType::String,
+	    BaseType::StringView,
+	    BaseType::UnsignedChar,
+	    BaseType::UnsignedInt,
 	    BaseType::UnsignedLongInt,
 	    BaseType::UnsignedLongLongInt,
 	    BaseType::UnsignedShortInt,
-	    BaseType::UnsignedInt,
-	    BaseType::String,
 	    BaseType::Void,
+	    BaseType::Wchar_t,
 	};
 }
 
@@ -61,6 +62,7 @@ std::string getAsString(IR::BaseType type) {
 		case BaseType::Char32_t: return "char32_t";
 		case BaseType::Char: return "char";
 		case BaseType::Double: return "double";
+		case BaseType::FilesystemPath: return "std::filesystem::path";
 		case BaseType::Float: return "float";
 		case BaseType::Int: return "int";
 		case BaseType::LongDouble: return "long double";
@@ -142,7 +144,11 @@ std::string getIncludesIfNeeded(IR::BaseType type) {
 	std::string include = "";
 	using IR::BaseType;
 	switch (type) {
-		case BaseType::String: include = "#include <string>\n";
+		case BaseType::FilesystemPath:
+			include = "#include <filesystem>\n";
+			break;
+		case BaseType::String: include = "#include <string>\n"; break;
+		case BaseType::StringView: include = "#include <string_view>\n"; break;
 		default: break;
 	}
 	return include;
@@ -170,6 +176,7 @@ std::string getValidReturnForType(IR::BaseType type) {
 		case BaseType::UnsignedLongLongInt:
 		case BaseType::UnsignedShortInt:
 		case BaseType::UnsignedInt: return "0";
+		case BaseType::FilesystemPath:
 		case BaseType::String:
 		case BaseType::StringView: return "\"HelloWorld\"";
 		case BaseType::Void: return "";

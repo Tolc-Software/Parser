@@ -49,8 +49,8 @@ foreach(
   fields.cpp
   files.cpp
   forward_lists.cpp
-  functions.cpp
   functionTypes.cpp
+  functions.cpp
   lists.cpp
   maps.cpp
   multimaps.cpp
@@ -58,6 +58,7 @@ foreach(
   multisets.cpp
   namespaces.cpp
   optional.cpp
+  paths.cpp
   priority_queues.cpp
   queues.cpp
   references.cpp

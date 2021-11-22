@@ -35,28 +35,24 @@ public:
 	Simple();
 };
 		)");
-	SECTION("Parser finds an empty namespace named Simple") {
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto& simple = globalNS.m_structs[0];
-		REQUIRE(simple.m_name == "Simple");
-		REQUIRE(simple.m_functions.size() == 1);
-		// NOTE: It has a default constructor manually written
-		REQUIRE(!simple.m_hasImplicitDefaultConstructor);
-		auto [access, constructor] = simple.m_functions.back();
-		REQUIRE(constructor.m_name == "Simple");
-		REQUIRE(access == IR::AccessModifier::Public);
-	}
-}
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto& simple = globalNS.m_structs[0];
+	REQUIRE(simple.m_name == "Simple");
+	REQUIRE(simple.m_functions.size() == 1);
+	// NOTE: It has a default constructor manually written
+	REQUIRE(!simple.m_hasImplicitDefaultConstructor);
+	auto [access, constructor] = simple.m_functions.back();
+	REQUIRE(constructor.m_name == "Simple");
+	REQUIRE(access == IR::AccessModifier::Public);
+    }
 
 TEST_CASE("Finds a global class", "[classes]") {
 	for (std::string structure : {"class", "struct"}) {
 		auto globalNS = TestUtil::parseString(structure + " Simple {}; ");
-		SECTION("Parser finds an empty structure named Simple") {
-			REQUIRE(globalNS.m_structs.size() == 1);
-			auto& simple = globalNS.m_structs[0];
-			REQUIRE(simple.m_hasImplicitDefaultConstructor);
-			REQUIRE(simple.m_name == "Simple");
-		}
+		REQUIRE(globalNS.m_structs.size() == 1);
+		auto& simple = globalNS.m_structs[0];
+		REQUIRE(simple.m_hasImplicitDefaultConstructor);
+		REQUIRE(simple.m_name == "Simple");
 	}
 }
 
@@ -66,14 +62,12 @@ namespace NS {
 	class Simple {};
 }
 		)");
-	SECTION("Parser finds an empty namespace named Simple") {
-		REQUIRE(globalNS.m_namespaces.size() == 1);
-		auto& ns = globalNS.m_namespaces[0];
-		CHECK(ns.m_name == "NS");
-		REQUIRE(ns.m_structs.size() == 1);
-		auto& simple = ns.m_structs[0];
-		REQUIRE(simple.m_name == "Simple");
-	}
+	REQUIRE(globalNS.m_namespaces.size() == 1);
+	auto& ns = globalNS.m_namespaces[0];
+	CHECK(ns.m_name == "NS");
+	REQUIRE(ns.m_structs.size() == 1);
+	auto& simple = ns.m_structs[0];
+	REQUIRE(simple.m_name == "Simple");
 }
 
 TEST_CASE("Finds a struct within a struct", "[classes]") {
@@ -82,14 +76,10 @@ struct Outer {
 	struct Inner {};
 };
 		)");
-	SECTION("Parser finds the Outer struct") {
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto& outer = globalNS.m_structs[0];
-		REQUIRE(outer.m_name == "Outer");
-		SECTION("Parser finds the Inner struct") {
-			REQUIRE(outer.m_structs.size() == 1);
-			auto& inner = outer.m_structs[0];
-			REQUIRE(inner.m_name == "Inner");
-		}
-	}
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto& outer = globalNS.m_structs[0];
+	REQUIRE(outer.m_name == "Outer");
+	REQUIRE(outer.m_structs.size() == 1);
+	auto& inner = outer.m_structs[0];
+	REQUIRE(inner.m_name == "Inner");
 }

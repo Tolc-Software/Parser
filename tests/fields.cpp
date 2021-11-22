@@ -1,97 +1,41 @@
-#include "Helpers/walkIRStructure.hpp"
 #include "TestUtil/compare.hpp"
 #include "TestUtil/finders.hpp"
 #include "TestUtil/parse.hpp"
 #include "TestUtil/types.hpp"
 #include <IR/ir.hpp>
 #include <catch2/catch.hpp>
-#include <variant>
 
-TEST_CASE("Simple string member variable", "[fields]") {
-	auto globalNS = TestUtil::parseString(R"(
-#include <string>
+TEST_CASE("Fixed width type equivalents", "[fields]") {
+	std::string code = R"(
+#include <cstdint>
+
 class MyClass {
-	std::string s;
+	int8_t m_member0;
+	int16_t m_member1;
+	int32_t m_member2;
+	int64_t m_member3;
+	uint8_t m_member4;
+	uint16_t m_member5;
+	uint32_t m_member6;
+	uint64_t m_member7;
 };
-		)");
-	SECTION("Parser finds the variable") {
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto myClass = globalNS.m_structs[0];
-		REQUIRE(myClass.m_memberVariables.size() == 1);
-		auto& [access, variable] = myClass.m_memberVariables.back();
-		CHECK(variable.m_name == "s");
-		TestUtil::compare(variable.m_type, IR::BaseType::String);
-		CHECK(variable.m_type.m_representation == "std::string");
-	}
-}
-
-TEST_CASE("Member variable works with default modifier", "[fields]") {
-	using IR::AccessModifier;
-	for (auto [accessModifier, structure] :
-	     {std::make_pair(AccessModifier::Private, std::string("class")),
-	      std::make_pair(AccessModifier::Public, std::string("struct"))}) {
-		auto globalNS =
-		    TestUtil::parseString(structure + " MyStructure { int m_var; };");
-
-		SECTION("Parser finds the function") {
-			REQUIRE(globalNS.m_structs.size() == 1);
-			auto structure = globalNS.m_structs[0];
-			REQUIRE(structure.m_memberVariables.size() == 1);
-			auto& [access, var] = structure.m_memberVariables.back();
-			CHECK(var.m_name == "m_var");
-			TestUtil::compare(var.m_type, IR::BaseType::Int);
-			CHECK(access == accessModifier);
-		}
-	}
-}
-
-TEST_CASE("Member variable within class with modifier", "[fields]") {
-	for (auto accessModifier : TestUtil::getAccessModifiers()) {
-		auto globalNS = TestUtil::parseString(
-		    "class MyClass { " + TestUtil::getAsString(accessModifier) +
-		    ": double myDouble; };");
-		SECTION("Parser finds the variable") {
-			REQUIRE(globalNS.m_structs.size() == 1);
-			auto myClass = globalNS.m_structs[0];
-			REQUIRE(myClass.m_memberVariables.size() == 1);
-			auto& [access, variable] = myClass.m_memberVariables.back();
-			CHECK(variable.m_name == "myDouble");
-			CHECK(access == accessModifier);
-		}
-	}
-}
-
-TEST_CASE("Simple member variable", "[fields]") {
-	auto globalNS = TestUtil::parseString(R"(
-class MyClass {
-	int i;
-};
-		)");
-	SECTION("Parser finds the variable") {
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto myClass = globalNS.m_structs[0];
-		REQUIRE(myClass.m_memberVariables.size() == 1);
-		auto& [access, variable] = myClass.m_memberVariables.back();
-		CHECK(variable.m_name == "i");
-		REQUIRE_FALSE(variable.m_type.m_isConst);
-		TestUtil::compare(variable.m_type, IR::BaseType::Int);
-	}
-}
-
-TEST_CASE("Simple const member variable", "[fields]") {
-	auto globalNS = TestUtil::parseString(R"(
-class MyClass {
-	int const i = 0;
-};
-		)");
-	SECTION("Parser finds the variable") {
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto myClass = globalNS.m_structs[0];
-		REQUIRE(myClass.m_memberVariables.size() == 1);
-		auto& [access, variable] = myClass.m_memberVariables.back();
-		CHECK(variable.m_name == "i");
-		REQUIRE(variable.m_type.m_isConst);
-		TestUtil::compare(variable.m_type, IR::BaseType::Int);
+)";
+	auto globalNS = TestUtil::parseString(code);
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
+	using IR::BaseType;
+	for (auto [type, i] : {std::make_pair(BaseType::SignedChar, 0),
+	                       std::make_pair(BaseType::ShortInt, 1),
+	                       std::make_pair(BaseType::Int, 2),
+	                       std::make_pair(BaseType::LongInt, 3),
+	                       std::make_pair(BaseType::UnsignedChar, 4),
+	                       std::make_pair(BaseType::UnsignedShortInt, 5),
+	                       std::make_pair(BaseType::UnsignedInt, 6),
+	                       std::make_pair(BaseType::UnsignedLongInt, 7)}) {
+		auto name = "m_member" + std::to_string(i);
+		auto& member =
+		    TestUtil::findMember(myClass, name, IR::AccessModifier::Private);
+		REQUIRE(member.m_name == name);
+		TestUtil::compare(member.m_type, type);
 	}
 }
 
@@ -110,18 +54,92 @@ TEST_CASE("Member variables of base types", "[fields]") {
 			CAPTURE(code);
 			CAPTURE(type);
 
-			SECTION("Parser finds the variable") {
-				REQUIRE(globalNS.m_structs.size() == 1);
-				auto myClass = globalNS.m_structs[0];
-				REQUIRE(myClass.m_memberVariables.size() == 1);
-				auto& [access, variable] = myClass.m_memberVariables.back();
-				CHECK(variable.m_name == "m_member");
-				SECTION("with correct return type") {
-					TestUtil::compare(variable.m_type, irType);
-				}
-			}
+			REQUIRE(globalNS.m_structs.size() == 1);
+			auto myClass = globalNS.m_structs[0];
+			REQUIRE(myClass.m_memberVariables.size() == 1);
+			auto& [access, variable] = myClass.m_memberVariables.back();
+			CHECK(variable.m_name == "m_member");
+			TestUtil::compare(variable.m_type, irType);
 		}
 	}
+}
+
+TEST_CASE("Simple string member variable", "[fields]") {
+	auto globalNS = TestUtil::parseString(R"(
+#include <string>
+class MyClass {
+	std::string s;
+};
+		)");
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto myClass = globalNS.m_structs[0];
+	REQUIRE(myClass.m_memberVariables.size() == 1);
+	auto& [access, variable] = myClass.m_memberVariables.back();
+	CHECK(variable.m_name == "s");
+	TestUtil::compare(variable.m_type, IR::BaseType::String);
+	CHECK(variable.m_type.m_representation == "std::string");
+}
+
+TEST_CASE("Member variable works with default modifier", "[fields]") {
+	using IR::AccessModifier;
+	for (auto [accessModifier, structure] :
+	     {std::make_pair(AccessModifier::Private, std::string("class")),
+	      std::make_pair(AccessModifier::Public, std::string("struct"))}) {
+		auto globalNS =
+		    TestUtil::parseString(structure + " MyStructure { int m_var; };");
+
+		REQUIRE(globalNS.m_structs.size() == 1);
+		auto s = globalNS.m_structs[0];
+		REQUIRE(s.m_memberVariables.size() == 1);
+		auto& [access, var] = s.m_memberVariables.back();
+		CHECK(var.m_name == "m_var");
+		TestUtil::compare(var.m_type, IR::BaseType::Int);
+		CHECK(access == accessModifier);
+	}
+}
+
+TEST_CASE("Member variable within class with modifier", "[fields]") {
+	for (auto accessModifier : TestUtil::getAccessModifiers()) {
+		auto globalNS = TestUtil::parseString(
+		    "class MyClass { " + TestUtil::getAsString(accessModifier) +
+		    ": double myDouble; };");
+		REQUIRE(globalNS.m_structs.size() == 1);
+		auto myClass = globalNS.m_structs[0];
+		REQUIRE(myClass.m_memberVariables.size() == 1);
+		auto& [access, variable] = myClass.m_memberVariables.back();
+		CHECK(variable.m_name == "myDouble");
+		CHECK(access == accessModifier);
+	}
+}
+
+TEST_CASE("Simple member variable", "[fields]") {
+	auto globalNS = TestUtil::parseString(R"(
+class MyClass {
+	int i;
+};
+		)");
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto myClass = globalNS.m_structs[0];
+	REQUIRE(myClass.m_memberVariables.size() == 1);
+	auto& [access, variable] = myClass.m_memberVariables.back();
+	CHECK(variable.m_name == "i");
+	REQUIRE_FALSE(variable.m_type.m_isConst);
+	TestUtil::compare(variable.m_type, IR::BaseType::Int);
+}
+
+TEST_CASE("Simple const member variable", "[fields]") {
+	auto globalNS = TestUtil::parseString(R"(
+class MyClass {
+	int const i = 0;
+};
+		)");
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto myClass = globalNS.m_structs[0];
+	REQUIRE(myClass.m_memberVariables.size() == 1);
+	auto& [access, variable] = myClass.m_memberVariables.back();
+	CHECK(variable.m_name == "i");
+	REQUIRE(variable.m_type.m_isConst);
+	TestUtil::compare(variable.m_type, IR::BaseType::Int);
 }
 
 TEST_CASE("Member variables of base types with using", "[fields]") {
@@ -141,16 +159,12 @@ TEST_CASE("Member variables of base types with using", "[fields]") {
 			CAPTURE(code);
 			CAPTURE(type);
 
-			SECTION("Parser finds the variable") {
-				REQUIRE(globalNS.m_structs.size() == 1);
-				auto myClass = globalNS.m_structs[0];
-				REQUIRE(myClass.m_memberVariables.size() == 1);
-				auto& [access, variable] = myClass.m_memberVariables.back();
-				CHECK(variable.m_name == "m_member");
-				SECTION("with correct return type") {
-					TestUtil::compare(variable.m_type, irType);
-				}
-			}
+			REQUIRE(globalNS.m_structs.size() == 1);
+			auto myClass = globalNS.m_structs[0];
+			REQUIRE(myClass.m_memberVariables.size() == 1);
+			auto& [access, variable] = myClass.m_memberVariables.back();
+			CHECK(variable.m_name == "m_member");
+			TestUtil::compare(variable.m_type, irType);
 		}
 	}
 }

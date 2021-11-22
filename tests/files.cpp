@@ -44,13 +44,11 @@ class MyClass {
 };
 		)");
 	auto globalNS = TestUtil::parseFile(file);
-	SECTION("Parser finds the variable") {
-		REQUIRE(globalNS.m_structs.size() == 1);
-		auto myClass = globalNS.m_structs[0];
-		REQUIRE(myClass.m_memberVariables.size() == 1);
-		auto& [access, variable] = myClass.m_memberVariables.back();
-		CHECK(variable.m_name == "i");
-		REQUIRE_FALSE(variable.m_type.m_isConst);
-		TestUtil::compare(variable.m_type, IR::BaseType::Int);
-	}
+	REQUIRE(globalNS.m_structs.size() == 1);
+	auto myClass = globalNS.m_structs[0];
+	REQUIRE(myClass.m_memberVariables.size() == 1);
+	auto& [access, variable] = myClass.m_memberVariables.back();
+	CHECK(variable.m_name == "i");
+	REQUIRE_FALSE(variable.m_type.m_isConst);
+	TestUtil::compare(variable.m_type, IR::BaseType::Int);
 }
