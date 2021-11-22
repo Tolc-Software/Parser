@@ -16,7 +16,6 @@ class MyClass {
 )";
 	auto globalNS = TestUtil::parseString(code);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	using IR::BaseType;
 	for (auto const& name : {"m_member0", "m_member1"}) {
 		auto& member =
 		    TestUtil::findMember(myClass, name, IR::AccessModifier::Private);

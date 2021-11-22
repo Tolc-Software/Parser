@@ -31,6 +31,18 @@ IR::Function& findFunction(IR::Namespace& parent, std::string const& name) {
 	return *function;
 }
 
+IR::Variable& findArgument(IR::Function& f, std::string const& name) {
+	auto& arguments = f.m_arguments;
+	REQUIRE(arguments.size() >= 1);
+	auto argument =
+	    std::find_if(arguments.begin(),
+	                 arguments.end(),
+	                 [&name](auto const& a) { return a.m_name == name; });
+
+	REQUIRE(argument != arguments.end());
+	return *argument;
+}
+
 IR::Function& findFunction(IR::Struct& parent,
                            std::string const& name,
                            IR::AccessModifier access) {

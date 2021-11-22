@@ -6,9 +6,15 @@
 
 namespace TestUtil {
 
-void compare(IR::Type returnType, IR::BaseType compareType) {
-	auto valueType = std::get_if<IR::Type::Value>(&returnType.m_type);
+void compare(IR::Type type, IR::BaseType compareType) {
+	auto valueType = std::get_if<IR::Type::Value>(&type.m_type);
 	REQUIRE(valueType);
 	REQUIRE(valueType->m_base == compareType);
+}
+
+void compare(IR::Type type, IR::ContainerType compareType) {
+	auto valueType = std::get_if<IR::Type::Container>(&type.m_type);
+	REQUIRE(valueType);
+	REQUIRE(valueType->m_container == compareType);
 }
 }

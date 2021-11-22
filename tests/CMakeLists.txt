@@ -42,6 +42,7 @@ foreach(
   Parser/Parse.cpp
   Parser/Windows/systemIncludeHelper.cpp
   arrays.cpp
+  autos.cpp
   classes.cpp
   dataStructs.cpp
   deques.cpp
