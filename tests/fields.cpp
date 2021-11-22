@@ -14,6 +14,7 @@ class MyClass {
 	int16_t m_member1;
 	int32_t m_member2;
 	int64_t m_member3;
+
 	uint8_t m_member4;
 	uint16_t m_member5;
 	uint32_t m_member6;
