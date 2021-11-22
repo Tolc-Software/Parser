@@ -24,19 +24,19 @@ class MyClass {
 	auto globalNS = TestUtil::parseString(code);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	using IR::BaseType;
-	for (auto [type, i] : {std::make_pair(BaseType::SignedChar, 0),
-	                       std::make_pair(BaseType::ShortInt, 1),
-	                       std::make_pair(BaseType::Int, 2),
-	                       std::make_pair(BaseType::LongInt, 3),
-	                       std::make_pair(BaseType::UnsignedChar, 4),
-	                       std::make_pair(BaseType::UnsignedShortInt, 5),
-	                       std::make_pair(BaseType::UnsignedInt, 6),
-	                       std::make_pair(BaseType::UnsignedLongInt, 7)}) {
+	for (auto [typeName, i] : {std::make_pair("int8_t", 0),
+	                           std::make_pair("int16_t", 1),
+	                           std::make_pair("int32_t", 2),
+	                           std::make_pair("int64_t", 3),
+	                           std::make_pair("uint8_t", 4),
+	                           std::make_pair("uint16_t", 5),
+	                           std::make_pair("uint32_t", 6),
+	                           std::make_pair("uint64_t", 7)}) {
 		auto name = "m_member" + std::to_string(i);
 		auto& member =
 		    TestUtil::findMember(myClass, name, IR::AccessModifier::Private);
 		REQUIRE(member.m_name == name);
-		TestUtil::compare(member.m_type, type);
+		REQUIRE(member.m_type.m_representation == typeName);
 	}
 }
 
