@@ -39,6 +39,9 @@ endif()
 install(DIRECTORY
   "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include"
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/lib/clang/${llvm_entry_version})
+# LLVM License file
+install(FILES ${CMAKE_SOURCE_DIR}/tools/packaging/LLVMLicense.txt
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/lib/clang/${llvm_entry_version})
 
 configure_file(${CMAKE_SOURCE_DIR}/cmake/packaging/ParserConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/ParserConfig.cmake @ONLY)
