@@ -13,7 +13,7 @@ auto getS(std::array<std::string, 2> s) { return s; }
 )";
 	auto globalNS = TestUtil::parseString(code);
 	auto& getS = TestUtil::findFunction(globalNS, "getS");
-	auto& s = TestUtil::findArgument(getS, "s");
-	TestUtil::compare(s.m_type, IR::ContainerType::Array);
+	auto& array = getS.m_returnType;
+	TestUtil::compare(array, IR::ContainerType::Array);
 }
 
