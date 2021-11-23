@@ -38,6 +38,7 @@ IR::Function createFunction(std::string_view name,
 	f.m_returnType = proxyF.m_returnType;
 	f.m_arguments = proxyF.m_arguments;
 	f.m_templateArguments = proxyF.m_templateArguments;
+	f.m_isStatic = proxyF.m_isStatic;
 	return f;
 }
 
@@ -95,6 +96,8 @@ buildFunction(clang::FunctionDecl* functionDecl,
 	// Check for access modifiers (public, private, ...)
 	parsedFunc.m_modifier =
 	    Builders::convertToIRAccess(functionDecl->getAccess());
+
+	parsedFunc.m_isStatic = functionDecl->isStatic();
 
 	return {FunctionError::Ok, parsedFunc};
 }

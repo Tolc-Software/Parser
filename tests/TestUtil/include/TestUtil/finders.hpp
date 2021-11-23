@@ -8,6 +8,17 @@
 #include <vector>
 
 namespace TestUtil {
+IR::Variable& findVariable(IR::Namespace& parent, std::string const& name) {
+	auto& variables = parent.m_variables;
+	REQUIRE(variables.size() >= 1);
+	auto v = std::find_if(variables.begin(),
+	                      variables.end(),
+	                      [&name](auto const& n) { return n.m_name == name; });
+
+	REQUIRE(v != variables.end());
+	return *v;
+}
+
 IR::Namespace& findNamespace(IR::Namespace& parent, std::string const& name) {
 	auto& namespaces = parent.m_namespaces;
 	REQUIRE(namespaces.size() >= 1);

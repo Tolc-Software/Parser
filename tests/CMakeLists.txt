@@ -52,6 +52,7 @@ foreach(
   forward_lists.cpp
   functionTypes.cpp
   functions.cpp
+  globalVariables.cpp
   lists.cpp
   maps.cpp
   multimaps.cpp
@@ -66,6 +67,7 @@ foreach(
   representation.cpp
   sets.cpp
   stacks.cpp
+  statics.cpp
   strings.cpp
   templates.cpp
   tuples.cpp

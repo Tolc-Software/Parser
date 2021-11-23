@@ -23,6 +23,10 @@ ParserVisitor::~ParserVisitor() {
 		m_parsedNamespaces =
 		    Builders::buildNamespaceStructure(m_irData.m_namespaces);
 
+		// Add global variables to namespaces
+		Builders::addGlobalVariables(m_irData.m_globalVariables,
+		                             m_parsedNamespaces);
+
 		// Add the collected member variables to the structs
 		Builders::addMemberVariables(m_irData.m_structs,
 		                             m_irData.m_memberVariables);

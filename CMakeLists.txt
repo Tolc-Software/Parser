@@ -100,7 +100,8 @@ add_llvm_library(
   src/Visitor/VisitFieldDecl.cpp
   src/Visitor/VisitFunctionDecl.cpp
   src/Visitor/VisitFunctionTemplateDecl.cpp
-  src/Visitor/VisitNamespaceDecl.cpp)
+  src/Visitor/VisitNamespaceDecl.cpp
+  src/Visitor/VisitVarDecl.cpp)
 
 target_link_libraries(
   Parser

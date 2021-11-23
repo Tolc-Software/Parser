@@ -28,7 +28,11 @@ public:
 	bool VisitClassTemplateSpecializationDecl(
 	    clang::ClassTemplateSpecializationDecl* classDecl);
 
+	// Member variables
 	bool VisitFieldDecl(clang::FieldDecl* fieldDecl);
+
+	// Static member variables
+	bool VisitVarDecl(clang::VarDecl* varDecl);
 
 	bool VisitEnumDecl(clang::EnumDecl* enumDecl);
 

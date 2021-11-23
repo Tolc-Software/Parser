@@ -2,6 +2,7 @@
 
 #include <IR/ir.hpp>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace Builders {
@@ -11,4 +12,11 @@ namespace Builders {
   */
 IR::Namespace
 buildNamespaceStructure(std::vector<std::string> const& namespaces);
+
+/**
+  * Add the variables to the corresponding namespaces
+  */
+void addGlobalVariables(
+    std::unordered_map<std::string, std::vector<IR::Variable>> const& variables,
+    IR::Namespace& globalNS);
 }    // namespace Builders

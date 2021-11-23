@@ -62,6 +62,8 @@ struct Function {
 	std::optional<IR::AccessModifier> m_modifier;
 
 	IR::Type m_returnType;
+
+	bool m_isStatic;
 };
 
 /**
@@ -120,5 +122,9 @@ struct IRData {
 	// {Fully qualified name of the owning class: variable}
 	std::unordered_map<std::string, std::vector<MemberVariable>>
 	    m_memberVariables;
+
+	// {Fully qualified name of the owning namespace: variable}
+	std::unordered_map<std::string, std::vector<IR::Variable>>
+	    m_globalVariables;
 };
 }    // namespace IRProxy
