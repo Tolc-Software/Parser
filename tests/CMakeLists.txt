@@ -44,6 +44,7 @@ foreach(
   arrays.cpp
   autos.cpp
   classes.cpp
+  complex.cpp
   dataStructs.cpp
   deques.cpp
   enums.cpp
