@@ -1,5 +1,62 @@
+#include "TestUtil/finders.hpp"
 #include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
+
+TEST_CASE("Static and const member variables", "[classes]") {
+	auto globalNS = TestUtil::parseString(R"(
+#include <string>
+
+class SimpleMember {
+public:
+	std::string myString;
+};
+
+class ConstMember {
+public:
+	const int i = 42;
+};
+
+class PrivateMember {
+private:
+	std::string str0;
+	static std::string str1;
+};
+
+namespace MyLib {
+	class Nested {
+	public:
+		double d = 4.3;
+	};
+}
+)");
+	auto& simpleMember = TestUtil::findStruct(globalNS, "SimpleMember");
+	auto& myString = TestUtil::findMember(
+	    simpleMember, "myString", IR::AccessModifier::Public);
+	REQUIRE(!myString.m_type.m_isStatic);
+	REQUIRE(!myString.m_type.m_isConst);
+
+	auto& constMember = TestUtil::findStruct(globalNS, "ConstMember");
+	auto& i =
+	    TestUtil::findMember(constMember, "i", IR::AccessModifier::Public);
+	REQUIRE(!i.m_type.m_isStatic);
+	REQUIRE(i.m_type.m_isConst);
+
+	auto& privateMember = TestUtil::findStruct(globalNS, "PrivateMember");
+	auto& str0 = TestUtil::findMember(
+	    privateMember, "str0", IR::AccessModifier::Private);
+	auto& str1 = TestUtil::findMember(
+	    privateMember, "str1", IR::AccessModifier::Private);
+	REQUIRE(!str0.m_type.m_isStatic);
+	REQUIRE(!str0.m_type.m_isConst);
+	REQUIRE(str1.m_type.m_isStatic);
+	REQUIRE(!str1.m_type.m_isConst);
+
+	auto& myLib = TestUtil::findNamespace(globalNS, "MyLib");
+	auto& nested = TestUtil::findStruct(myLib, "Nested");
+	auto& d = TestUtil::findMember(nested, "d", IR::AccessModifier::Public);
+	REQUIRE(!d.m_type.m_isStatic);
+	REQUIRE(!d.m_type.m_isConst);
+}
 
 TEST_CASE("Deeply nested classes", "[classes]") {
 	auto code = R"(
@@ -44,7 +101,7 @@ public:
 	auto [access, constructor] = simple.m_functions.back();
 	REQUIRE(constructor.m_name == "Simple");
 	REQUIRE(access == IR::AccessModifier::Public);
-    }
+}
 
 TEST_CASE("Finds a global class", "[classes]") {
 	for (std::string structure : {"class", "struct"}) {
