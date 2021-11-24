@@ -66,6 +66,7 @@ foreach(
   references.cpp
   representation.cpp
   sets.cpp
+  smartPointers.cpp
   stacks.cpp
   statics.cpp
   strings.cpp
@@ -76,6 +77,7 @@ foreach(
   unordered_multisets.cpp
   unordered_sets.cpp
   userDefined.cpp
+  valarrays.cpp
   variant.cpp
   vectors.cpp
 

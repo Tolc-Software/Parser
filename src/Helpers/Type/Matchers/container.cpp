@@ -181,6 +181,27 @@ constexpr auto matchEqualTo(std::string_view sv) noexcept {
 	return ctre::match<equalToPattern>(sv);
 }
 
+static constexpr auto sharedPtrPattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::shared_ptr<.*?>"};
+
+constexpr auto matchSharedPtr(std::string_view sv) noexcept {
+	return ctre::match<sharedPtrPattern>(sv);
+}
+
+static constexpr auto uniquePtrPattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::unique_ptr<.*?>"};
+
+constexpr auto matchUniquePtr(std::string_view sv) noexcept {
+	return ctre::match<uniquePtrPattern>(sv);
+}
+
+static constexpr auto valarrayPattern =
+    ctll::fixed_string {"(struct|class) std(::__1)?::valarray<.*?>"};
+
+constexpr auto matchValarray(std::string_view sv) noexcept {
+	return ctre::match<valarrayPattern>(sv);
+}
+
 std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 	using IR::ContainerType;
 	if (matchVector(type)) {
@@ -205,6 +226,10 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::EqualTo;
 	} else if (matchQueue(type)) {
 		return ContainerType::Queue;
+	} else if (matchUniquePtr(type)) {
+		return ContainerType::UniquePtr;
+	} else if (matchSharedPtr(type)) {
+		return ContainerType::SharedPtr;
 	} else if (matchOptional(type)) {
 		return ContainerType::Optional;
 	} else if (matchVariant(type)) {
@@ -233,6 +258,8 @@ std::optional<IR::ContainerType> getContainerType(std::string_view type) {
 		return ContainerType::UnorderedMultiSet;
 	} else if (matchForwardList(type)) {
 		return ContainerType::ForwardList;
+	} else if (matchValarray(type)) {
+		return ContainerType::Valarray;
 	}
 	return {};
 }
