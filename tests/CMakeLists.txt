@@ -45,6 +45,7 @@ foreach(
   autos.cpp
   classes.cpp
   complex.cpp
+  constructorsDestructors.cpp
   dataStructs.cpp
   deques.cpp
   enums.cpp

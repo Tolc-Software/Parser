@@ -64,6 +64,9 @@ struct Function {
 	IR::Type m_returnType;
 
 	bool m_isStatic;
+
+	bool m_isConstructor;
+	bool m_isDestructor;
 };
 
 /**

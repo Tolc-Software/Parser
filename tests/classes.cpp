@@ -95,10 +95,10 @@ public:
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto& simple = globalNS.m_structs[0];
 	REQUIRE(simple.m_name == "Simple");
-	REQUIRE(simple.m_functions.size() == 1);
+	REQUIRE(simple.m_constructors.size() == 1);
 	// NOTE: It has a default constructor manually written
 	REQUIRE(!simple.m_hasImplicitDefaultConstructor);
-	auto [access, constructor] = simple.m_functions.back();
+	auto [access, constructor] = simple.m_constructors.back();
 	REQUIRE(constructor.m_name == "Simple");
 	REQUIRE(access == IR::AccessModifier::Public);
 }

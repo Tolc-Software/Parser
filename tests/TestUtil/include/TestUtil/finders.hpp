@@ -71,6 +71,23 @@ IR::Function& findFunction(IR::Struct& parent,
 	return function->second;
 }
 
+IR::Function& findConstructor(IR::Struct& parent,
+                              std::string const& name,
+                              IR::AccessModifier access) {
+	auto& functions = parent.m_constructors;
+	REQUIRE(functions.size() >= 1);
+	auto function =
+	    std::find_if(functions.begin(),
+	                 functions.end(),
+	                 [&name, access](auto const& accessAndFunction) {
+		                 return accessAndFunction.first == access &&
+		                        accessAndFunction.second.m_name == name;
+	                 });
+
+	REQUIRE(function != functions.end());
+	return function->second;
+}
+
 IR::Variable& findMember(IR::Struct& parent,
                          std::string const& name,
                          IR::AccessModifier access) {

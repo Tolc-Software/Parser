@@ -58,6 +58,7 @@ private:
 	// Set to false if any visitor found an unrecoverable error
 	bool& m_parsedSuccessfully;
 
+	// Returns true if either from the standard library or from a header marked as System (i.e. not searcheable for errors)
 	bool isInSystemHeader(clang::Decl* decl);
 
 	// Returns true iff functionDecl is a template (false if a specialization)

@@ -112,8 +112,8 @@ template class MyClass<int>;
 	REQUIRE(myClass.m_templateArguments.size() == 1);
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
 	REQUIRE(!myClass.m_hasImplicitDefaultConstructor);
-	auto& constructor =
-	    TestUtil::findFunction(myClass, "MyClass", IR::AccessModifier::Public);
+	auto& constructor = TestUtil::findConstructor(
+	    myClass, "MyClass", IR::AccessModifier::Public);
 	REQUIRE(constructor.m_representation == "MyClass<int>::MyClass");
 	REQUIRE(constructor.m_arguments.size() == 1);
 	auto& type = constructor.m_arguments.back();
