@@ -54,25 +54,19 @@ struct S {
 	CAPTURE(code);
 	auto globalNS = TestUtil::parseString(code);
 	REQUIRE(globalNS.m_structs.size() == 2);
-	auto maybeC = TestUtil::findStruct(globalNS, "C");
-	auto maybeS = TestUtil::findStruct(globalNS, "S");
-	for (auto const& s : globalNS.m_structs) {
-		CAPTURE(s.m_name);
-		REQUIRE(s.m_enums.size() == 1);
-		auto& [am, e] = s.m_enums.back();
-		CAPTURE(e.m_name);
-		CAPTURE(e.m_representation);
-		if (s.m_name == "S") {
-			REQUIRE(am == IR::AccessModifier::Public);
-		} else {
-			REQUIRE(am == IR::AccessModifier::Private);
-		}
-		REQUIRE(e.m_isScoped == true);
-		REQUIRE(e.m_representation ==
-		        fmt::format("{className}::{enumName}",
-		                    fmt::arg("className", s.m_name),
-		                    fmt::arg("enumName", e.m_name)));
 
+	auto& C = TestUtil::findStruct(globalNS, "C");
+	REQUIRE(C.m_private.m_enums.size() == 1);
+	auto const& cMyEnum = C.m_private.m_enums.back();
+	REQUIRE(cMyEnum.m_representation == "C::MyEnum");
+
+	auto& S = TestUtil::findStruct(globalNS, "S");
+	REQUIRE(S.m_public.m_enums.size() == 1);
+	auto const& sMyEnum = S.m_public.m_enums.back();
+	REQUIRE(sMyEnum.m_representation == "S::MyEnum");
+
+	for (auto const& e : {cMyEnum, sMyEnum}) {
+		REQUIRE(e.m_isScoped);
 		REQUIRE(e.m_values.size() == 1);
 		REQUIRE(e.m_values.back() == "Value");
 	}

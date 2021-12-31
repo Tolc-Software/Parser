@@ -47,6 +47,7 @@ convertToIRAccess(clang::AccessSpecifier access) {
 		case clang::AS_protected: return IR::AccessModifier::Protected;
 		case clang::AS_none: return {};
 	}
+	return {};
 }
 
 }    // namespace Builders

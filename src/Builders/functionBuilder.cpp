@@ -2,6 +2,7 @@
 #include "Builders/commonBuilder.hpp"
 #include "Builders/structBuilder.hpp"
 #include "Builders/typeBuilder.hpp"
+#include "Helpers/getStructData.hpp"
 #include "Helpers/walkIRStructure.hpp"
 #include <IR/ir.hpp>
 #include <algorithm>
@@ -23,17 +24,6 @@ struct FunctionData {
 	bool m_isDestructor;
 };
 
-IR::StructData* getStructDataBasedOnAccess(IR::Struct& s,
-                                           IR::AccessModifier access) {
-	using IR::AccessModifier;
-	switch (access) {
-		case AccessModifier::Public: return &s.m_public;
-		case AccessModifier::Private: return &s.m_private;
-		case AccessModifier::Protected: return &s.m_protected;
-	}
-	return nullptr;
-}
-
 void addFunctionToVariant(FunctionData data,
                           std::variant<IR::Namespace*, IR::Struct*> const& v,
                           IR::Function f) {
@@ -42,7 +32,7 @@ void addFunctionToVariant(FunctionData data,
 		functions.push_back(f);
 	} else if (auto irStruct = std::get_if<IR::Struct*>(&v)) {
 		// Add to the correct container in the struct
-		if (auto structData = getStructDataBasedOnAccess(
+		if (auto structData = Helpers::getStructDataBasedOnAccess(
 		        **irStruct, data.m_modifier.value())) {
 			if (data.m_isConstructor) {
 				auto& functions = structData->m_constructors;

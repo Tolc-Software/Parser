@@ -2,6 +2,7 @@
 #include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 #include <algorithm>
+#include <array>
 #include <string_view>
 #include <variant>
 #include <vector>
@@ -27,9 +28,16 @@ IR::Struct* gotoStruct(std::variant<IR::Namespace*, IR::Struct*> const& current,
 			return &(*it);
 		}
 	} else if (auto s = std::get_if<IR::Struct*>(&current)) {
-		auto& children = (*s)->m_structs;
-		if (auto it = findWithName(children, name); it != children.end()) {
-			return &(*it);
+		// TODO: This checks the nested structs in order {public, private, protected}
+		//       and stops when it has found one with the matching name.
+		//       It will therefore not work if someone wants to see a private nested class
+		//       with the same name as a public one.
+		for (auto* data : std::array<IR::StructData*, 3> {
+		         &(*s)->m_public, &(*s)->m_private, &(*s)->m_protected}) {
+			auto& children = data->m_structs;
+			if (auto it = findWithName(children, name); it != children.end()) {
+				return &(*it);
+			}
 		}
 	}
 	return nullptr;

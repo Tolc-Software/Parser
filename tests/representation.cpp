@@ -57,8 +57,8 @@ TEST_CASE("Representation one struct deep", "[representation]") {
 		REQUIRE(globalNS.m_structs.size() == 1);
 		auto& inner = globalNS.m_structs.back();
 		std::string representation = "";
-		if (inner.m_structs.size() == 1) {
-			representation = inner.m_structs.back().m_representation;
+		if (inner.m_private.m_structs.size() == 1) {
+			representation = inner.m_private.m_structs.back().m_representation;
 		} else if (inner.m_private.m_functions.size() == 1) {
 			representation =
 			    inner.m_private.m_functions.back().m_representation;

@@ -1,4 +1,5 @@
 #include "Builders/structBuilder.hpp"
+#include "Helpers/getStructData.hpp"
 #include "Helpers/walkIRStructure.hpp"
 #include "IR/ir.hpp"
 #include <algorithm>
@@ -16,8 +17,10 @@ void addEnumToVariant(std::optional<IR::AccessModifier> modifier,
 	if (auto ns = std::get_if<IR::Namespace*>(&v)) {
 		(*ns)->m_enums.push_back(e);
 	} else if (auto irStruct = std::get_if<IR::Struct*>(&v)) {
-		// TODO: Error on modifier no value
-		(*irStruct)->m_enums.push_back({modifier.value(), e});
+		if (auto data = Helpers::getStructDataBasedOnAccess(**irStruct,
+		                                                    modifier.value())) {
+			data->m_enums.push_back(e);
+		}
 	}
 }
 

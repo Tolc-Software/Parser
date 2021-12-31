@@ -40,6 +40,10 @@ struct Struct {
 	// Empty if not a template
 	std::vector<IR::Type> m_templateArguments;
 
+	// public, private, protected
+	// For nested structs
+	std::optional<IR::AccessModifier> m_modifier;
+
 	bool m_hasImplicitDefaultConstructor;
 };
 

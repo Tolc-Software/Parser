@@ -1,4 +1,5 @@
 #include "Builders/structBuilder.hpp"
+#include "Helpers/getStructData.hpp"
 #include "Helpers/walkIRStructure.hpp"
 #include "IR/ir.hpp"
 #include <algorithm>
@@ -11,14 +12,18 @@
 
 namespace {
 
-void addStructToVariant(std::variant<IR::Namespace*, IR::Struct*> const& v,
+void addStructToVariant(std::optional<IR::AccessModifier> modifier,
+                        std::variant<IR::Namespace*, IR::Struct*> const& v,
                         IR::Struct newStruct) {
 	if (auto ns = std::get_if<IR::Namespace*>(&v)) {
 		auto& children = (*ns)->m_structs;
 		children.push_back(newStruct);
 	} else if (auto irStruct = std::get_if<IR::Struct*>(&v)) {
-		auto& children = (*irStruct)->m_structs;
-		children.push_back(newStruct);
+		if (auto structData = Helpers::getStructDataBasedOnAccess(
+		        **irStruct, modifier.value())) {
+			auto& children = structData->m_structs;
+			children.push_back(newStruct);
+		}
 	}
 }
 
@@ -52,7 +57,7 @@ void addStruct(IRProxy::Struct& s, IR::Namespace& globalNamespace) {
 	    Helpers::walkPathThroughStructure(path, globalNamespace);
 
 	// Create and add the struct
-	addStructToVariant(parentOfNewStruct, createStruct(s));
+	addStructToVariant(s.m_modifier, parentOfNewStruct, createStruct(s));
 }
 
 std::optional<std::vector<IRProxy::MemberVariable>>

@@ -135,7 +135,7 @@ struct Outer {
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto& outer = globalNS.m_structs[0];
 	REQUIRE(outer.m_name == "Outer");
-	REQUIRE(outer.m_structs.size() == 1);
-	auto& inner = outer.m_structs[0];
+	REQUIRE(outer.m_public.m_structs.size() == 1);
+	auto& inner = outer.m_public.m_structs[0];
 	REQUIRE(inner.m_name == "Inner");
 }
