@@ -31,21 +31,21 @@ namespace MyLib {
 )");
 	auto& simpleMember = TestUtil::findStruct(globalNS, "SimpleMember");
 	auto& myString = TestUtil::findMember(
-	    simpleMember, "myString", IR::AccessModifier::Public);
+	    simpleMember, "myString", TestUtil::AccessModifier::Public);
 	REQUIRE(!myString.m_type.m_isStatic);
 	REQUIRE(!myString.m_type.m_isConst);
 
 	auto& constMember = TestUtil::findStruct(globalNS, "ConstMember");
-	auto& i =
-	    TestUtil::findMember(constMember, "i", IR::AccessModifier::Public);
+	auto& i = TestUtil::findMember(
+	    constMember, "i", TestUtil::AccessModifier::Public);
 	REQUIRE(!i.m_type.m_isStatic);
 	REQUIRE(i.m_type.m_isConst);
 
 	auto& privateMember = TestUtil::findStruct(globalNS, "PrivateMember");
 	auto& str0 = TestUtil::findMember(
-	    privateMember, "str0", IR::AccessModifier::Private);
+	    privateMember, "str0", TestUtil::AccessModifier::Private);
 	auto& str1 = TestUtil::findMember(
-	    privateMember, "str1", IR::AccessModifier::Private);
+	    privateMember, "str1", TestUtil::AccessModifier::Private);
 	REQUIRE(!str0.m_type.m_isStatic);
 	REQUIRE(!str0.m_type.m_isConst);
 	REQUIRE(str1.m_type.m_isStatic);
@@ -53,7 +53,8 @@ namespace MyLib {
 
 	auto& myLib = TestUtil::findNamespace(globalNS, "MyLib");
 	auto& nested = TestUtil::findStruct(myLib, "Nested");
-	auto& d = TestUtil::findMember(nested, "d", IR::AccessModifier::Public);
+	auto& d =
+	    TestUtil::findMember(nested, "d", TestUtil::AccessModifier::Public);
 	REQUIRE(!d.m_type.m_isStatic);
 	REQUIRE(!d.m_type.m_isConst);
 }
@@ -95,12 +96,11 @@ public:
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto& simple = globalNS.m_structs[0];
 	REQUIRE(simple.m_name == "Simple");
-	REQUIRE(simple.m_functions.size() == 1);
+	REQUIRE(simple.m_public.m_constructors.size() == 1);
 	// NOTE: It has a default constructor manually written
 	REQUIRE(!simple.m_hasImplicitDefaultConstructor);
-	auto [access, constructor] = simple.m_functions.back();
+	auto constructor = simple.m_public.m_constructors.back();
 	REQUIRE(constructor.m_name == "Simple");
-	REQUIRE(access == IR::AccessModifier::Public);
 }
 
 TEST_CASE("Finds a global class", "[classes]") {
@@ -136,7 +136,7 @@ struct Outer {
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto& outer = globalNS.m_structs[0];
 	REQUIRE(outer.m_name == "Outer");
-	REQUIRE(outer.m_structs.size() == 1);
-	auto& inner = outer.m_structs[0];
+	REQUIRE(outer.m_public.m_structs.size() == 1);
+	auto& inner = outer.m_public.m_structs[0];
 	REQUIRE(inner.m_name == "Inner");
 }

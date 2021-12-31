@@ -1,6 +1,7 @@
 #include "TestUtil/files.hpp"
 #include "Parser/Parse.hpp"
 #include "TestUtil/compare.hpp"
+#include "TestUtil/finders.hpp"
 #include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
 
@@ -44,11 +45,11 @@ class MyClass {
 };
 		)");
 	auto globalNS = TestUtil::parseFile(file);
-	REQUIRE(globalNS.m_structs.size() == 1);
-	auto myClass = globalNS.m_structs[0];
-	REQUIRE(myClass.m_memberVariables.size() == 1);
-	auto& [access, variable] = myClass.m_memberVariables.back();
-	CHECK(variable.m_name == "i");
-	REQUIRE_FALSE(variable.m_type.m_isConst);
-	TestUtil::compare(variable.m_type, IR::BaseType::Int);
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
+	auto& i =
+	    TestUtil::findMember(myClass, "i", TestUtil::AccessModifier::Private);
+
+	CHECK(i.m_name == "i");
+	REQUIRE(!i.m_type.m_isConst);
+	TestUtil::compare(i.m_type, IR::BaseType::Int);
 }

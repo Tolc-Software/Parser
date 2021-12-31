@@ -45,7 +45,8 @@ struct MyClass {
 )";
 	auto globalNS = TestUtil::parseString(code);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	auto& f = TestUtil::findFunction(myClass, "f", IR::AccessModifier::Public);
+	auto& f =
+	    TestUtil::findFunction(myClass, "f", TestUtil::AccessModifier::Public);
 
 	REQUIRE(f.m_isStatic);
 }
@@ -59,7 +60,8 @@ struct MyClass
 )";
 	auto globalNS = TestUtil::parseString(code);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	auto& i = TestUtil::findMember(myClass, "i", IR::AccessModifier::Public);
+	auto& i =
+	    TestUtil::findMember(myClass, "i", TestUtil::AccessModifier::Public);
 
 	REQUIRE(i.m_type.m_isStatic);
 }

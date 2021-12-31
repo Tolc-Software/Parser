@@ -49,17 +49,18 @@ class WithPrivateFunction {
 	    TestUtil::findWithName("WithConstructor", globalNS.m_structs);
 	REQUIRE(mwithConstructor.has_value());
 	auto withConstructor = mwithConstructor.value();
-	REQUIRE(withConstructor.m_functions.size() == 2);
+	REQUIRE(withConstructor.m_public.m_functions.size() == 1);
+	REQUIRE(withConstructor.m_public.m_constructors.size() == 1);
 
 	auto mwithFunction =
 	    TestUtil::findWithName("WithFunction", globalNS.m_structs);
 	REQUIRE(mwithConstructor.has_value());
 	auto withFunction = mwithFunction.value();
-	REQUIRE(withFunction.m_functions.size() == 1);
+	REQUIRE(withFunction.m_public.m_functions.size() == 1);
 
 	auto mwithPrivateFunction =
-	    TestUtil::findWithName("WithFunction", globalNS.m_structs);
+	    TestUtil::findWithName("WithPrivateFunction", globalNS.m_structs);
 	REQUIRE(mwithConstructor.has_value());
 	auto withPrivateFunction = mwithPrivateFunction.value();
-	REQUIRE(withPrivateFunction.m_functions.size() == 1);
+	REQUIRE(withPrivateFunction.m_private.m_functions.size() == 1);
 }

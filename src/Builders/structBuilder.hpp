@@ -2,16 +2,18 @@
 
 #include "IR/ir.hpp"
 #include "IRProxy/IRData.hpp"
+#include <map>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace Builders {
 /**
   * Add the variables to the structs
   */
-void addMemberVariables(std::vector<IRProxy::Struct>& structs,
-                        std::unordered_map<std::string, std::vector<IRProxy::MemberVariable>>& memberVariables);
+void addMemberVariables(
+    std::vector<IRProxy::Struct>& structs,
+    std::map<std::string, std::vector<IRProxy::MemberVariable>>&
+        memberVariables);
 
 /**
   * Convert the Helpers::Struct to IR::Struct and add them to the structure

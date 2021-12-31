@@ -2,11 +2,13 @@
 
 #include <IR/ir.hpp>
 #include <deque>
+#include <map>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace IRProxy {
+
+enum class AccessModifier { Public, Private, Protected };
 
 /**
   * Used to distinguish a part name in a fully qualified name
@@ -33,10 +35,16 @@ struct Struct {
 	//     Ns::cl => {(Ns, Structure::Namespace), (cl, Structure::Struct)}
 	std::deque<std::pair<std::string, Structure>> m_path;
 	// The variables within the struct/class
-	std::vector<std::pair<IR::AccessModifier, IR::Variable>> m_variables;
+	std::vector<IR::Variable> m_publicVariables;
+	std::vector<IR::Variable> m_privateVariables;
+	std::vector<IR::Variable> m_protectedVariables;
 
 	// Empty if not a template
 	std::vector<IR::Type> m_templateArguments;
+
+	// public, private, protected
+	// For nested structs
+	std::optional<IRProxy::AccessModifier> m_modifier;
 
 	bool m_hasImplicitDefaultConstructor;
 };
@@ -59,11 +67,14 @@ struct Function {
 	std::vector<IR::Type> m_templateArguments;
 
 	// public, private, protected
-	std::optional<IR::AccessModifier> m_modifier;
+	std::optional<IRProxy::AccessModifier> m_modifier;
 
 	IR::Type m_returnType;
 
 	bool m_isStatic;
+
+	bool m_isConstructor;
+	bool m_isDestructor;
 };
 
 /**
@@ -79,7 +90,7 @@ struct Enum {
 	std::deque<std::pair<std::string, Structure>> m_path;
 
 	// public, private, protected
-	std::optional<IR::AccessModifier> m_modifier;
+	std::optional<IRProxy::AccessModifier> m_modifier;
 
 	// Unscoped values of the enum
 	std::vector<std::string> m_values;
@@ -94,7 +105,7 @@ struct MemberVariable {
 	IR::Variable m_variable;
 
 	// public, private, protected
-	IR::AccessModifier m_modifier;
+	IRProxy::AccessModifier m_modifier;
 };
 
 /**
@@ -120,11 +131,9 @@ struct IRData {
 	std::vector<Enum> m_enums;
 
 	// {Fully qualified name of the owning class: variable}
-	std::unordered_map<std::string, std::vector<MemberVariable>>
-	    m_memberVariables;
+	std::map<std::string, std::vector<MemberVariable>> m_memberVariables;
 
 	// {Fully qualified name of the owning namespace: variable}
-	std::unordered_map<std::string, std::vector<IR::Variable>>
-	    m_globalVariables;
+	std::map<std::string, std::vector<IR::Variable>> m_globalVariables;
 };
 }    // namespace IRProxy

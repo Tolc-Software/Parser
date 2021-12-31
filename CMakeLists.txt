@@ -88,6 +88,7 @@ add_llvm_library(
   src/Helpers/Utils/split.cpp
   src/Helpers/Utils/string.cpp
   src/Helpers/commandLineArgs.cpp
+  src/Helpers/getStructData.cpp
   src/Helpers/walkIRStructure.cpp
   src/Parser/Parse.cpp
   src/Parser/Windows/systemIncludeHelper.cpp

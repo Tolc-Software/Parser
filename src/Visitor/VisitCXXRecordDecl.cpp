@@ -36,6 +36,9 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 	parsedStruct.m_hasImplicitDefaultConstructor =
 	    classDecl->needsImplicitDefaultConstructor();
 
+	parsedStruct.m_modifier =
+	    Builders::convertToIRAccess(classDecl->getAccess());
+
 	m_irData.m_structs.push_back(parsedStruct);
 	// Continue the AST search
 	return true;

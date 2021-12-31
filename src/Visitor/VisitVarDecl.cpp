@@ -66,7 +66,7 @@ bool ParserVisitor::VisitVarDecl(clang::VarDecl* varDecl) {
 		// Add so it can be put into the IR AST later
 		auto parentName = getParent(varDecl->getQualifiedNameAsString());
 		if (varDecl->isStaticDataMember()) {
-			IR::AccessModifier modifier;
+			IRProxy::AccessModifier modifier;
 			if (auto accessModifier =
 			        Builders::convertToIRAccess(varDecl->getAccess())) {
 				modifier = accessModifier.value();

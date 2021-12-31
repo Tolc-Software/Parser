@@ -11,9 +11,9 @@
 namespace Builders {
 
 /**
-  * Convert the clang::AccessSpecifier to IR::AccessModifier and add them to the structure
+  * Convert the clang::AccessSpecifier to IRProxy::AccessModifier and add them to the structure
   */
-std::optional<IR::AccessModifier>
+std::optional<IRProxy::AccessModifier>
 convertToIRAccess(clang::AccessSpecifier access);
 
 /**

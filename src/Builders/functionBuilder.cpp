@@ -2,29 +2,49 @@
 #include "Builders/commonBuilder.hpp"
 #include "Builders/structBuilder.hpp"
 #include "Builders/typeBuilder.hpp"
+#include "Helpers/getStructData.hpp"
 #include "Helpers/walkIRStructure.hpp"
 #include <IR/ir.hpp>
 #include <algorithm>
 #include <clang/AST/ASTContext.h>
 #include <clang/AST/Decl.h>
+#include <clang/AST/DeclCXX.h>
 #include <clang/AST/PrettyPrinter.h>
 #include <clang/AST/Type.h>
 #include <clang/Basic/Specifiers.h>
 #include <deque>
+#include <llvm/Support/Casting.h>
 #include <string>
 #include <variant>
 
 namespace {
+struct FunctionData {
+	std::optional<IRProxy::AccessModifier> m_modifier;
+	bool m_isConstructor;
+	bool m_isDestructor;
+};
 
-void addFunctionToVariant(std::optional<IR::AccessModifier> modifier,
+void addFunctionToVariant(FunctionData data,
                           std::variant<IR::Namespace*, IR::Struct*> const& v,
                           IR::Function f) {
 	if (auto ns = std::get_if<IR::Namespace*>(&v)) {
 		auto& functions = (*ns)->m_functions;
 		functions.push_back(f);
 	} else if (auto irStruct = std::get_if<IR::Struct*>(&v)) {
-		auto& functions = (*irStruct)->m_functions;
-		functions.push_back({modifier.value(), f});
+		// Add to the correct container in the struct
+		if (auto structData = Helpers::getStructDataBasedOnAccess(
+		        **irStruct, data.m_modifier.value())) {
+			if (data.m_isConstructor) {
+				auto& functions = structData->m_constructors;
+				functions.push_back(f);
+			} else if (data.m_isDestructor) {
+				auto& functions = structData->m_destructors;
+				functions.push_back(f);
+			} else {
+				auto& functions = structData->m_functions;
+				functions.push_back(f);
+			}
+		}
 	}
 }
 
@@ -53,8 +73,9 @@ void addFunction(IRProxy::Function const& f, IR::Namespace& globalNamespace) {
 	    Helpers::walkPathThroughStructure(path, globalNamespace);
 
 	// Create and add the function
-	addFunctionToVariant(
-	    f.m_modifier, parentOfNewFunction, createFunction(name, f));
+	addFunctionToVariant({f.m_modifier, f.m_isConstructor, f.m_isDestructor},
+	                     parentOfNewFunction,
+	                     createFunction(name, f));
 }
 }    // namespace
 
@@ -98,6 +119,11 @@ buildFunction(clang::FunctionDecl* functionDecl,
 	    Builders::convertToIRAccess(functionDecl->getAccess());
 
 	parsedFunc.m_isStatic = functionDecl->isStatic();
+
+	parsedFunc.m_isConstructor =
+	    llvm::isa<clang::CXXConstructorDecl>(functionDecl);
+	parsedFunc.m_isDestructor =
+	    llvm::isa<clang::CXXDestructorDecl>(functionDecl);
 
 	return {FunctionError::Ok, parsedFunc};
 }

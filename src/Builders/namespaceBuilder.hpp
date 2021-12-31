@@ -1,8 +1,8 @@
 #pragma once
 
 #include <IR/ir.hpp>
+#include <map>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace Builders {
@@ -17,6 +17,6 @@ buildNamespaceStructure(std::vector<std::string> const& namespaces);
   * Add the variables to the corresponding namespaces
   */
 void addGlobalVariables(
-    std::unordered_map<std::string, std::vector<IR::Variable>> const& variables,
+    std::map<std::string, std::vector<IR::Variable>> const& variables,
     IR::Namespace& globalNS);
 }    // namespace Builders

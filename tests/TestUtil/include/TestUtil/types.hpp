@@ -1,14 +1,15 @@
 #pragma once
 
 #include "IR/ir.hpp"
+#include "TestUtil/finders.hpp"
 #include <algorithm>
 #include <string>
 #include <vector>
 
 namespace TestUtil {
 
-std::vector<IR::AccessModifier> getAccessModifiers() {
-	using IR::AccessModifier;
+std::vector<TestUtil::AccessModifier> getAccessModifiers() {
+	using TestUtil::AccessModifier;
 	return {
 	    AccessModifier::Public,
 	    AccessModifier::Private,
@@ -23,6 +24,7 @@ std::vector<IR::BaseType> getTypes() {
 	    BaseType::Char,
 	    BaseType::Char16_t,
 	    BaseType::Char32_t,
+	    BaseType::Complex,
 	    BaseType::Double,
 	    BaseType::FilesystemPath,
 	    BaseType::Float,
@@ -44,8 +46,8 @@ std::vector<IR::BaseType> getTypes() {
 	};
 }
 
-std::string getAsString(IR::AccessModifier am) {
-	using IR::AccessModifier;
+std::string getAsString(TestUtil::AccessModifier am) {
+	using TestUtil::AccessModifier;
 	switch (am) {
 		case AccessModifier::Public: return "public";
 		case AccessModifier::Private: return "private";
@@ -61,6 +63,7 @@ std::string getAsString(IR::BaseType type) {
 		case BaseType::Char16_t: return "char16_t";
 		case BaseType::Char32_t: return "char32_t";
 		case BaseType::Char: return "char";
+		case BaseType::Complex: return "std::complex<int>";
 		case BaseType::Double: return "double";
 		case BaseType::FilesystemPath: return "std::filesystem::path";
 		case BaseType::Float: return "float";
@@ -149,6 +152,7 @@ std::string getIncludesIfNeeded(IR::BaseType type) {
 			break;
 		case BaseType::String: include = "#include <string>\n"; break;
 		case BaseType::StringView: include = "#include <string_view>\n"; break;
+		case BaseType::Complex: include = "#include <complex>\n"; break;
 		default: break;
 	}
 	return include;
@@ -168,6 +172,7 @@ std::string getValidReturnForType(IR::BaseType type) {
 		case BaseType::Double:
 		case BaseType::LongDouble:
 		case BaseType::Float: return "0.0";
+		case BaseType::Complex:
 		case BaseType::Int:
 		case BaseType::LongInt:
 		case BaseType::LongLongInt:

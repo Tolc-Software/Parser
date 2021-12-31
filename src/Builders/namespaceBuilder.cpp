@@ -3,10 +3,10 @@
 #include "IR/ir.hpp"
 #include <algorithm>
 #include <deque>
+#include <map>
 #include <queue>
 #include <string>
 #include <string_view>
-#include <unordered_map>
 #include <vector>
 
 namespace {
@@ -55,7 +55,7 @@ void addNamespaceToRoot(IR::Namespace& rootNS,
 namespace Builders {
 
 void addGlobalVariables(
-    std::unordered_map<std::string, std::vector<IR::Variable>> const& variables,
+    std::map<std::string, std::vector<IR::Variable>> const& variables,
     IR::Namespace& globalNS) {
 	std::queue<IR::Namespace*> namespaces;
 	namespaces.push(&globalNS);
