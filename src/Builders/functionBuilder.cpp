@@ -19,7 +19,7 @@
 
 namespace {
 struct FunctionData {
-	std::optional<IR::AccessModifier> m_modifier;
+	std::optional<IRProxy::AccessModifier> m_modifier;
 	bool m_isConstructor;
 	bool m_isDestructor;
 };

@@ -39,12 +39,12 @@ buildParentStructure(clang::DeclContext const* parent,
 	return structure;
 }
 
-std::optional<IR::AccessModifier>
+std::optional<IRProxy::AccessModifier>
 convertToIRAccess(clang::AccessSpecifier access) {
 	switch (access) {
-		case clang::AS_public: return IR::AccessModifier::Public;
-		case clang::AS_private: return IR::AccessModifier::Private;
-		case clang::AS_protected: return IR::AccessModifier::Protected;
+		case clang::AS_public: return IRProxy::AccessModifier::Public;
+		case clang::AS_private: return IRProxy::AccessModifier::Private;
+		case clang::AS_protected: return IRProxy::AccessModifier::Protected;
 		case clang::AS_none: return {};
 	}
 	return {};

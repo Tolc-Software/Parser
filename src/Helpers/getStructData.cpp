@@ -1,11 +1,12 @@
 #include "Helpers/getStructData.hpp"
+#include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 
 namespace Helpers {
 
 IR::StructData* getStructDataBasedOnAccess(IR::Struct& s,
-                                           IR::AccessModifier access) {
-	using IR::AccessModifier;
+                                           IRProxy::AccessModifier access) {
+	using IRProxy::AccessModifier;
 	switch (access) {
 		case AccessModifier::Public: return &s.m_public;
 		case AccessModifier::Private: return &s.m_private;
@@ -13,5 +14,4 @@ IR::StructData* getStructDataBasedOnAccess(IR::Struct& s,
 	}
 	return nullptr;
 }
-
 }

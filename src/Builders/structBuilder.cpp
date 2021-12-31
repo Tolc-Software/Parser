@@ -12,7 +12,7 @@
 
 namespace {
 
-void addStructToVariant(std::optional<IR::AccessModifier> modifier,
+void addStructToVariant(std::optional<IRProxy::AccessModifier> modifier,
                         std::variant<IR::Namespace*, IR::Struct*> const& v,
                         IR::Struct newStruct) {
 	if (auto ns = std::get_if<IR::Namespace*>(&v)) {
@@ -82,7 +82,7 @@ void addMemberVariables(
 	for (auto& s : structs) {
 		if (auto variables = getVariables(s, memberVariables)) {
 			for (auto& variable : variables.value()) {
-				using IR::AccessModifier;
+				using IRProxy::AccessModifier;
 				switch (variable.m_modifier) {
 					case AccessModifier::Public:
 						s.m_publicVariables.push_back(variable.m_variable);

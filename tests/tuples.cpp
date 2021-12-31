@@ -24,7 +24,7 @@ public:
 	auto globalNS = TestUtil::parseString(code);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	auto& m_t =
-	    TestUtil::findMember(myClass, "m_t", IR::AccessModifier::Public);
+	    TestUtil::findMember(myClass, "m_t", TestUtil::AccessModifier::Public);
 	REQUIRE(m_t.m_type.m_isConst == false);
 	REQUIRE(m_t.m_type.m_representation == "std::tuple<std::string, int>");
 	auto tupleType = std::get_if<IR::Type::Container>(&m_t.m_type.m_type);

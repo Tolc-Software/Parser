@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 
 namespace Helpers {
@@ -10,5 +11,5 @@ namespace Helpers {
 * Returns nullptr if not found (should not happen)
 */
 IR::StructData* getStructDataBasedOnAccess(IR::Struct& s,
-                                           IR::AccessModifier access);
+                                           IRProxy::AccessModifier access);
 }

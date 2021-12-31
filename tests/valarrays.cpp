@@ -14,6 +14,7 @@ struct MyClass {
 	CAPTURE(code);
 	auto globalNS = TestUtil::parseString(code);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	auto& v = TestUtil::findMember(myClass, "v", IR::AccessModifier::Public);
+	auto& v =
+	    TestUtil::findMember(myClass, "v", TestUtil::AccessModifier::Public);
 	TestUtil::compare(v.m_type, IR::ContainerType::Valarray);
 }

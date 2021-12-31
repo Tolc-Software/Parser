@@ -17,7 +17,7 @@ struct MyClass {
 
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	auto& m_d =
-	    TestUtil::findMember(myClass, "m_d", IR::AccessModifier::Public);
+	    TestUtil::findMember(myClass, "m_d", TestUtil::AccessModifier::Public);
 
 	REQUIRE(m_d.m_type.m_representation == "std::priority_queue<int>");
 	auto queueType = std::get_if<IR::Type::Container>(&m_d.m_type.m_type);

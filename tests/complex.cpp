@@ -18,7 +18,7 @@ struct MyClass {
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	for (auto c : {"c0", "c1", "c2"}) {
 		auto& complex =
-		    TestUtil::findMember(myClass, c, IR::AccessModifier::Public);
+		    TestUtil::findMember(myClass, c, TestUtil::AccessModifier::Public);
 		TestUtil::compare(complex.m_type, IR::BaseType::Complex);
 	}
 }

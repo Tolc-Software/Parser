@@ -46,7 +46,8 @@ class MyClass {
 		)");
 	auto globalNS = TestUtil::parseFile(file);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	auto& i = TestUtil::findMember(myClass, "i", IR::AccessModifier::Private);
+	auto& i =
+	    TestUtil::findMember(myClass, "i", TestUtil::AccessModifier::Private);
 
 	CHECK(i.m_name == "i");
 	REQUIRE(!i.m_type.m_isConst);

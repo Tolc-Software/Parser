@@ -132,7 +132,7 @@ private:
 
 	{
 		auto const& m_e =
-		    TestUtil::findMember(C, "m_e", IR::AccessModifier::Public);
+		    TestUtil::findMember(C, "m_e", TestUtil::AccessModifier::Public);
 		REQUIRE(std::get_if<IR::Type::EnumValue>(&m_e.m_type.m_type) !=
 		        nullptr);
 		REQUIRE(m_e.m_type.m_representation == "E");
@@ -142,7 +142,7 @@ private:
 
 	{
 		auto const& m_e2 =
-		    TestUtil::findMember(C, "m_e2", IR::AccessModifier::Private);
+		    TestUtil::findMember(C, "m_e2", TestUtil::AccessModifier::Private);
 		REQUIRE(std::get_if<IR::Type::EnumValue>(&m_e2.m_type.m_type) !=
 		        nullptr);
 		REQUIRE(m_e2.m_type.m_representation == "MyLib::E2");

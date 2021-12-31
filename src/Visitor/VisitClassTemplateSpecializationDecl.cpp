@@ -120,7 +120,7 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 			if (auto maybeField =
 			        Builders::buildField(memberVariable, memberType)) {
 				auto [access, variable] = maybeField.value();
-				using IR::AccessModifier;
+				using IRProxy::AccessModifier;
 				switch (access) {
 					case AccessModifier::Public:
 						parsedStruct.m_publicVariables.push_back(variable);

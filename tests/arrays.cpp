@@ -23,8 +23,8 @@ struct MyClass {
 		CAPTURE(code);
 		auto globalNS = TestUtil::parseString(code);
 		auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-		auto& m_v =
-		    TestUtil::findMember(myClass, "m_v", IR::AccessModifier::Public);
+		auto& m_v = TestUtil::findMember(
+		    myClass, "m_v", TestUtil::AccessModifier::Public);
 
 		REQUIRE(m_v.m_type.m_representation ==
 		        fmt::format("std::array<{baseType}, 5>",

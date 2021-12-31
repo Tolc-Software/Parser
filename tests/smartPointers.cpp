@@ -15,9 +15,11 @@ struct MyClass {
 	CAPTURE(code);
 	auto globalNS = TestUtil::parseString(code);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	auto& u = TestUtil::findMember(myClass, "u", IR::AccessModifier::Public);
+	auto& u =
+	    TestUtil::findMember(myClass, "u", TestUtil::AccessModifier::Public);
 	TestUtil::compare(u.m_type, IR::ContainerType::UniquePtr);
 
-	auto& s = TestUtil::findMember(myClass, "s", IR::AccessModifier::Public);
+	auto& s =
+	    TestUtil::findMember(myClass, "s", TestUtil::AccessModifier::Public);
 	TestUtil::compare(s.m_type, IR::ContainerType::SharedPtr);
 }

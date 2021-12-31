@@ -21,7 +21,7 @@ TEST_CASE("Function that returns base types", "[functions]") {
 }
 
 TEST_CASE("Function works with default modifier", "[functions]") {
-	using IR::AccessModifier;
+	using TestUtil::AccessModifier;
 	for (auto [accessModifier, structure] :
 	     {std::make_pair(AccessModifier::Private, std::string("class")),
 	      std::make_pair(AccessModifier::Public, std::string("struct"))}) {

@@ -36,7 +36,7 @@ struct MyClass {
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto& myClass = globalNS.m_structs.back();
 	REQUIRE(myClass.m_public.m_memberVariables.size() == 3);
-	auto modifier = IR::AccessModifier::Public;
+	auto modifier = TestUtil::AccessModifier::Public;
 
 	auto const& i = TestUtil::findMember(myClass, "i", modifier);
 	REQUIRE(!i.m_type.m_isConst);

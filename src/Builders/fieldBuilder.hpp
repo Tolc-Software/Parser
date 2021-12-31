@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 #include <clang/AST/Decl.h>
 #include <clang/AST/Type.h>
@@ -15,9 +16,9 @@ namespace Builders {
 * @param: clang::FieldDecl field
 *         std::optional<clang::QualType> templateSpecialization
 *
-* @return: std::optional<std::pair<IR::AccessModifier modifier, IR::Variable variable>>
+* @return: std::optional<std::pair<IRProxy::AccessModifier modifier, IR::Variable variable>>
 */
-std::optional<std::pair<IR::AccessModifier, IR::Variable>> buildField(
+std::optional<std::pair<IRProxy::AccessModifier, IR::Variable>> buildField(
     clang::FieldDecl* field,
     std::optional<clang::QualType> templateSpecialization = std::nullopt);
 

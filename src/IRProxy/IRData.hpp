@@ -8,6 +8,8 @@
 
 namespace IRProxy {
 
+enum class AccessModifier { Public, Private, Protected };
+
 /**
   * Used to distinguish a part name in a fully qualified name
   * Ex:
@@ -42,7 +44,7 @@ struct Struct {
 
 	// public, private, protected
 	// For nested structs
-	std::optional<IR::AccessModifier> m_modifier;
+	std::optional<IRProxy::AccessModifier> m_modifier;
 
 	bool m_hasImplicitDefaultConstructor;
 };
@@ -65,7 +67,7 @@ struct Function {
 	std::vector<IR::Type> m_templateArguments;
 
 	// public, private, protected
-	std::optional<IR::AccessModifier> m_modifier;
+	std::optional<IRProxy::AccessModifier> m_modifier;
 
 	IR::Type m_returnType;
 
@@ -88,7 +90,7 @@ struct Enum {
 	std::deque<std::pair<std::string, Structure>> m_path;
 
 	// public, private, protected
-	std::optional<IR::AccessModifier> m_modifier;
+	std::optional<IRProxy::AccessModifier> m_modifier;
 
 	// Unscoped values of the enum
 	std::vector<std::string> m_values;
@@ -103,7 +105,7 @@ struct MemberVariable {
 	IR::Variable m_variable;
 
 	// public, private, protected
-	IR::AccessModifier m_modifier;
+	IRProxy::AccessModifier m_modifier;
 };
 
 /**

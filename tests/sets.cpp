@@ -18,7 +18,7 @@ struct MyClass {
 	auto globalNS = TestUtil::parseString(code);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	auto& m_v =
-	    TestUtil::findMember(myClass, "m_v", IR::AccessModifier::Public);
+	    TestUtil::findMember(myClass, "m_v", TestUtil::AccessModifier::Public);
 	REQUIRE(m_v.m_type.m_representation == "std::set<int>");
 	auto arrayType = std::get_if<IR::Type::Container>(&m_v.m_type.m_type);
 	REQUIRE(arrayType != nullptr);

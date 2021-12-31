@@ -1,14 +1,15 @@
 #pragma once
 
 #include "IR/ir.hpp"
+#include "TestUtil/finders.hpp"
 #include <algorithm>
 #include <string>
 #include <vector>
 
 namespace TestUtil {
 
-std::vector<IR::AccessModifier> getAccessModifiers() {
-	using IR::AccessModifier;
+std::vector<TestUtil::AccessModifier> getAccessModifiers() {
+	using TestUtil::AccessModifier;
 	return {
 	    AccessModifier::Public,
 	    AccessModifier::Private,
@@ -45,8 +46,8 @@ std::vector<IR::BaseType> getTypes() {
 	};
 }
 
-std::string getAsString(IR::AccessModifier am) {
-	using IR::AccessModifier;
+std::string getAsString(TestUtil::AccessModifier am) {
+	using TestUtil::AccessModifier;
 	switch (am) {
 		case AccessModifier::Public: return "public";
 		case AccessModifier::Private: return "private";

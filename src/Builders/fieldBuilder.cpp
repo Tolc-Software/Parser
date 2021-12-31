@@ -1,6 +1,7 @@
 #include "Builders/fieldBuilder.hpp"
 #include "Builders/commonBuilder.hpp"
 #include "Builders/typeBuilder.hpp"
+#include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 #include <clang/AST/ASTContext.h>
 #include <clang/AST/Decl.h>
@@ -9,11 +10,11 @@
 #include <optional>
 
 namespace Builders {
-std::optional<std::pair<IR::AccessModifier, IR::Variable>>
+std::optional<std::pair<IRProxy::AccessModifier, IR::Variable>>
 buildField(clang::FieldDecl* field,
            std::optional<clang::QualType> templateSpecialization) {
 	IR::Variable variable;
-	IR::AccessModifier modifier;
+	IRProxy::AccessModifier modifier;
 	variable.m_name = field->getName();
 
 	// This is passed so that while extracting text from types it is exactly what the user wrote

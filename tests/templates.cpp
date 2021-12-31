@@ -34,10 +34,10 @@ template class MyClass<double>;
 		CHECK(type.m_name == "type");
 		TestUtil::compare(type.m_type, b);
 	};
-	checkFun(
-	    TestUtil::findFunction(myClassI, "myFun", IR::AccessModifier::Public),
-	    "MyClass<int>::myFun",
-	    IR::BaseType::Int);
+	checkFun(TestUtil::findFunction(
+	             myClassI, "myFun", TestUtil::AccessModifier::Public),
+	         "MyClass<int>::myFun",
+	         IR::BaseType::Int);
 
 	auto& myClassD = TestUtil::findStruct(globalNS, "MyClass<double>");
 	// Bug found while using this downstream
@@ -46,10 +46,10 @@ template class MyClass<double>;
 	REQUIRE(myClassD.m_templateArguments.size() == 1);
 	TestUtil::compare(myClassD.m_templateArguments[0], IR::BaseType::Double);
 
-	checkFun(
-	    TestUtil::findFunction(myClassD, "myFun", IR::AccessModifier::Public),
-	    "MyClass<double>::myFun",
-	    IR::BaseType::Double);
+	checkFun(TestUtil::findFunction(
+	             myClassD, "myFun", TestUtil::AccessModifier::Public),
+	         "MyClass<double>::myFun",
+	         IR::BaseType::Double);
 }
 
 TEST_CASE("Function template parameters", "[templates]") {
@@ -143,8 +143,8 @@ template class MyClass<int>;
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
 
 	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
-	auto& myFun =
-	    TestUtil::findFunction(myClass, "myFun", IR::AccessModifier::Public);
+	auto& myFun = TestUtil::findFunction(
+	    myClass, "myFun", TestUtil::AccessModifier::Public);
 	REQUIRE(myFun.m_representation == "MyClass<int>::myFun");
 	TestUtil::compare(myFun.m_returnType, IR::BaseType::Int);
 	REQUIRE(myFun.m_arguments.size() == 1);
@@ -172,12 +172,12 @@ template class MyClass<int, double>;
 	TestUtil::compare(myClass.m_templateArguments[1], IR::BaseType::Double);
 	REQUIRE(myClass.m_public.m_memberVariables.size() == 2);
 	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
-	auto& memberT =
-	    TestUtil::findMember(myClass, "m_memberT", IR::AccessModifier::Public);
+	auto& memberT = TestUtil::findMember(
+	    myClass, "m_memberT", TestUtil::AccessModifier::Public);
 	TestUtil::compare(memberT.m_type, IR::BaseType::Int);
 
-	auto& memberU =
-	    TestUtil::findMember(myClass, "m_memberU", IR::AccessModifier::Public);
+	auto& memberU = TestUtil::findMember(
+	    myClass, "m_memberU", TestUtil::AccessModifier::Public);
 	TestUtil::compare(memberU.m_type, IR::BaseType::Double);
 }
 
@@ -203,8 +203,8 @@ template class MyClass<int>;
 	REQUIRE(myClass.m_templateArguments.size() == 1);
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
 
-	auto& member =
-	    TestUtil::findMember(myClass, "m_member", IR::AccessModifier::Public);
+	auto& member = TestUtil::findMember(
+	    myClass, "m_member", TestUtil::AccessModifier::Public);
 	TestUtil::compare(member.m_type, IR::BaseType::Int);
 }
 
@@ -227,8 +227,8 @@ public:
 	REQUIRE(myClass.m_templateArguments.size() == 1);
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
 
-	auto& member =
-	    TestUtil::findMember(myClass, "m_member", IR::AccessModifier::Public);
+	auto& member = TestUtil::findMember(
+	    myClass, "m_member", TestUtil::AccessModifier::Public);
 	TestUtil::compare(member.m_type, IR::BaseType::Int);
 }
 

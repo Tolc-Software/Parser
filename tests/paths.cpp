@@ -17,8 +17,8 @@ class MyClass {
 	auto globalNS = TestUtil::parseString(code);
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 	for (auto const& name : {"m_member0", "m_member1"}) {
-		auto& member =
-		    TestUtil::findMember(myClass, name, IR::AccessModifier::Private);
+		auto& member = TestUtil::findMember(
+		    myClass, name, TestUtil::AccessModifier::Private);
 		REQUIRE(member.m_name == name);
 		TestUtil::compare(member.m_type, IR::BaseType::FilesystemPath);
 	}

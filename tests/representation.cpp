@@ -83,8 +83,8 @@ class MyClass {)" + std::string(typeRepresentation) +
 
 		CAPTURE(code);
 		auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-		auto& i =
-		    TestUtil::findMember(myClass, "i", IR::AccessModifier::Private);
+		auto& i = TestUtil::findMember(
+		    myClass, "i", TestUtil::AccessModifier::Private);
 		CHECK(i.m_type.m_representation == typeRepresentation);
 	}
 }

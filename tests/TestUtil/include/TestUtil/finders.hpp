@@ -9,9 +9,11 @@
 
 namespace TestUtil {
 
+enum class AccessModifier { Public, Private, Protected };
+
 IR::StructData* getStructDataBasedOnAccess(IR::Struct& s,
-                                           IR::AccessModifier access) {
-	using IR::AccessModifier;
+                                           TestUtil::AccessModifier access) {
+	using TestUtil::AccessModifier;
 	switch (access) {
 		case AccessModifier::Public: return &s.m_public;
 		case AccessModifier::Private: return &s.m_private;
@@ -68,7 +70,7 @@ IR::Variable& findArgument(IR::Function& f, std::string const& name) {
 
 IR::Function& findFunction(IR::Struct& parent,
                            std::string const& name,
-                           IR::AccessModifier access) {
+                           TestUtil::AccessModifier access) {
 	auto data = getStructDataBasedOnAccess(parent, access);
 	REQUIRE(data != nullptr);
 	auto& functions = data->m_functions;
@@ -84,7 +86,7 @@ IR::Function& findFunction(IR::Struct& parent,
 
 IR::Variable& findMember(IR::Struct& parent,
                          std::string const& name,
-                         IR::AccessModifier access) {
+                         TestUtil::AccessModifier access) {
 	auto data = getStructDataBasedOnAccess(parent, access);
 	REQUIRE(data != nullptr);
 	auto& members = data->m_memberVariables;

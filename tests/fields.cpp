@@ -33,8 +33,8 @@ class MyClass {
 	                           std::make_pair("uint32_t", 6),
 	                           std::make_pair("uint64_t", 7)}) {
 		auto name = "m_member" + std::to_string(i);
-		auto& member =
-		    TestUtil::findMember(myClass, name, IR::AccessModifier::Private);
+		auto& member = TestUtil::findMember(
+		    myClass, name, TestUtil::AccessModifier::Private);
 		REQUIRE(member.m_name == name);
 		REQUIRE(member.m_type.m_representation == typeName);
 	}
@@ -57,7 +57,7 @@ TEST_CASE("Member variables of base types", "[fields]") {
 
 			auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 			auto& m_member = TestUtil::findMember(
-			    myClass, "m_member", IR::AccessModifier::Private);
+			    myClass, "m_member", TestUtil::AccessModifier::Private);
 
 			CHECK(m_member.m_name == "m_member");
 			TestUtil::compare(m_member.m_type, irType);
@@ -73,7 +73,8 @@ class MyClass {
 };
 		)");
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	auto& s = TestUtil::findMember(myClass, "s", IR::AccessModifier::Private);
+	auto& s =
+	    TestUtil::findMember(myClass, "s", TestUtil::AccessModifier::Private);
 
 	CHECK(s.m_name == "s");
 	TestUtil::compare(s.m_type, IR::BaseType::String);
@@ -81,7 +82,7 @@ class MyClass {
 }
 
 TEST_CASE("Member variable works with default modifier", "[fields]") {
-	using IR::AccessModifier;
+	using TestUtil::AccessModifier;
 	for (auto [accessModifier, structure] :
 	     {std::make_pair(AccessModifier::Private, std::string("class")),
 	      std::make_pair(AccessModifier::Public, std::string("struct"))}) {
@@ -117,7 +118,8 @@ class MyClass {
 		)");
 
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	auto& i = TestUtil::findMember(myClass, "i", IR::AccessModifier::Private);
+	auto& i =
+	    TestUtil::findMember(myClass, "i", TestUtil::AccessModifier::Private);
 	REQUIRE_FALSE(i.m_type.m_isConst);
 	TestUtil::compare(i.m_type, IR::BaseType::Int);
 }
@@ -129,7 +131,8 @@ class MyClass {
 };
 		)");
 	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	auto& i = TestUtil::findMember(myClass, "i", IR::AccessModifier::Private);
+	auto& i =
+	    TestUtil::findMember(myClass, "i", TestUtil::AccessModifier::Private);
 
 	REQUIRE(i.m_type.m_isConst);
 	TestUtil::compare(i.m_type, IR::BaseType::Int);
@@ -154,7 +157,7 @@ TEST_CASE("Member variables of base types with using", "[fields]") {
 
 			auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
 			auto& m_member = TestUtil::findMember(
-			    myClass, "m_member", IR::AccessModifier::Private);
+			    myClass, "m_member", TestUtil::AccessModifier::Private);
 			TestUtil::compare(m_member.m_type, irType);
 		}
 	}

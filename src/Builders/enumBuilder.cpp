@@ -11,7 +11,7 @@
 
 namespace {
 
-void addEnumToVariant(std::optional<IR::AccessModifier> modifier,
+void addEnumToVariant(std::optional<IRProxy::AccessModifier> modifier,
                       std::variant<IR::Namespace*, IR::Struct*> const& v,
                       IR::Enum e) {
 	if (auto ns = std::get_if<IR::Namespace*>(&v)) {
