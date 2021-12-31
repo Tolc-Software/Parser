@@ -1,3 +1,4 @@
+#include "TestUtil/finders.hpp"
 #include "TestUtil/parse.hpp"
 #include "TestUtil/types.hpp"
 #include <catch2/catch.hpp>
@@ -15,11 +16,9 @@ struct MyClass {
 )";
 	CAPTURE(code);
 	auto globalNS = TestUtil::parseString(code);
-	REQUIRE(globalNS.m_structs.size() == 1);
-	auto& myClass = globalNS.m_structs.back();
-	REQUIRE(myClass.m_memberVariables.size() == 1);
-	auto& [am, m_v] = myClass.m_memberVariables.back();
-	REQUIRE(am == IR::AccessModifier::Public);
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
+	auto& m_v =
+	    TestUtil::findMember(myClass, "m_v", IR::AccessModifier::Public);
 	REQUIRE(m_v.m_type.m_representation == "std::set<int>");
 	auto arrayType = std::get_if<IR::Type::Container>(&m_v.m_type.m_type);
 	REQUIRE(arrayType != nullptr);

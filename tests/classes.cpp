@@ -95,12 +95,11 @@ public:
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto& simple = globalNS.m_structs[0];
 	REQUIRE(simple.m_name == "Simple");
-	REQUIRE(simple.m_constructors.size() == 1);
+	REQUIRE(simple.m_public.m_constructors.size() == 1);
 	// NOTE: It has a default constructor manually written
 	REQUIRE(!simple.m_hasImplicitDefaultConstructor);
-	auto [access, constructor] = simple.m_constructors.back();
+	auto constructor = simple.m_public.m_constructors.back();
 	REQUIRE(constructor.m_name == "Simple");
-	REQUIRE(access == IR::AccessModifier::Public);
 }
 
 TEST_CASE("Finds a global class", "[classes]") {

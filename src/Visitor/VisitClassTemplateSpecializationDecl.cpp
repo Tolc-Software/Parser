@@ -120,7 +120,18 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 			if (auto maybeField =
 			        Builders::buildField(memberVariable, memberType)) {
 				auto [access, variable] = maybeField.value();
-				parsedStruct.m_variables.push_back({access, variable});
+				using IR::AccessModifier;
+				switch (access) {
+					case AccessModifier::Public:
+						parsedStruct.m_publicVariables.push_back(variable);
+						break;
+					case AccessModifier::Private:
+						parsedStruct.m_privateVariables.push_back(variable);
+						break;
+					case AccessModifier::Protected:
+						parsedStruct.m_protectedVariables.push_back(variable);
+						break;
+				}
 			} else {
 				spdlog::error(R"(Failed to parse member variable "{}::{}")",
 				              parsedStruct.m_fullyQualifiedName,

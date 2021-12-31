@@ -54,10 +54,8 @@ struct S {
 	CAPTURE(code);
 	auto globalNS = TestUtil::parseString(code);
 	REQUIRE(globalNS.m_structs.size() == 2);
-	auto maybeC = TestUtil::findWithName("C", globalNS.m_structs);
-	auto maybeS = TestUtil::findWithName("S", globalNS.m_structs);
-	REQUIRE(maybeS.has_value());
-	REQUIRE(maybeC.has_value());
+	auto maybeC = TestUtil::findStruct(globalNS, "C");
+	auto maybeS = TestUtil::findStruct(globalNS, "S");
 	for (auto const& s : globalNS.m_structs) {
 		CAPTURE(s.m_name);
 		REQUIRE(s.m_enums.size() == 1);
@@ -134,24 +132,28 @@ private:
 )";
 	CAPTURE(code);
 	auto globalNS = TestUtil::parseString(code);
-	REQUIRE(globalNS.m_structs.size() == 1);
-	auto& C = globalNS.m_structs.back();
-	REQUIRE(C.m_memberVariables.size() == 2);
-	for (auto const& [am, e] : C.m_memberVariables) {
-		CAPTURE(e.m_name);
-		auto enumValue = std::get_if<IR::Type::EnumValue>(&e.m_type.m_type);
-		REQUIRE(enumValue != nullptr);
-		if (e.m_name == "m_e") {
-			REQUIRE(am == IR::AccessModifier::Public);
-			REQUIRE(enumValue->m_representation == "E");
-		} else if (e.m_name == "m_e2") {
-			REQUIRE(am == IR::AccessModifier::Private);
-			REQUIRE(enumValue->m_representation == "MyLib::E2");
-		} else {
-			REQUIRE(false);
-		}
-		REQUIRE(e.m_type.m_isConst == false);
-		REQUIRE(e.m_type.m_isReference == false);
+	auto& C = TestUtil::findStruct(globalNS, "C");
+	REQUIRE(C.m_public.m_memberVariables.size() == 1);
+	REQUIRE(C.m_private.m_memberVariables.size() == 1);
+
+	{
+		auto const& m_e =
+		    TestUtil::findMember(C, "m_e", IR::AccessModifier::Public);
+		REQUIRE(std::get_if<IR::Type::EnumValue>(&m_e.m_type.m_type) !=
+		        nullptr);
+		REQUIRE(m_e.m_type.m_representation == "E");
+		REQUIRE(m_e.m_type.m_isConst == false);
+		REQUIRE(m_e.m_type.m_isReference == false);
+	}
+
+	{
+		auto const& m_e2 =
+		    TestUtil::findMember(C, "m_e2", IR::AccessModifier::Private);
+		REQUIRE(std::get_if<IR::Type::EnumValue>(&m_e2.m_type.m_type) !=
+		        nullptr);
+		REQUIRE(m_e2.m_type.m_representation == "MyLib::E2");
+		REQUIRE(m_e2.m_type.m_isConst == false);
+		REQUIRE(m_e2.m_type.m_isReference == false);
 	}
 }
 

@@ -8,6 +8,18 @@
 #include <vector>
 
 namespace TestUtil {
+
+IR::StructData* getStructDataBasedOnAccess(IR::Struct& s,
+                                           IR::AccessModifier access) {
+	using IR::AccessModifier;
+	switch (access) {
+		case AccessModifier::Public: return &s.m_public;
+		case AccessModifier::Private: return &s.m_private;
+		case AccessModifier::Protected: return &s.m_protected;
+	}
+	return nullptr;
+}
+
 IR::Variable& findVariable(IR::Namespace& parent, std::string const& name) {
 	auto& variables = parent.m_variables;
 	REQUIRE(variables.size() >= 1);
@@ -57,51 +69,33 @@ IR::Variable& findArgument(IR::Function& f, std::string const& name) {
 IR::Function& findFunction(IR::Struct& parent,
                            std::string const& name,
                            IR::AccessModifier access) {
-	auto& functions = parent.m_functions;
+	auto data = getStructDataBasedOnAccess(parent, access);
+	REQUIRE(data != nullptr);
+	auto& functions = data->m_functions;
 	REQUIRE(functions.size() >= 1);
 	auto function =
 	    std::find_if(functions.begin(),
 	                 functions.end(),
-	                 [&name, access](auto const& accessAndFunction) {
-		                 return accessAndFunction.first == access &&
-		                        accessAndFunction.second.m_name == name;
-	                 });
+	                 [&name](auto const& f) { return f.m_name == name; });
 
 	REQUIRE(function != functions.end());
-	return function->second;
-}
-
-IR::Function& findConstructor(IR::Struct& parent,
-                              std::string const& name,
-                              IR::AccessModifier access) {
-	auto& functions = parent.m_constructors;
-	REQUIRE(functions.size() >= 1);
-	auto function =
-	    std::find_if(functions.begin(),
-	                 functions.end(),
-	                 [&name, access](auto const& accessAndFunction) {
-		                 return accessAndFunction.first == access &&
-		                        accessAndFunction.second.m_name == name;
-	                 });
-
-	REQUIRE(function != functions.end());
-	return function->second;
+	return *function;
 }
 
 IR::Variable& findMember(IR::Struct& parent,
                          std::string const& name,
                          IR::AccessModifier access) {
-	auto& members = parent.m_memberVariables;
+	auto data = getStructDataBasedOnAccess(parent, access);
+	REQUIRE(data != nullptr);
+	auto& members = data->m_memberVariables;
 	REQUIRE(members.size() >= 1);
-	auto member = std::find_if(members.begin(),
-	                           members.end(),
-	                           [&name, access](auto const& accessAndMember) {
-		                           return accessAndMember.first == access &&
-		                                  accessAndMember.second.m_name == name;
-	                           });
+	auto member =
+	    std::find_if(members.begin(), members.end(), [&name](auto const& m) {
+		    return m.m_name == name;
+	    });
 
 	REQUIRE(member != members.end());
-	return member->second;
+	return *member;
 }
 
 IR::Struct& findStruct(IR::Namespace& parent,

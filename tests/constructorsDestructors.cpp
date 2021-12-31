@@ -13,8 +13,11 @@ struct Constructor {
 )");
 
 	auto& constructor = TestUtil::findStruct(globalNS, "Constructor");
-	REQUIRE(constructor.m_constructors.size() == 2);
-	REQUIRE(constructor.m_destructors.size() == 1);
-	REQUIRE(constructor.m_functions.empty());
+	REQUIRE(constructor.m_public.m_constructors.size() == 2);
+	REQUIRE(constructor.m_public.m_destructors.size() == 1);
+
+	REQUIRE(constructor.m_public.m_functions.empty());
+	REQUIRE(constructor.m_private.m_functions.empty());
+	REQUIRE(constructor.m_protected.m_functions.empty());
 }
 

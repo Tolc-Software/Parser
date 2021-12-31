@@ -31,10 +31,12 @@ TEST_CASE("Function works with default modifier", "[functions]") {
 		REQUIRE(globalNS.m_functions.size() == 0);
 		REQUIRE(globalNS.m_structs.size() == 1);
 		auto s = globalNS.m_structs[0];
-		REQUIRE(s.m_functions.size() == 1);
-		auto& [access, fun] = s.m_functions.back();
+		auto& functions = accessModifier == AccessModifier::Private ?
+		                      s.m_private.m_functions :
+                              s.m_public.m_functions;
+		REQUIRE(functions.size() == 1);
+		auto& fun = functions.back();
 		CHECK(fun.m_name == "fun");
-		CHECK(access == accessModifier);
 	}
 }
 
@@ -46,10 +48,12 @@ TEST_CASE("Function within class with modifier", "[functions]") {
 		REQUIRE(globalNS.m_functions.size() == 0);
 		REQUIRE(globalNS.m_structs.size() == 1);
 		auto myClass = globalNS.m_structs[0];
-		REQUIRE(myClass.m_functions.size() == 1);
-		auto& [access, fun] = myClass.m_functions.back();
+		auto data =
+		    TestUtil::getStructDataBasedOnAccess(myClass, accessModifier);
+		REQUIRE(data != nullptr);
+		REQUIRE(data->m_functions.size() == 1);
+		auto& fun = data->m_functions.back();
 		CHECK(fun.m_name == "fun");
-		CHECK(access == accessModifier);
 	}
 }
 
@@ -77,8 +81,8 @@ void fun();
 	REQUIRE(globalNS.m_functions.size() == 0);
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto myClass = globalNS.m_structs[0];
-	REQUIRE(myClass.m_functions.size() == 1);
-	auto& [access, fun] = myClass.m_functions.back();
+	REQUIRE(myClass.m_private.m_functions.size() == 1);
+	auto& fun = myClass.m_private.m_functions.back();
 	CHECK(fun.m_name == "fun");
 	CHECK(fun.m_arguments.size() == 0);
     }

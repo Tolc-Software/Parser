@@ -20,7 +20,7 @@ template class MyClass<double>;
 	)");
 	auto& myClassI = TestUtil::findStruct(globalNS, "MyClass<int>");
 	// Bug found while using this downstream
-	REQUIRE(myClassI.m_functions.size() == 1);
+	REQUIRE(myClassI.m_public.m_functions.size() == 1);
 
 	REQUIRE(myClassI.m_templateArguments.size() == 1);
 	TestUtil::compare(myClassI.m_templateArguments[0], IR::BaseType::Int);
@@ -41,7 +41,7 @@ template class MyClass<double>;
 
 	auto& myClassD = TestUtil::findStruct(globalNS, "MyClass<double>");
 	// Bug found while using this downstream
-	REQUIRE(myClassD.m_functions.size() == 1);
+	REQUIRE(myClassD.m_public.m_functions.size() == 1);
 
 	REQUIRE(myClassD.m_templateArguments.size() == 1);
 	TestUtil::compare(myClassD.m_templateArguments[0], IR::BaseType::Double);
@@ -112,8 +112,8 @@ template class MyClass<int>;
 	REQUIRE(myClass.m_templateArguments.size() == 1);
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
 	REQUIRE(!myClass.m_hasImplicitDefaultConstructor);
-	auto& constructor = TestUtil::findConstructor(
-	    myClass, "MyClass", IR::AccessModifier::Public);
+	REQUIRE(myClass.m_public.m_constructors.size() == 1);
+	auto& constructor = myClass.m_public.m_constructors.back();
 	REQUIRE(constructor.m_representation == "MyClass<int>::MyClass");
 	REQUIRE(constructor.m_arguments.size() == 1);
 	auto& type = constructor.m_arguments.back();
@@ -170,7 +170,7 @@ template class MyClass<int, double>;
 	REQUIRE(myClass.m_templateArguments.size() == 2);
 	TestUtil::compare(myClass.m_templateArguments[0], IR::BaseType::Int);
 	TestUtil::compare(myClass.m_templateArguments[1], IR::BaseType::Double);
-	REQUIRE(myClass.m_memberVariables.size() == 2);
+	REQUIRE(myClass.m_public.m_memberVariables.size() == 2);
 	REQUIRE(myClass.m_hasImplicitDefaultConstructor);
 	auto& memberT =
 	    TestUtil::findMember(myClass, "m_memberT", IR::AccessModifier::Public);

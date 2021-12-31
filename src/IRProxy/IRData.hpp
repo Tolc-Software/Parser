@@ -2,8 +2,8 @@
 
 #include <IR/ir.hpp>
 #include <deque>
+#include <map>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace IRProxy {
@@ -33,7 +33,9 @@ struct Struct {
 	//     Ns::cl => {(Ns, Structure::Namespace), (cl, Structure::Struct)}
 	std::deque<std::pair<std::string, Structure>> m_path;
 	// The variables within the struct/class
-	std::vector<std::pair<IR::AccessModifier, IR::Variable>> m_variables;
+	std::vector<IR::Variable> m_publicVariables;
+	std::vector<IR::Variable> m_privateVariables;
+	std::vector<IR::Variable> m_protectedVariables;
 
 	// Empty if not a template
 	std::vector<IR::Type> m_templateArguments;
@@ -123,11 +125,9 @@ struct IRData {
 	std::vector<Enum> m_enums;
 
 	// {Fully qualified name of the owning class: variable}
-	std::unordered_map<std::string, std::vector<MemberVariable>>
-	    m_memberVariables;
+	std::map<std::string, std::vector<MemberVariable>> m_memberVariables;
 
 	// {Fully qualified name of the owning namespace: variable}
-	std::unordered_map<std::string, std::vector<IR::Variable>>
-	    m_globalVariables;
+	std::map<std::string, std::vector<IR::Variable>> m_globalVariables;
 };
 }    // namespace IRProxy

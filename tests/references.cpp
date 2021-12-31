@@ -1,3 +1,4 @@
+#include "TestUtil/finders.hpp"
 #include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
 
@@ -34,21 +35,18 @@ struct MyClass {
 	auto globalNS = TestUtil::parseString(code);
 	REQUIRE(globalNS.m_structs.size() == 1);
 	auto& myClass = globalNS.m_structs.back();
-	REQUIRE(myClass.m_memberVariables.size() == 3);
+	REQUIRE(myClass.m_public.m_memberVariables.size() == 3);
+	auto modifier = IR::AccessModifier::Public;
 
-	for (auto const& [am, var] : myClass.m_memberVariables) {
-		if (var.m_name == "i") {
-			auto i = var.m_type;
-			REQUIRE(!i.m_isConst);
-			REQUIRE(!i.m_isReference);
-		} else if (var.m_name == "d") {
-			auto d = var.m_type;
-			REQUIRE(!d.m_isConst);
-			REQUIRE(d.m_isReference);
-		} else if (var.m_name == "s") {
-			auto s = var.m_type;
-			REQUIRE(s.m_isConst);
-			REQUIRE(s.m_isReference);
-		}
-	}
+	auto const& i = TestUtil::findMember(myClass, "i", modifier);
+	REQUIRE(!i.m_type.m_isConst);
+	REQUIRE(!i.m_type.m_isReference);
+
+	auto const& d = TestUtil::findMember(myClass, "d", modifier);
+	REQUIRE(!d.m_type.m_isConst);
+	REQUIRE(d.m_type.m_isReference);
+
+	auto const& s = TestUtil::findMember(myClass, "s", modifier);
+	REQUIRE(s.m_type.m_isConst);
+	REQUIRE(s.m_type.m_isReference);
 }

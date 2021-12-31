@@ -1,3 +1,4 @@
+#include "TestUtil/finders.hpp"
 #include "TestUtil/parse.hpp"
 #include "TestUtil/types.hpp"
 #include <catch2/catch.hpp>
@@ -21,11 +22,9 @@ public:
 )";
 	CAPTURE(code);
 	auto globalNS = TestUtil::parseString(code);
-	REQUIRE(globalNS.m_structs.size() == 1);
-	auto& myClass = globalNS.m_structs.back();
-	REQUIRE(myClass.m_memberVariables.size() == 1);
-	auto& [am, m_t] = myClass.m_memberVariables.back();
-	REQUIRE(am == IR::AccessModifier::Public);
+	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
+	auto& m_t =
+	    TestUtil::findMember(myClass, "m_t", IR::AccessModifier::Public);
 	REQUIRE(m_t.m_type.m_isConst == false);
 	REQUIRE(m_t.m_type.m_representation == "std::tuple<std::string, int>");
 	auto tupleType = std::get_if<IR::Type::Container>(&m_t.m_type.m_type);
