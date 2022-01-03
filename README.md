@@ -13,7 +13,7 @@ include(FetchContent)
 FetchContent_Declare(
   Parser
   GIT_REPOSITORY git@github.com:Tolc-Software/Parser.git
-  GIT_TAG master)
+  GIT_TAG main)
 
 # Downloads and makes the parser library available
 FetchContent_MakeAvailable(Parser)
