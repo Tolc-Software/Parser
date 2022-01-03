@@ -2,7 +2,7 @@
 
 # Parser #
 
-Parser is the library for converting a header file of `C++` to the intermediate representation declared in the library `IR::IR`
+Parser is the library for converting a header file of `C++` to the intermediate representation declared in the library [`IR::IR`](https://github.com/Tolc-Software/IntermediateRepresentation).
 
 ## Installation ##
 
