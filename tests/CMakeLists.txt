@@ -96,4 +96,9 @@ foreach(
     LIBRARIES
     fmt::fmt
     TestUtil)
+
+  set(ENABLE_SANITIZER_ADDRESS TRUE)
+  set(ENABLE_SANITIZER_MEMORY TRUE)
+  enable_sanitizers(${testName})
 endforeach()
+

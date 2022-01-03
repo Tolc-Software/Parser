@@ -98,7 +98,7 @@ jobs:
       run: |
         go get -v github.com/github-release/github-release
         echo "Checking if a new release is needed"
-        github-release release --user srydell --repo Parser --tag master-release --name "Head release" --description "This release gets updated with each commit to master" || true
+        github-release release --user Tolc-Software --repo Parser --tag master-release --name "Head release" --description "This release gets updated with each commit to master" || true
         echo "Pushing the release"
-        github-release upload --user srydell --repo Parser --tag master-release --name "Parser-Windows-master-Release.tar.xz" --file Parser.tar.xz --replace
+        github-release upload --user Tolc-Software --repo Parser --tag master-release --name "Parser-Windows-master-Release.tar.xz" --file Parser.tar.xz --replace
 

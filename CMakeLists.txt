@@ -23,7 +23,7 @@ include(cmake/Sanitizers.cmake)
 include(FetchContent)
 FetchContent_Declare(
   IRSpecification
-  GIT_REPOSITORY git@github.com:srydell/IntermediateRepresentation.git
+  GIT_REPOSITORY git@github.com:Tolc-Software/IntermediateRepresentation.git
   GIT_TAG master)
 FetchContent_MakeAvailable(IRSpecification)
 
