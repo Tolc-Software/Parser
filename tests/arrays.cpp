@@ -5,6 +5,37 @@
 #include <fmt/format.h>
 #include <variant>
 
+TEST_CASE("array segfault case from downstream", "[arrays]") {
+	auto code = R"(
+#include <array>
+#include <string>
+
+class WithMember {
+public:
+	explicit WithMember(std::array<std::string, 2> s) : m_s(s) {}
+
+	std::array<std::string, 2> getS() { return m_s; }
+
+private:
+	std::array<std::string, 2> m_s;
+};
+
+class WithFunction {
+public:
+	int sum(std::array<int, 5> v) {
+		int s = 0;
+		for (auto i : v) {
+			s += i;
+		}
+		return s;
+	}
+};
+)";
+
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+}
+
 TEST_CASE("std::array of base type", "[arrays]") {
 	for (auto baseType : TestUtil::getBaseTypes(
 	         /* excluding */ {"std::string", "void"})) {
