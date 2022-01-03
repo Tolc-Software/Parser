@@ -1,4 +1,4 @@
-![Ubuntu](https://github.com/srydell/Parser/workflows/Ubuntu/badge.svg) ![MacOS](https://github.com/srydell/Parser/workflows/MacOS/badge.svg) ![Windows](https://github.com/srydell/Parser/actions/workflows/windows.yml/badge.svg) ![Windows-debug-deploy](https://github.com/srydell/Parser/actions/workflows/windows-debug-deploy.yml/badge.svg)
+![Ubuntu](https://github.com/Tolc-Software/Parser/workflows/Ubuntu/badge.svg) ![MacOS](https://github.com/Tolc-Software/Parser/workflows/MacOS/badge.svg) ![Windows](https://github.com/Tolc-Software/Parser/actions/workflows/windows.yml/badge.svg) ![Windows-debug-deploy](https://github.com/Tolc-Software/Parser/actions/workflows/windows-debug-deploy.yml/badge.svg)
 
 # Parser #
 
