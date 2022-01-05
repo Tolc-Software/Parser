@@ -49,7 +49,12 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/packaging/ParserConfig.cmake.in
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ParserConfig.cmake
           DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Parser)
 
-
+# Add License
+install(
+  FILES
+    ${CMAKE_SOURCE_DIR}/LICENSE.md
+  DESTINATION
+    .)
 
 # Export IR
 install(TARGETS IR EXPORT IRTargets PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/IR)
