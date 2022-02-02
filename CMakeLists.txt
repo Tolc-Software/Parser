@@ -5,25 +5,33 @@ project(
   VERSION 0.1
   LANGUAGES CXX)
 
-include(cmake/Doxygen.cmake)
+include(FetchContent)
+FetchContent_Declare(
+  cmake_modules
+  GIT_REPOSITORY https://github.com/Tolc-Software/cmake-modules.git
+  GIT_TAG main)
+FetchContent_MakeAvailable(cmake_modules)
+# Basis of all shared CMake modules
+set(modules ${cmake_modules_SOURCE_DIR}/cmake)
+
+include(${modules}/Doxygen.cmake)
 enable_doxygen()
 
 # Set ccache, ipo, etc.
-include(cmake/ProjectSettings.cmake)
+include(${modules}/ProjectSettings.cmake)
 
 # Define add_{warnings,options}
-include(cmake/WarningsAndOptions.cmake)
+include(${modules}/WarningsAndOptions.cmake)
 
 # allow for static analysis options
-include(cmake/StaticAnalyzers.cmake)
+include(${modules}/StaticAnalyzers.cmake)
 
 # Define enable_sanitizers
-include(cmake/Sanitizers.cmake)
+include(${modules}/Sanitizers.cmake)
 
-include(FetchContent)
 FetchContent_Declare(
   IRSpecification
-  GIT_REPOSITORY git@github.com:Tolc-Software/IntermediateRepresentation.git
+  GIT_REPOSITORY https://github.com/Tolc-Software/IntermediateRepresentation.git
   GIT_TAG main)
 FetchContent_MakeAvailable(IRSpecification)
 
@@ -34,7 +42,7 @@ FetchContent_Declare(
 FetchContent_Populate(ctre_content)
 
 # Define run_conan
-include(cmake/ConanHelpers.cmake)
+include(${modules}/ConanHelpers.cmake)
 # Create the profile from variables known during configure
 setup_conan_profile(VARIABLE parser_conan_profile)
 # This helps with packaging
@@ -43,7 +51,7 @@ find_conan_packages(
   REQUIRES ${CONAN_REQUIRES_PACKAGES} PROFILE
   ${parser_conan_profile})
 
-include(cmake/LLVMUtilities.cmake)
+include(${modules}/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
 # llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
 set(llvm_entry_version 12.0.0)
@@ -55,7 +63,7 @@ get_clang_and_llvm(PATH ${llvm_entry_SOURCE_DIR})
 include(AddLLVM)
 
 # Defines get_system_include and format_includes
-include(cmake/IncludePathHelpers.cmake)
+include(${modules}/IncludePathHelpers.cmake)
 
 # Set the include path for the system library in the variable
 # We are using the standard library shipped
