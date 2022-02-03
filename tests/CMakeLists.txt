@@ -8,9 +8,6 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-# Add custom scripts
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
-
 # Everything put in TestUtil/include is available
 add_library(TestUtil INTERFACE)
 target_include_directories(TestUtil INTERFACE TestUtil/include)
@@ -20,10 +17,10 @@ set(Catch2_FOUND TRUE)
 set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
 
 # Defines create_catch2_test
-include(${PROJECT_SOURCE_DIR}/cmake/SetupTest.cmake)
+include(${modules}/Catch2Helpers.cmake)
 
 if(ENABLE_COVERAGE)
-  include(cmake/CodeCoverage.cmake)
+  include(${modules}/CodeCoverage.cmake)
 
   # Use coverage of parser
   target_code_coverage(Parser)
@@ -88,14 +85,23 @@ foreach(
   # Ex: PybindProxy/moduleFile.cpp -> moduleFile
   get_filename_component(testName ${test} NAME_WLE)
 
-  setup_test(
-    TEST_NAME
+  create_catch2_test(
+    TARGET
     ${testName}
-    SOURCE
+    SOURCES
     ${test}
-    LIBRARIES
+    INCLUDE
+    ${PROJECT_SOURCE_DIR}/src
+    LINK_LIBRARIES
+    clangTooling
+    clangBasic
+    clangASTMatchers
+    Parser
     fmt::fmt
     TestUtil)
+
+  target_include_directories(${testName} SYSTEM
+                             PRIVATE ${llvm_entry_INCLUDE_DIR})
 
   set(ENABLE_SANITIZER_ADDRESS TRUE)
   set(ENABLE_SANITIZER_MEMORY TRUE)
