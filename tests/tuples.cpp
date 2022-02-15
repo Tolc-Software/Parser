@@ -31,4 +31,5 @@ public:
 	REQUIRE(tupleType != nullptr);
 
 	REQUIRE(tupleType->m_container == IR::ContainerType::Tuple);
+	REQUIRE(tupleType->m_containedTypes.size() == 2);
 }
