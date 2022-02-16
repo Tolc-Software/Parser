@@ -64,9 +64,11 @@ struct MyClass {
 		REQUIRE(arrayType != nullptr);
 
 		REQUIRE(arrayType->m_container == IR::ContainerType::Array);
-		// {baseType} - NOTE: Second arg is always size_t but as you cannot change its type, it is not recorded
-		REQUIRE(arrayType->m_containedTypes.size() == 1);
-		auto& type = arrayType->m_containedTypes.back();
+		// {int, 5}
+		REQUIRE(arrayType->m_containedTypes.size() == 2);
+		auto& type = arrayType->m_containedTypes.front();
+		auto& integral = arrayType->m_containedTypes.back();
+		REQUIRE(integral.m_representation == "5");
 
 		if (auto value = std::get_if<IR::Type::Value>(&type.m_type)) {
 			auto base = TestUtil::getIRFromString(baseType);
