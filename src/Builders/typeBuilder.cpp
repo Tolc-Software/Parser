@@ -7,6 +7,7 @@
 #include <clang/AST/DeclTemplate.h>
 #include <clang/AST/PrettyPrinter.h>
 #include <clang/AST/Type.h>
+#include <iostream>
 #include <llvm/Support/Casting.h>
 #include <queue>
 #include <spdlog/spdlog.h>
@@ -15,20 +16,60 @@
 
 namespace Builders {
 
+struct Integral {
+	// Might be 3 from std::array<int, 3>
+	std::string i;
+};
+
 /**
 * Returns a vector of QualType's which corresponds to the inputs template arguments list
 * E.g.
 *   std::vector<int, std::allocator<int>> -> {int, std::allocator<int>}
 */
-std::vector<clang::QualType>
+std::vector<std::variant<clang::QualType, Integral>>
 getTemplateArgs(clang::CXXRecordDecl const* classDecl) {
-	std::vector<clang::QualType> templateArgs;
+	std::vector<std::variant<clang::QualType, Integral>> templateArgs;
 
 	if (auto templatedClass =
 	        llvm::dyn_cast<clang::ClassTemplateSpecializationDecl>(classDecl)) {
 		for (auto const& arg : templatedClass->getTemplateArgs().asArray()) {
-			if (arg.getKind() == clang::TemplateArgument::Type) {
-				templateArgs.push_back(arg.getAsType());
+			switch (arg.getKind()) {
+				case clang::TemplateArgument::Type:
+					templateArgs.push_back(arg.getAsType());
+					break;
+				case clang::TemplateArgument::Declaration:
+					templateArgs.push_back(arg.getAsDecl()->getType());
+					break;
+				case clang::TemplateArgument::Integral: {
+					// Extract 3 from std::array<int, 3>
+					// The 10 means it should be represented as base 10
+					templateArgs.push_back(
+					    Integral {arg.getAsIntegral().toString(10)});
+					break;
+				}
+				case clang::TemplateArgument::Null:
+				case clang::TemplateArgument::NullPtr:
+				case clang::TemplateArgument::Template:
+					/// The template argument is a pack expansion of a template name that was
+					/// provided for a template template parameter.
+				case clang::TemplateArgument::TemplateExpansion:
+					/// The template argument is an expression, and we've not resolved it to one
+					/// of the other forms yet, either because it's dependent or because we're
+					/// representing a non-canonical template argument (for instance, in a
+					/// TemplateSpecializationType).
+				case clang::TemplateArgument::Expression:
+					break;
+					/// The template argument is actually a parameter pack. Arguments are stored
+					/// in the Args struct.
+				case clang::TemplateArgument::Pack:
+					// This is a tuple like structure
+					for (auto p : arg.getPackAsArray()) {
+						// Do not support nested tuples
+						if (p.getKind() == clang::TemplateArgument::Type) {
+							templateArgs.push_back(p.getAsType());
+						}
+					}
+					break;
 			}
 		}
 	}
@@ -36,7 +77,8 @@ getTemplateArgs(clang::CXXRecordDecl const* classDecl) {
 	return templateArgs;
 }
 
-std::vector<clang::QualType> getTemplateArgs(clang::QualType type) {
+std::vector<std::variant<clang::QualType, Integral>>
+getTemplateArgs(clang::QualType type) {
 	if (auto classType = type->getAsCXXRecordDecl()) {
 		return getTemplateArgs(classType);
 	}
@@ -113,23 +155,50 @@ std::optional<IR::Type> buildOneLevelIRType(clang::QualType type,
 */
 struct ProxyType {
 	IR::Type* m_type;
-	std::vector<std::pair<IR::Type, clang::QualType>> m_templateArgs;
+	std::vector<std::pair<IR::Type, std::variant<clang::QualType, Integral>>>
+	    m_templateArgs;
 };
+
+IR::Type buildIRTypeFromIntegral(Integral const& integral) {
+	IR::Type type;
+	// The actual number
+	type.m_representation = integral.i;
+
+	// An integral is just a number
+	type.m_numPointers = 0;
+	type.m_isReference = false;
+	type.m_isConst = false;
+	type.m_isStatic = false;
+	type.m_type = IR::Type::Integral();
+
+	return type;
+}
 
 /**
 * Builds a ProxyType that contains template arguments of irType
 */
 ProxyType buildProxyType(IR::Type& irType,
-                         clang::QualType type,
+                         std::variant<clang::QualType, Integral> typeOrIntegral,
                          clang::PrintingPolicy policy) {
 	ProxyType p;
 	p.m_type = &irType;
 	// Check if we need to go even further
-	if (isTemplateSpecialization(irType) && isTemplateSpecialization(type)) {
-		for (auto templateArg : getTemplateArgs(type)) {
-			if (auto irTemplateArg = buildOneLevelIRType(templateArg, policy)) {
-				p.m_templateArgs.emplace_back(
-				    std::make_pair(irTemplateArg.value(), templateArg));
+	if (auto type = std::get_if<clang::QualType>(&typeOrIntegral)) {
+		if (isTemplateSpecialization(irType) &&
+		    isTemplateSpecialization(*type)) {
+			for (auto templateArg : getTemplateArgs(*type)) {
+				if (auto qualType =
+				        std::get_if<clang::QualType>(&templateArg)) {
+					if (auto irTemplateArg =
+					        buildOneLevelIRType(*qualType, policy)) {
+						p.m_templateArgs.emplace_back(
+						    std::make_pair(irTemplateArg.value(), templateArg));
+					}
+				} else if (auto integral =
+				               std::get_if<Integral>(&templateArg)) {
+					p.m_templateArgs.emplace_back(std::make_pair(
+					    buildIRTypeFromIntegral(*integral), templateArg));
+				}
 			}
 		}
 	}

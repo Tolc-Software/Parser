@@ -1,23 +1,13 @@
 include_guard()
 
-include(FetchContent)
-FetchContent_Declare(
-  Catch2
-  GIT_REPOSITORY git@github.com:catchorg/Catch2.git
-  GIT_TAG v2.12.1)
+# Defines create_catch2_test and get_catch2
+include(${modules}/Catch2Helpers.cmake)
 
-FetchContent_MakeAvailable(Catch2)
+get_catch2(VERSION v2.13.8)
 
 # Everything put in TestUtil/include is available
 add_library(TestUtil INTERFACE)
 target_include_directories(TestUtil INTERFACE TestUtil/include)
-
-# These are needed to use create_catch2_test
-set(Catch2_FOUND TRUE)
-set(Catch2_INCLUDE_DIRS ${Catch2_SOURCE_DIR}/single_include)
-
-# Defines create_catch2_test
-include(${modules}/Catch2Helpers.cmake)
 
 if(ENABLE_COVERAGE)
   include(${modules}/CodeCoverage.cmake)
@@ -71,6 +61,7 @@ foreach(
   strings.cpp
   templates.cpp
   tuples.cpp
+  pairs.cpp
   unordered_maps.cpp
   unordered_multimaps.cpp
   unordered_multisets.cpp
