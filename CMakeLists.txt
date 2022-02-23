@@ -2,8 +2,11 @@ cmake_minimum_required(VERSION 3.16)
 
 project(
   Parser
-  VERSION 0.1
+  VERSION 0.2
   LANGUAGES CXX)
+
+configure_file(docs/ReleaseNotes/version.in
+               ${CMAKE_CURRENT_LIST_DIR}/docs/ReleaseNotes/version @ONLY)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -46,7 +49,7 @@ include(${modules}/ConanHelpers.cmake)
 # Create the profile from variables known during configure
 setup_conan_profile(VARIABLE parser_conan_profile)
 # This helps with packaging
-set(CONAN_REQUIRES_PACKAGES spdlog/1.8.0 fmt/7.1.3)
+set(CONAN_REQUIRES_PACKAGES spdlog/1.9.2 fmt/8.1.1)
 find_conan_packages(
   REQUIRES ${CONAN_REQUIRES_PACKAGES} PROFILE
   ${parser_conan_profile})
