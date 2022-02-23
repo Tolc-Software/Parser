@@ -78,6 +78,7 @@ jobs:
         mv Parser-Linux-main.tar.xz Parser-Linux-${version}.tar.xz
 
         echo "Making sure the release ${version} is online"
+        test -f docs/ReleaseNotes/${version}.md
         gh release create "${version}" --title "${version}" --notes-file "docs/ReleaseNotes/${version}.md" || true
         gh release upload "${version}" Parser-Linux-${version}.tar.xz || true
 

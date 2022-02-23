@@ -83,6 +83,7 @@ jobs:
         mv Parser-Darwin-main.tar.xz Parser-Darwin-${version}.tar.xz
 
         echo "Making sure the release ${version} is online"
+        test -f docs/ReleaseNotes/${version}.md
         gh release create "${version}" --title "${version}" --notes-file "docs/ReleaseNotes/${version}.md" || true
         gh release upload "${version}" "Parser-Darwin-${version}.tar.xz" || true
 
