@@ -20,11 +20,9 @@ jobs:
       run: |
         git clone https://Tolc-Software:${{ secrets.ACCESS_TOKEN }}@github.com/Tolc-Software/Parser.git C:\Repo
 
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
+    - uses: actions/setup-node@v2
       with:
-        key: ${{ secrets.SSH_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        node-version: '16'
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -75,29 +73,25 @@ jobs:
         call "%VCVARS%"
         cpack -G TXZ --config build/CPackConfig.cmake
 
-    - name: Setup go
-      if: github.ref == 'refs/heads/main'
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.14'
-
-    - name: Setup go cache
-      if: github.ref == 'refs/heads/main'
-      uses: actions/cache@v2
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-
-    - name: Push main release
+    - name: Push release
       if: github.ref == 'refs/heads/main'
       working-directory: C:\Repo
+      shell: bash
       env:
         GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
-        go get -v github.com/github-release/github-release
-        echo "Checking if a new release is needed"
-        github-release release --user Tolc-Software --repo Parser --tag main-release --name "Head release" --description "This release gets updated with each commit to main" || true
-        echo "Pushing the release"
-        github-release upload --user Tolc-Software --repo Parser --tag main-release --name "Parser-Windows-main-Debug.tar.xz" --file Parser.tar.xz --replace
+        # Move to keep the directory on Github Actions free from filename clashes
+        mv Parser.tar.xz Parser-Windows-main-Debug.tar.xz
+
+        echo "Pushing to the latest tag"
+        gh release create latest --title "Latest release from main" --notes "This release gets updated on each commit to main" || true
+        gh release upload latest Parser-Windows-main-Debug.tar.xz --clobber
+
+        version="$(cat docs/ReleaseNotes/version)"
+        # Move to keep the directory on Github Actions free from filename clashes
+        mv Parser-Windows-main-Debug.tar.xz Parser-Windows-${version}-Debug.tar.xz
+
+        echo "Making sure the release ${version} is online"
+        gh release create "${version}" --title "${version}" --notes-file "docs/ReleaseNotes/${version}.md" || true
+        gh release upload "${version}" Parser-Windows-${version}-Debug.tar.xz || true
+
