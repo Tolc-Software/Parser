@@ -84,7 +84,7 @@ jobs:
         mv Parser.tar.xz Parser-Windows-main-Debug.tar.xz
 
         echo "Pushing to the latest tag"
-        gh release create latest --title "Latest release from main" --notes "This release gets updated on each commit to main" || true
+        gh release create latest --title "Latest release from main" --notes "This release gets updated with each commit to main" || true
         gh release upload latest Parser-Windows-main-Debug.tar.xz --clobber
 
         version="$(cat docs/ReleaseNotes/version)"
