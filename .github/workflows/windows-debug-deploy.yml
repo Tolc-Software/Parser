@@ -20,10 +20,6 @@ jobs:
       run: |
         git clone https://Tolc-Software:${{ secrets.ACCESS_TOKEN }}@github.com/Tolc-Software/Parser.git C:\Repo
 
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
