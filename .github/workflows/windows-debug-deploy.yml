@@ -52,7 +52,7 @@ jobs:
       shell: cmd
       run: |
         call "%VCVARS%"
-        cmake -S. -Bbuild -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Debug -DCPACK_PACKAGE_FILE_NAME=Parser -G Ninja
+        cmake -S. -Bbuild -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DENABLE_PACKAGING=ON -DCMAKE_BUILD_TYPE=Debug -DCPACK_PACKAGE_FILE_NAME=Parser-Windows-Debug -G Ninja
 
     - name: Build
       working-directory: C:\Repo
@@ -76,19 +76,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
-        # Move to keep the directory on Github Actions free from filename clashes
-        mv Parser.tar.xz Parser-Windows-main-Debug.tar.xz
-
         echo "Pushing to the latest tag"
         gh release create latest --title "Latest release from main" --notes "This release gets updated with each commit to main" || true
-        gh release upload latest Parser-Windows-main-Debug.tar.xz --clobber
+        gh release upload latest Parser-Windows-Debug.tar.xz --clobber
 
         version="$(cat docs/ReleaseNotes/version)"
-        # Move to keep the directory on Github Actions free from filename clashes
-        mv Parser-Windows-main-Debug.tar.xz Parser-Windows-${version}-Debug.tar.xz
-
         echo "Making sure the release ${version} is online"
         test -f docs/ReleaseNotes/${version}.md
         gh release create "${version}" --title "${version}" --notes-file "docs/ReleaseNotes/${version}.md" || true
-        gh release upload "${version}" Parser-Windows-${version}-Debug.tar.xz || true
+        gh release upload "${version}" Parser-Windows-Debug.tar.xz || true
 

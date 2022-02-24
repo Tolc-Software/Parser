@@ -48,7 +48,7 @@ jobs:
 
     - name: Configure
       run: |
-        cmake -S. -Bbuild -G Ninja -DCMAKE_CXX_COMPILER="/usr/local/opt/llvm/bin/clang++" -DCMAKE_C_COMPILER="/usr/local/opt/llvm/bin/clang" -DCMAKE_BUILD_TYPE="Release" -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCPACK_PACKAGE_FILE_NAME=Parser
+        cmake -S. -Bbuild -G Ninja -DCMAKE_CXX_COMPILER="/usr/local/opt/llvm/bin/clang++" -DCMAKE_C_COMPILER="/usr/local/opt/llvm/bin/clang" -DCMAKE_BUILD_TYPE="Release" -DENABLE_TESTING=ON -DENABLE_PACKAGING=ON -DCPACK_PACKAGE_FILE_NAME=Parser-Darwin
 
     - name: Build
       run: cmake --build build -j4
@@ -67,19 +67,14 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
-        # Move to keep the directory on Github Actions free from filename clashes
-        mv Parser.tar.xz Parser-Darwin-main.tar.xz
-
         echo "Pushing to the latest tag"
         gh release create latest --title "Latest release from main" --notes "This release gets updated with each commit to main" || true
-        gh release upload latest Parser-Darwin-main.tar.xz --clobber
+        gh release upload latest Parser-Darwin.tar.xz --clobber
+
 
         version="$(cat docs/ReleaseNotes/version)"
-        # Move to keep the directory on Github Actions free from filename clashes
-        mv Parser-Darwin-main.tar.xz Parser-Darwin-${version}.tar.xz
-
         echo "Making sure the release ${version} is online"
         test -f docs/ReleaseNotes/${version}.md
         gh release create "${version}" --title "${version}" --notes-file "docs/ReleaseNotes/${version}.md" || true
-        gh release upload "${version}" "Parser-Darwin-${version}.tar.xz" || true
+        gh release upload "${version}" Parser-Darwin.tar.xz || true
 
