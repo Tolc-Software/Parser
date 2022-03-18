@@ -31,6 +31,7 @@ foreach(
   arrays.cpp
   autos.cpp
   classes.cpp
+  classComments.cpp
   complex.cpp
   constructorsDestructors.cpp
   dataStructs.cpp

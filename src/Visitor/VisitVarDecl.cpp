@@ -48,7 +48,7 @@ bool ParserVisitor::VisitVarDecl(clang::VarDecl* varDecl) {
 	              varDecl->getQualifiedNameAsString());
 
 	if (auto maybeVariable = buildVar(varDecl)) {
-		auto variable = maybeVariable.value();
+		IR::Variable variable = maybeVariable.value();
 
 		switch (varDecl->getStorageClass()) {
 			case (clang::StorageClass::SC_Static):

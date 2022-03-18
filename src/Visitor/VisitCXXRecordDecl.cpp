@@ -1,7 +1,10 @@
 #include "Builders/commonBuilder.hpp"
 #include "IRProxy/IRData.hpp"
+#include "Visitor/Helpers/getDocumentation.hpp"
 #include "Visitor/ParserVisitor.hpp"
+#include <iostream>
 #include <spdlog/spdlog.h>
+#include <string>
 
 namespace Visitor {
 
@@ -29,6 +32,9 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 	IRProxy::Struct parsedStruct;
 
 	parsedStruct.m_fullyQualifiedName = classDecl->getQualifiedNameAsString();
+
+	parsedStruct.m_documentation =
+	    Visitor::Helpers::getDocumentation(classDecl);
 
 	parsedStruct.m_path =
 	    Builders::buildStructure(classDecl, IRProxy::Structure::Struct);
