@@ -2,6 +2,7 @@
 #include "Builders/commonBuilder.hpp"
 #include "Builders/typeBuilder.hpp"
 #include "IRProxy/IRData.hpp"
+#include "Visitor/Helpers/getDocumentation.hpp"
 #include <IR/ir.hpp>
 #include <clang/AST/ASTContext.h>
 #include <clang/AST/Decl.h>
@@ -27,6 +28,8 @@ buildField(clang::FieldDecl* field,
 		variable.m_type = type.value();
 		// Static members are of type VarDecl
 		variable.m_type.m_isStatic = false;
+
+		variable.m_documentation = Visitor::Helpers::getDocumentation(field);
 	} else {
 		return std::nullopt;
 	}

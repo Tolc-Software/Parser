@@ -33,6 +33,17 @@ IR::Variable& findVariable(IR::Namespace& parent, std::string const& name) {
 	return *v;
 }
 
+IR::Enum& findEnum(IR::Namespace& parent, std::string const& name) {
+	auto& enums = parent.m_enums;
+	REQUIRE(enums.size() >= 1);
+	auto v = std::find_if(enums.begin(), enums.end(), [&name](auto const& n) {
+		return n.m_name == name;
+	});
+
+	REQUIRE(v != enums.end());
+	return *v;
+}
+
 IR::Namespace& findNamespace(IR::Namespace& parent, std::string const& name) {
 	auto& namespaces = parent.m_namespaces;
 	REQUIRE(namespaces.size() >= 1);

@@ -28,13 +28,13 @@ void addStructToVariant(std::optional<IRProxy::AccessModifier> modifier,
 }
 
 IR::Struct createStruct(IRProxy::Struct& s) {
-	IR::Struct newStruct;
-	auto& path = s.m_path;
-	auto& [name, structure] = path.back();
+	auto& [name, _structure] = s.m_path.back();
 
+	IR::Struct newStruct;
 	newStruct.m_name = name;
 	// Representation is the fully qualified name
 	newStruct.m_representation = s.m_fullyQualifiedName;
+	newStruct.m_documentation = s.m_documentation;
 
 	newStruct.m_public.m_memberVariables = s.m_publicVariables;
 	newStruct.m_private.m_memberVariables = s.m_privateVariables;

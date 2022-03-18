@@ -4,6 +4,7 @@
 #include "Helpers/Type/utilities.hpp"
 #include "Helpers/Utils/split.hpp"
 #include "IRProxy/IRData.hpp"
+#include "Visitor/Helpers/getDocumentation.hpp"
 #include "Visitor/ParserVisitor.hpp"
 #include <clang/AST/Decl.h>
 #include <fmt/format.h>
@@ -16,6 +17,7 @@ buildVar(clang::VarDecl* field,
          std::optional<clang::QualType> templateSpecialization = std::nullopt) {
 	IR::Variable variable;
 	variable.m_name = field->getName();
+	variable.m_documentation = Visitor::Helpers::getDocumentation(field);
 
 	// This is passed so that while extracting text from types it is exactly what the user wrote
 	auto policy = clang::PrintingPolicy(field->getASTContext().getLangOpts());
@@ -33,7 +35,7 @@ buildVar(clang::VarDecl* field,
 }
 
 std::string getParent(std::string const& name) {
-	auto splitNames = Helpers::Utils::split(name, "::");
+	auto splitNames = ::Helpers::Utils::split(name, "::");
 	splitNames.pop_back();
 	return fmt::format("{}", fmt::join(splitNames, "::"));
 }
@@ -48,7 +50,7 @@ bool ParserVisitor::VisitVarDecl(clang::VarDecl* varDecl) {
 	              varDecl->getQualifiedNameAsString());
 
 	if (auto maybeVariable = buildVar(varDecl)) {
-		auto variable = maybeVariable.value();
+		IR::Variable variable = maybeVariable.value();
 
 		switch (varDecl->getStorageClass()) {
 			case (clang::StorageClass::SC_Static):
