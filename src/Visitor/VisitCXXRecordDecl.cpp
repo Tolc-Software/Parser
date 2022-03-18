@@ -2,7 +2,6 @@
 #include "IRProxy/IRData.hpp"
 #include "Visitor/Helpers/getDocumentation.hpp"
 #include "Visitor/ParserVisitor.hpp"
-#include <iostream>
 #include <spdlog/spdlog.h>
 #include <string>
 

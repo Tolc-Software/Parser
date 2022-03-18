@@ -30,6 +30,7 @@ IR::Enum createEnum(std::string_view name, IRProxy::Enum const& proxyEnum) {
 
 	// Representation is the fully qualified name
 	e.m_representation = proxyEnum.m_fullyQualifiedName;
+	e.m_documentation = proxyEnum.m_documentation;
 	e.m_isScoped = proxyEnum.m_isScoped;
 	e.m_values = proxyEnum.m_values;
 	return e;

@@ -56,6 +56,8 @@ struct Struct {
 struct Function {
 	std::string m_fullyQualifiedName;
 
+	std::string m_documentation;
+
 	// Fully qualified name with structure annotations
 	// Path to where this function belongs
 	// Ex:
@@ -83,6 +85,7 @@ struct Function {
   */
 struct Enum {
 	std::string m_fullyQualifiedName;
+	std::string m_documentation;
 
 	// Fully qualified name with structure annotations
 	// Path to where this struct belongs

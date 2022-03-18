@@ -4,6 +4,7 @@
 #include "Builders/typeBuilder.hpp"
 #include "Helpers/getStructData.hpp"
 #include "Helpers/walkIRStructure.hpp"
+#include "Visitor/Helpers/getDocumentation.hpp"
 #include <IR/ir.hpp>
 #include <algorithm>
 #include <clang/AST/ASTContext.h>
@@ -55,6 +56,7 @@ IR::Function createFunction(std::string_view name,
 
 	// Representation is the fully qualified name
 	f.m_representation = proxyF.m_fullyQualifiedName;
+	f.m_documentation = proxyF.m_documentation;
 	f.m_returnType = proxyF.m_returnType;
 	f.m_arguments = proxyF.m_arguments;
 	f.m_templateArguments = proxyF.m_templateArguments;
@@ -87,6 +89,9 @@ buildFunction(clang::FunctionDecl* functionDecl,
                   getPotentiallyTemplatedType) {
 	IRProxy::Function parsedFunc;
 	parsedFunc.m_fullyQualifiedName = functionDecl->getQualifiedNameAsString();
+
+	parsedFunc.m_documentation =
+	    Visitor::Helpers::getDocumentation(functionDecl);
 	parsedFunc.m_path =
 	    Builders::buildStructure(functionDecl, IRProxy::Structure::Function);
 

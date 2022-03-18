@@ -31,7 +31,10 @@ foreach(
   arrays.cpp
   autos.cpp
   classes.cpp
-  classComments.cpp
+  docsClass.cpp
+  docsEnums.cpp
+  docsFunctions.cpp
+  docsVariables.cpp
   complex.cpp
   constructorsDestructors.cpp
   dataStructs.cpp

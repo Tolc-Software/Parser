@@ -1,5 +1,6 @@
 #include "Builders/commonBuilder.hpp"
 #include "IRProxy/IRData.hpp"
+#include "Visitor/Helpers/getDocumentation.hpp"
 #include "Visitor/ParserVisitor.hpp"
 #include <spdlog/spdlog.h>
 
@@ -18,6 +19,8 @@ bool ParserVisitor::VisitEnumDecl(clang::EnumDecl* enumDecl) {
 	IRProxy::Enum parsedEnum;
 
 	parsedEnum.m_fullyQualifiedName = enumDecl->getQualifiedNameAsString();
+
+	parsedEnum.m_documentation = Visitor::Helpers::getDocumentation(enumDecl);
 
 	parsedEnum.m_path =
 	    Builders::buildStructure(enumDecl, IRProxy::Structure::Enum);

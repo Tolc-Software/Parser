@@ -7,7 +7,6 @@
 #include <clang/AST/DeclTemplate.h>
 #include <clang/AST/PrettyPrinter.h>
 #include <clang/AST/Type.h>
-#include <iostream>
 #include <llvm/Support/Casting.h>
 #include <queue>
 #include <spdlog/spdlog.h>

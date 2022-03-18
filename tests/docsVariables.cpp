@@ -4,82 +4,92 @@
 #include <catch2/catch.hpp>
 
 void checkDoc(IR::Namespace& ns,
-              std::string className,
+              std::string variableName,
               std::string containsDoc) {
 	using TestUtil::contains;
-	auto& strct = TestUtil::findStruct(ns, className);
+	auto& strct = TestUtil::findVariable(ns, variableName);
 	REQUIRE(contains(strct.m_documentation, containsDoc));
 }
 
-TEST_CASE("Can parse out class comments", "[classComments]") {
+TEST_CASE("Can parse out class comments", "[docsVariables]") {
 	auto ns = TestUtil::parseString(R"(
 // One line comment
-class OneLiner {};
+int i;
 
 /** Single multi line comment */
-class SingleMulti {};
+int j;
 
 /**
 * Multi
 * line
 * comment
 */
-class Multi {};
+int k;
 
 /**
 Bare multi
 Another line
 */
-class BareMulti {};
+int l;
 
 /*!
 * Qt style
 */
-class QtStyle {};
+int m;
 
 /*******************************************************************************
 * JavaDoc Style
 * is
 * boxy
 ******************************************************************************/
-class JavaDoc {};
+int n;
 
 ///
 /// Triplets is a lifestyle
 ///
-class Triplets {};
+int o;
 
 //!
 //! This is one of the doxy styles
 //!
-class DoxyBang {};
-)");
-	checkDoc(ns, "OneLiner", "One line comment");
+int p;
 
-	checkDoc(ns, "SingleMulti", "Single multi line comment");
+struct Hidden {
+	// Comment on member
+	int i;
+};
+)");
+	checkDoc(ns, "i", "One line comment");
+
+	checkDoc(ns, "j", "Single multi line comment");
 
 	checkDoc(ns,
-	         "Multi",
+	         "k",
 	         R"( Multi
  line
  comment)");
 
 	checkDoc(ns,
-	         "BareMulti",
+	         "l",
 	         R"(Bare multi
 Another line)");
 
-	checkDoc(ns, "QtStyle", "Qt style");
+	checkDoc(ns, "m", "Qt style");
 
 	checkDoc(ns,
-	         "JavaDoc",
+	         "n",
 	         R"(*******************************************************
 JavaDoc Style
 is
 boxy
 ***************************************************)");
 
-	checkDoc(ns, "Triplets", "Triplets is a lifestyle");
+	checkDoc(ns, "o", "Triplets is a lifestyle");
 
-	checkDoc(ns, "DoxyBang", "This is one of the doxy styles");
+	checkDoc(ns, "p", "This is one of the doxy styles");
+
+	auto& hidden = TestUtil::findStruct(ns, "Hidden");
+	REQUIRE(!hidden.m_public.m_memberVariables.empty());
+	auto& i = hidden.m_public.m_memberVariables.back();
+	REQUIRE(i.m_documentation == "Comment on member");
 }
