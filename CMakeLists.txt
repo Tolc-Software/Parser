@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(
   Parser
-  VERSION 0.2.0
+  VERSION 0.2.1
   LANGUAGES CXX)
 
 configure_file(docs/ReleaseNotes/version.in
@@ -32,11 +32,8 @@ include(${modules}/StaticAnalyzers.cmake)
 # Define enable_sanitizers
 include(${modules}/Sanitizers.cmake)
 
-FetchContent_Declare(
-  IRSpecification
-  GIT_REPOSITORY https://github.com/Tolc-Software/IntermediateRepresentation.git
-  GIT_TAG main)
-FetchContent_MakeAvailable(IRSpecification)
+include(${modules}/GetIR.cmake)
+get_ir(VERSION v0.11.0)
 
 FetchContent_Declare(
   ctre_content

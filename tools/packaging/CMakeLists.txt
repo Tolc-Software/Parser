@@ -57,12 +57,6 @@ install(
   DESTINATION
     .)
 
-# Export IR
-install(TARGETS IR EXPORT IRTargets PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/IR)
-install(EXPORT IRTargets DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/IR NAMESPACE IR::)
-install(FILES ${CMAKE_SOURCE_DIR}/cmake/packaging/IRConfig.cmake
-          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/IR)
-
 set(CPACK_VERBATIM_VARIABLES YES)
 # Allow packaging
 include(CPack)
