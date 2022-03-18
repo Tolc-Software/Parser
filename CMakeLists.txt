@@ -35,7 +35,7 @@ include(${modules}/Sanitizers.cmake)
 FetchContent_Declare(
   IRSpecification
   GIT_REPOSITORY https://github.com/Tolc-Software/IntermediateRepresentation.git
-  GIT_TAG main)
+  GIT_TAG v0.11.0)
 FetchContent_MakeAvailable(IRSpecification)
 
 FetchContent_Declare(
