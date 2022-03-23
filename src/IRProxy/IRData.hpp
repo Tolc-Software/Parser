@@ -113,6 +113,15 @@ struct MemberVariable {
 };
 
 /**
+  * Representation of a namespace
+  */
+struct Namespace {
+	std::string m_fullyQualifiedName;
+
+	std::string m_documentation;
+};
+
+/**
   * Contains partially parsed code to IR on the form
   *     m_something = vector<[parent context, IR::something]>
   *
@@ -126,7 +135,7 @@ struct MemberVariable {
 struct IRData {
 	// {Fully qualified namespace name}
 	// Ex: ParentNS::ChildNS::GrandChildNS
-	std::vector<std::string> m_namespaces;
+	std::vector<Namespace> m_namespaces;
 
 	std::vector<Struct> m_structs;
 

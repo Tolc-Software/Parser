@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 #include <map>
 #include <string>
@@ -11,7 +12,7 @@ namespace Builders {
   * and return the root namespace (always the global namespace)
   */
 IR::Namespace
-buildNamespaceStructure(std::vector<std::string> const& namespaces);
+buildNamespaceStructure(std::vector<IRProxy::Namespace> const& namespaces);
 
 /**
   * Add the variables to the corresponding namespaces

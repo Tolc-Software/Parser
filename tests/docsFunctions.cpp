@@ -11,7 +11,7 @@ void checkDoc(IR::Namespace& ns,
 	REQUIRE(contains(strct.m_documentation, containsDoc));
 }
 
-TEST_CASE("Can parse out class comments", "[docsFunctions]") {
+TEST_CASE("Can parse out comments", "[docsFunctions]") {
 	auto ns = TestUtil::parseString(R"(
 // One line comment
 void f0();

@@ -7,11 +7,11 @@ void checkDoc(IR::Namespace& ns,
               std::string variableName,
               std::string containsDoc) {
 	using TestUtil::contains;
-	auto& strct = TestUtil::findVariable(ns, variableName);
-	REQUIRE(contains(strct.m_documentation, containsDoc));
+	auto& v = TestUtil::findVariable(ns, variableName);
+	REQUIRE(contains(v.m_documentation, containsDoc));
 }
 
-TEST_CASE("Can parse out class comments", "[docsVariables]") {
+TEST_CASE("Can parse out comments", "[docsVariables]") {
 	auto ns = TestUtil::parseString(R"(
 // One line comment
 int i;

@@ -34,6 +34,7 @@ foreach(
   docsClass.cpp
   docsEnums.cpp
   docsFunctions.cpp
+  docsNamespaces.cpp
   docsVariables.cpp
   complex.cpp
   constructorsDestructors.cpp
