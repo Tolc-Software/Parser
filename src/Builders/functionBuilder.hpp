@@ -3,7 +3,6 @@
 #include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
 #include <clang/AST/Decl.h>
-#include <functional>
 #include <optional>
 #include <vector>
 
@@ -12,7 +11,7 @@ namespace Builders {
 /**
   * The type of errors that can be had while parsing a clang::FunctionDecl to a IRProxy::Function
   */
-enum class FunctionError { Ok, ReturnType, ArgumentType };
+enum class FunctionError { Ok, ReturnType, ArgumentType, UnsupportedOperator };
 
 /**
   * Convert a clang::FunctionDecl to IRProxy::Function

@@ -54,6 +54,7 @@ foreach(
   multipleClasses.cpp
   multisets.cpp
   namespaces.cpp
+  operators.cpp
   optional.cpp
   pairs.cpp
   paths.cpp

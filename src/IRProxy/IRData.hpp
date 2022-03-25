@@ -78,6 +78,9 @@ struct Function {
 	// public, private, protected
 	std::optional<IRProxy::AccessModifier> m_modifier;
 
+	// Operator overloading
+	std::optional<IR::Operator> m_operator;
+
 	IR::Type m_returnType;
 
 	bool m_isStatic;

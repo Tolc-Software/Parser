@@ -13,17 +13,23 @@ parseFunction(clang::FunctionDecl* functionDecl,
                   getPotentiallyTemplatedType) {
 	auto [status, parsedFunc] =
 	    Builders::buildFunction(functionDecl, getPotentiallyTemplatedType);
+
+	using Builders::FunctionError;
 	switch (status) {
-		case (Builders::FunctionError::Ok): return parsedFunc.value(); break;
-		case (Builders::FunctionError::ArgumentType):
+		case (FunctionError::Ok): return parsedFunc.value(); break;
+		case (FunctionError::ArgumentType):
 			spdlog::error(R"(Failed to parse argument type for function "{}")",
 			              functionDecl->getQualifiedNameAsString());
 			break;
-		case (Builders::FunctionError::ReturnType):
+		case (FunctionError::ReturnType):
 			spdlog::error(
 			    R"(Failed to parse return type "{}" for function "{}")",
 			    functionDecl->getReturnType().getAsString(),
 			    functionDecl->getQualifiedNameAsString());
+			break;
+		case (FunctionError::UnsupportedOperator):
+			spdlog::error(R"(Unsupported operator "{}")",
+			              functionDecl->getQualifiedNameAsString());
 			break;
 	}
 	return std::nullopt;
