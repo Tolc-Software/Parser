@@ -31,15 +31,15 @@ foreach(
   arrays.cpp
   autos.cpp
   classes.cpp
+  complex.cpp
+  constructorsDestructors.cpp
+  dataStructs.cpp
+  deques.cpp
   docsClass.cpp
   docsEnums.cpp
   docsFunctions.cpp
   docsNamespaces.cpp
   docsVariables.cpp
-  complex.cpp
-  constructorsDestructors.cpp
-  dataStructs.cpp
-  deques.cpp
   enums.cpp
   fields.cpp
   files.cpp
@@ -47,6 +47,7 @@ foreach(
   functionTypes.cpp
   functions.cpp
   globalVariables.cpp
+  inheritence.cpp
   lists.cpp
   maps.cpp
   multimaps.cpp
@@ -54,6 +55,7 @@ foreach(
   multisets.cpp
   namespaces.cpp
   optional.cpp
+  pairs.cpp
   paths.cpp
   priority_queues.cpp
   queues.cpp
@@ -66,7 +68,6 @@ foreach(
   strings.cpp
   templates.cpp
   tuples.cpp
-  pairs.cpp
   unordered_maps.cpp
   unordered_multimaps.cpp
   unordered_multisets.cpp

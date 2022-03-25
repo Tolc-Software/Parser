@@ -36,9 +36,17 @@ IR::Struct createStruct(IRProxy::Struct& s) {
 	newStruct.m_representation = s.m_fullyQualifiedName;
 	newStruct.m_documentation = s.m_documentation;
 
-	newStruct.m_public.m_memberVariables = s.m_publicVariables;
-	newStruct.m_private.m_memberVariables = s.m_privateVariables;
-	newStruct.m_protected.m_memberVariables = s.m_protectedVariables;
+	auto& pub = newStruct.m_public;
+	pub.m_memberVariables = s.m_public.m_variables;
+	pub.m_inherited = s.m_public.m_inherited;
+
+	auto& priv = newStruct.m_private;
+	priv.m_memberVariables = s.m_private.m_variables;
+	priv.m_inherited = s.m_private.m_inherited;
+
+	auto& prot = newStruct.m_protected;
+	prot.m_memberVariables = s.m_protected.m_variables;
+	prot.m_inherited = s.m_protected.m_inherited;
 
 	newStruct.m_templateArguments = s.m_templateArguments;
 
@@ -85,13 +93,14 @@ void addMemberVariables(
 				using IRProxy::AccessModifier;
 				switch (variable.m_modifier) {
 					case AccessModifier::Public:
-						s.m_publicVariables.push_back(variable.m_variable);
+						s.m_public.m_variables.push_back(variable.m_variable);
 						break;
 					case AccessModifier::Private:
-						s.m_privateVariables.push_back(variable.m_variable);
+						s.m_private.m_variables.push_back(variable.m_variable);
 						break;
 					case AccessModifier::Protected:
-						s.m_protectedVariables.push_back(variable.m_variable);
+						s.m_protected.m_variables.push_back(
+						    variable.m_variable);
 						break;
 				}
 			}

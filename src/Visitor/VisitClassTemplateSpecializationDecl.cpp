@@ -123,13 +123,14 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 				using IRProxy::AccessModifier;
 				switch (access) {
 					case AccessModifier::Public:
-						parsedStruct.m_publicVariables.push_back(variable);
+						parsedStruct.m_public.m_variables.push_back(variable);
 						break;
 					case AccessModifier::Private:
-						parsedStruct.m_privateVariables.push_back(variable);
+						parsedStruct.m_private.m_variables.push_back(variable);
 						break;
 					case AccessModifier::Protected:
-						parsedStruct.m_protectedVariables.push_back(variable);
+						parsedStruct.m_protected.m_variables.push_back(
+						    variable);
 						break;
 				}
 			} else {

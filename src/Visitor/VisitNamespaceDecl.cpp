@@ -2,7 +2,6 @@
 #include "Visitor/ParserVisitor.hpp"
 #include "clang/AST/DeclBase.h"
 #include "clang/AST/Type.h"
-#include <iostream>
 #include <spdlog/spdlog.h>
 
 namespace Visitor {

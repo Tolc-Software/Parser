@@ -23,6 +23,11 @@ enum class Structure {
 	Enum,
 };
 
+struct StructData {
+	std::vector<IR::Variable> m_variables;
+	std::vector<std::string> m_inherited;
+};
+
 /**
   * Representation of a struct/class that can be used to create the IR::Struct
   */
@@ -35,10 +40,11 @@ struct Struct {
 	// Ex:
 	//     Ns::cl => {(Ns, Structure::Namespace), (cl, Structure::Struct)}
 	std::deque<std::pair<std::string, Structure>> m_path;
+
 	// The variables within the struct/class
-	std::vector<IR::Variable> m_publicVariables;
-	std::vector<IR::Variable> m_privateVariables;
-	std::vector<IR::Variable> m_protectedVariables;
+	StructData m_public;
+	StructData m_private;
+	StructData m_protected;
 
 	// Empty if not a template
 	std::vector<IR::Type> m_templateArguments;
