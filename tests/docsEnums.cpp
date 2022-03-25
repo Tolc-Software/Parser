@@ -7,11 +7,11 @@ void checkDoc(IR::Namespace& ns,
               std::string enumName,
               std::string containsDoc) {
 	using TestUtil::contains;
-	auto& strct = TestUtil::findEnum(ns, enumName);
-	REQUIRE(contains(strct.m_documentation, containsDoc));
+	auto& e = TestUtil::findEnum(ns, enumName);
+	REQUIRE(contains(e.m_documentation, containsDoc));
 }
 
-TEST_CASE("Can parse out class comments", "[docsEnums]") {
+TEST_CASE("Can parse out comments", "[docsEnums]") {
 	auto ns = TestUtil::parseString(R"(
 // One line comment
 enum class e0 {

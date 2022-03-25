@@ -23,6 +23,11 @@ enum class Structure {
 	Enum,
 };
 
+struct StructData {
+	std::vector<IR::Variable> m_variables;
+	std::vector<std::string> m_inherited;
+};
+
 /**
   * Representation of a struct/class that can be used to create the IR::Struct
   */
@@ -35,10 +40,11 @@ struct Struct {
 	// Ex:
 	//     Ns::cl => {(Ns, Structure::Namespace), (cl, Structure::Struct)}
 	std::deque<std::pair<std::string, Structure>> m_path;
+
 	// The variables within the struct/class
-	std::vector<IR::Variable> m_publicVariables;
-	std::vector<IR::Variable> m_privateVariables;
-	std::vector<IR::Variable> m_protectedVariables;
+	StructData m_public;
+	StructData m_private;
+	StructData m_protected;
 
 	// Empty if not a template
 	std::vector<IR::Type> m_templateArguments;
@@ -71,6 +77,9 @@ struct Function {
 
 	// public, private, protected
 	std::optional<IRProxy::AccessModifier> m_modifier;
+
+	// Operator overloading
+	std::optional<IR::Operator> m_operator;
 
 	IR::Type m_returnType;
 
@@ -113,6 +122,15 @@ struct MemberVariable {
 };
 
 /**
+  * Representation of a namespace
+  */
+struct Namespace {
+	std::string m_fullyQualifiedName;
+
+	std::string m_documentation;
+};
+
+/**
   * Contains partially parsed code to IR on the form
   *     m_something = vector<[parent context, IR::something]>
   *
@@ -126,7 +144,7 @@ struct MemberVariable {
 struct IRData {
 	// {Fully qualified namespace name}
 	// Ex: ParentNS::ChildNS::GrandChildNS
-	std::vector<std::string> m_namespaces;
+	std::vector<Namespace> m_namespaces;
 
 	std::vector<Struct> m_structs;
 

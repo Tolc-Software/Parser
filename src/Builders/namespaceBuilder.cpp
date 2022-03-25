@@ -17,7 +17,7 @@ namespace {
  */
 IR::Namespace* createOrGetChild(IR::Namespace* parent,
                                 std::string_view childName,
-                                std::string_view childRepresentation) {
+                                IRProxy::Namespace const& ns) {
 	auto& children = parent->m_namespaces;
 	// Check if the child exists
 	if (auto child = std::find_if(children.begin(),
@@ -31,7 +31,8 @@ IR::Namespace* createOrGetChild(IR::Namespace* parent,
 	// Create the child
 	IR::Namespace childNS;
 	childNS.m_name = childName;
-	childNS.m_representation = childRepresentation;
+	childNS.m_representation = ns.m_fullyQualifiedName;
+	childNS.m_documentation = ns.m_documentation;
 	return &children.emplace_back(childNS);
 }
 
@@ -39,15 +40,15 @@ IR::Namespace* createOrGetChild(IR::Namespace* parent,
  * Add the fully qualified namespace defined by the deque to the root or global namespace
  */
 void addNamespaceToRoot(IR::Namespace& rootNS,
-                        std::deque<std::string> ns,
-                        std::string const& representation) {
+                        std::deque<std::string> path,
+                        IRProxy::Namespace const& ns) {
 	auto* currentNs = &rootNS;
-	while (!ns.empty()) {
-		auto& name = ns.front();
+	while (!path.empty()) {
+		auto& name = path.front();
 		auto parentName = currentNs->m_name;
 		// Set child
-		currentNs = createOrGetChild(currentNs, name, representation);
-		ns.pop_front();
+		currentNs = createOrGetChild(currentNs, name, ns);
+		path.pop_front();
 	}
 }
 }    // namespace
@@ -74,15 +75,17 @@ void addGlobalVariables(
 }
 
 IR::Namespace
-buildNamespaceStructure(std::vector<std::string> const& namespaces) {
+buildNamespaceStructure(std::vector<IRProxy::Namespace> const& namespaces) {
 	// {fully qualified namespaces divided into names}
 	// Ex:
 	//   Helpers::buildNamespaceStructure -> {deque({Helpers, buildNamespaceStructure}), Helpers::buildNamespaceStructure}
-	std::vector<std::pair<std::deque<std::string>, std::string>> fqNamespaces;
+	std::vector<std::pair<std::deque<std::string>, IRProxy::Namespace>>
+	    fqNamespaces;
 
 	// Build the fully qualified namespaces
-	for (auto const& name : namespaces) {
-		fqNamespaces.emplace_back(Helpers::Utils::split(name, "::"), name);
+	for (auto const& ns : namespaces) {
+		fqNamespaces.emplace_back(
+		    Helpers::Utils::split(ns.m_fullyQualifiedName, "::"), ns);
 	}
 
 	// Sort them by length (deepest from global ns)
@@ -99,8 +102,8 @@ buildNamespaceStructure(std::vector<std::string> const& namespaces) {
 	rootNS.m_name = "";
 
 	// Build parent structure and lookup tables
-	for (auto& [ns, representation] : fqNamespaces) {
-		addNamespaceToRoot(rootNS, ns, representation);
+	for (auto& [path, ns] : fqNamespaces) {
+		addNamespaceToRoot(rootNS, path, ns);
 	}
 
 	// Return the root node

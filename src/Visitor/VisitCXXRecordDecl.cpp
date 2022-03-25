@@ -1,4 +1,5 @@
 #include "Builders/commonBuilder.hpp"
+#include "Helpers/getStructData.hpp"
 #include "IRProxy/IRData.hpp"
 #include "Visitor/Helpers/getDocumentation.hpp"
 #include "Visitor/ParserVisitor.hpp"
@@ -43,6 +44,17 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 
 	parsedStruct.m_modifier =
 	    Builders::convertToIRAccess(classDecl->getAccess());
+
+	// Inheritence
+	for (auto const& base : classDecl->bases()) {
+		if (auto maybeAccess = ::Helpers::getStructDataBasedOnAccess(
+		        parsedStruct, base.getAccessSpecifier())) {
+			auto policy =
+			    clang::PrintingPolicy(classDecl->getASTContext().getLangOpts());
+			maybeAccess->m_inherited.push_back(
+			    base.getType().getAsString(policy));
+		}
+	}
 
 	m_irData.m_structs.push_back(parsedStruct);
 	// Continue the AST search

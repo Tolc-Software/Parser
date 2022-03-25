@@ -14,6 +14,7 @@
 #include <clang/AST/Type.h>
 #include <clang/Basic/Specifiers.h>
 #include <deque>
+#include <functional>
 #include <llvm/Support/Casting.h>
 #include <string>
 #include <variant>
@@ -21,6 +22,7 @@
 namespace {
 struct FunctionData {
 	std::optional<IRProxy::AccessModifier> m_modifier;
+	std::optional<IR::Operator> m_operator;
 	bool m_isConstructor;
 	bool m_isDestructor;
 };
@@ -41,6 +43,9 @@ void addFunctionToVariant(FunctionData data,
 			} else if (data.m_isDestructor) {
 				auto& functions = structData->m_destructors;
 				functions.push_back(f);
+			} else if (data.m_operator) {
+				auto& functions = structData->m_operators;
+				functions.push_back({data.m_operator.value(), f});
 			} else {
 				auto& functions = structData->m_functions;
 				functions.push_back(f);
@@ -74,10 +79,56 @@ void addFunction(IRProxy::Function const& f, IR::Namespace& globalNamespace) {
 	auto parentOfNewFunction =
 	    Helpers::walkPathThroughStructure(path, globalNamespace);
 
+	FunctionData data;
+	data.m_isConstructor = f.m_isConstructor;
+	data.m_isDestructor = f.m_isDestructor;
+	data.m_modifier = f.m_modifier;
+	data.m_operator = f.m_operator;
+
 	// Create and add the function
-	addFunctionToVariant({f.m_modifier, f.m_isConstructor, f.m_isDestructor},
-	                     parentOfNewFunction,
-	                     createFunction(name, f));
+	addFunctionToVariant(data, parentOfNewFunction, createFunction(name, f));
+}
+
+/**
+* Tries to parse out a known operator from op
+* Assumes op is whatever comes AFTER "operator" in the function name
+* Ex:
+*   operator+
+*     getOperator("+") -> IR::Operator::Addition
+*/
+std::optional<IR::Operator> getOperator(std::string const& op) {
+	using IR::Operator;
+	if (op == "+") {
+		return Operator::Addition;
+	} else if (op == "-") {
+		return Operator::Subtraction;
+	} else if (op == "*") {
+		return Operator::Multiplication;
+	} else if (op == "/") {
+		return Operator::Division;
+	} else if (op == "%") {
+		return Operator::Modulus;
+	} else if (op == "=") {
+		return Operator::Assignment;
+	} else if (op == "==") {
+		return Operator::Equal;
+	} else if (op == "!=") {
+		return Operator::NotEqual;
+	} else if (op == ">") {
+		return Operator::GreaterThan;
+	} else if (op == ">=") {
+		return Operator::GreaterThanOrEqualTo;
+	} else if (op == "<") {
+		return Operator::LessThan;
+	} else if (op == "<=") {
+		return Operator::LessThanOrEqualTo;
+	} else if (op.front() == '[') {
+		return Operator::Subscript;
+	} else if (op.front() == '(') {
+		return Operator::Call;
+	}
+
+	return std::nullopt;
 }
 }    // namespace
 
@@ -94,6 +145,19 @@ buildFunction(clang::FunctionDecl* functionDecl,
 	    Visitor::Helpers::getDocumentation(functionDecl);
 	parsedFunc.m_path =
 	    Builders::buildStructure(functionDecl, IRProxy::Structure::Function);
+
+	parsedFunc.m_operator = std::nullopt;
+	auto& simpleName = parsedFunc.m_path.back().first;
+	auto constexpr afterOperator = 8;
+	if (simpleName.starts_with("operator") &&
+	    simpleName.size() > afterOperator) {
+		auto opType = simpleName.substr(afterOperator);
+		if (auto maybeOperator = getOperator(opType)) {
+			parsedFunc.m_operator = maybeOperator.value();
+		} else {
+			return {FunctionError::UnsupportedOperator, std::nullopt};
+		}
+	}
 
 	// This is passed so that while extracting text from types it is exactly what the user wrote
 	auto policy =

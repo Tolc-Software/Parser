@@ -2,6 +2,7 @@
 
 #include "IRProxy/IRData.hpp"
 #include <IR/ir.hpp>
+#include <clang/AST/DeclBase.h>
 
 namespace Helpers {
 
@@ -12,4 +13,7 @@ namespace Helpers {
 */
 IR::StructData* getStructDataBasedOnAccess(IR::Struct& s,
                                            IRProxy::AccessModifier access);
+
+IRProxy::StructData* getStructDataBasedOnAccess(IRProxy::Struct& s,
+                                                clang::AccessSpecifier access);
 }
