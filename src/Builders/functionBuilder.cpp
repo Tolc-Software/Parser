@@ -110,6 +110,24 @@ std::optional<IR::Operator> getOperator(std::string const& op) {
 		return Operator::Modulus;
 	} else if (op == "=") {
 		return Operator::Assignment;
+	} else if (op == "+=") {
+		return Operator::AddEqual;
+	} else if (op == "-=") {
+		return Operator::SubEqual;
+	} else if (op == "*=") {
+		return Operator::MulEqual;
+	} else if (op == "/=") {
+		return Operator::DivEqual;
+	} else if (op == "%=") {
+		return Operator::ModEqual;
+	} else if (op == "<<") {
+		return Operator::LeftShift;
+	} else if (op == ">>") {
+		return Operator::RightShift;
+	} else if (op == "++") {
+		return Operator::Increment;
+	} else if (op == "--") {
+		return Operator::Decrement;
 	} else if (op == "==") {
 		return Operator::Equal;
 	} else if (op == "!=") {

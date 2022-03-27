@@ -30,7 +30,20 @@ struct Operator {
   Operator operator%(int);
 
   // Assignment
-  Operator& operator=(Operator&& other) noexcept;
+  Operator& operator=(Operator&& other);
+  Operator& operator+=(Operator&& other);
+  Operator& operator-=(Operator&& other);
+  Operator& operator*=(Operator&& other);
+  Operator& operator/=(Operator&& other);
+  Operator& operator%=(Operator&& other);
+
+  // {in,de}crement
+  Operator& operator++();
+  Operator& operator--();
+
+  // Shift
+  Operator operator<<(const Operator& other);
+  Operator operator>>(const Operator& other);
 
   // Comparisons
   bool operator==(const Operator& rhs);
@@ -49,18 +62,27 @@ struct Operator {
 )");
 	using IR::Operator;
 	requireContainsOperators(globalNS,
-	                         {Operator::Addition,
-	                          Operator::Subtraction,
-	                          Operator::Multiplication,
-	                          Operator::Division,
-	                          Operator::Modulus,
+	                         {Operator::AddEqual,
 	                          Operator::Assignment,
+	                          Operator::Call,
+	                          Operator::Decrement,
+	                          Operator::DivEqual,
+	                          Operator::Division,
 	                          Operator::Equal,
-	                          Operator::NotEqual,
-	                          Operator::LessThan,
-	                          Operator::LessThanOrEqualTo,
 	                          Operator::GreaterThan,
 	                          Operator::GreaterThanOrEqualTo,
+	                          Operator::Increment,
+	                          Operator::LeftShift,
+	                          Operator::LessThan,
+	                          Operator::LessThanOrEqualTo,
+	                          Operator::ModEqual,
+	                          Operator::Modulus,
+	                          Operator::MulEqual,
+	                          Operator::Multiplication,
+	                          Operator::NotEqual,
+	                          Operator::RightShift,
+	                          Operator::SubEqual,
 	                          Operator::Subscript,
-	                          Operator::Call});
+	                          Operator::Subtraction,
+	                          Operator::Addition});
 }
