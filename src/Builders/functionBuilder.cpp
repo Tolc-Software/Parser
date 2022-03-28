@@ -66,6 +66,8 @@ IR::Function createFunction(std::string_view name,
 	f.m_arguments = proxyF.m_arguments;
 	f.m_templateArguments = proxyF.m_templateArguments;
 	f.m_isStatic = proxyF.m_isStatic;
+	f.m_polymorphic = proxyF.m_polymorphic;
+
 	return f;
 }
 
@@ -148,6 +150,16 @@ std::optional<IR::Operator> getOperator(std::string const& op) {
 
 	return std::nullopt;
 }
+
+IR::Polymorphic getPolymorphic(clang::FunctionDecl* f) {
+	using IR::Polymorphic;
+	if (f->isPure()) {
+		return Polymorphic::PureVirtual;
+	} else if (f->isVirtualAsWritten()) {
+		return Polymorphic::Virtual;
+	}
+	return Polymorphic::NA;
+}
 }    // namespace
 
 namespace Builders {
@@ -163,6 +175,8 @@ buildFunction(clang::FunctionDecl* functionDecl,
 	    Visitor::Helpers::getDocumentation(functionDecl);
 	parsedFunc.m_path =
 	    Builders::buildStructure(functionDecl, IRProxy::Structure::Function);
+
+	parsedFunc.m_polymorphic = getPolymorphic(functionDecl);
 
 	parsedFunc.m_operator = std::nullopt;
 	auto& simpleName = parsedFunc.m_path.back().first;

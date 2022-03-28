@@ -58,6 +58,7 @@ foreach(
   optional.cpp
   pairs.cpp
   paths.cpp
+  polymorphic.cpp
   priority_queues.cpp
   queues.cpp
   references.cpp

@@ -78,6 +78,9 @@ struct Function {
 	// public, private, protected
 	std::optional<IRProxy::AccessModifier> m_modifier;
 
+	// Virtual, purevirtual or not applicable
+	IR::Polymorphic m_polymorphic;
+
 	// Operator overloading
 	std::optional<IR::Operator> m_operator;
 
