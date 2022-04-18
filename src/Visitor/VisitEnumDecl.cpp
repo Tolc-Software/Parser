@@ -8,7 +8,8 @@
 namespace Visitor {
 
 bool ParserVisitor::VisitEnumDecl(clang::EnumDecl* enumDecl) {
-	if (isInSystemHeader(enumDecl)) {
+	if (isInSystemHeader(enumDecl) ||
+	    !enumDecl->isThisDeclarationADefinition()) {
 		// Continue the AST search
 		return true;
 	}
@@ -41,4 +42,4 @@ bool ParserVisitor::VisitEnumDecl(clang::EnumDecl* enumDecl) {
 	// Continue the AST search
 	return true;
 }
-}
+}    // namespace Visitor

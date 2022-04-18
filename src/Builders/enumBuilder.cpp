@@ -27,6 +27,7 @@ void addEnumToVariant(std::optional<IRProxy::AccessModifier> modifier,
 IR::Enum createEnum(std::string_view name, IRProxy::Enum const& proxyEnum) {
 	IR::Enum e;
 	e.m_name = name;
+	e.m_id = proxyEnum.m_id;
 
 	// Representation is the fully qualified name
 	e.m_representation = proxyEnum.m_fullyQualifiedName;

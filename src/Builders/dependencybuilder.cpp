@@ -1,8 +1,10 @@
 #include "Builders/dependencybuilder.hpp"
+#include "Parser/MetaData.hpp"
 #include <IR/ir.hpp>
 #include <iostream>
 #include <map>
 #include <queue>
+#include <set>
 #include <vector>
 
 namespace Builders {
@@ -164,6 +166,54 @@ void buildDependency(IR::Namespace const& ns,
 		}
 
 		nsToProcess.pop();
+	}
+}
+
+void createDefinitionOrder(Parser::MetaData& metaData,
+                           std::vector<std::vector<size_t>>& dependencyMap) {
+	// The ones already put into the ordered list of objects to define
+	std::set<size_t> alreadyOrdered;
+
+	bool hasProgressed = true;
+	while (metaData.m_definitionOrder.size() != dependencyMap.size()) {
+		// Has this round put us closer to a solution?
+		hasProgressed = false;
+
+		size_t index = 0;
+		for (auto dependencies : dependencyMap) {
+			if (dependencies.empty()) {
+				// No dependencies => we can add it
+				if (auto hasAdded = alreadyOrdered.insert(index);
+				    hasAdded.second) {
+					// Never added before => Add it
+					metaData.m_definitionOrder.push_back(index);
+					hasProgressed = true;
+				}
+			} else {
+				// Has dependencies => Have we defined all of them before?
+				bool canAdd = true;
+				for (auto dependency : dependencies) {
+					if (alreadyOrdered.find(dependency) ==
+					    alreadyOrdered.end()) {
+						// Found a dependency not previously defined => Stop for loop
+						canAdd = false;
+						break;
+					}
+				}
+				if (canAdd) {
+					// No children => we can add it
+					metaData.m_definitionOrder.push_back(index);
+					alreadyOrdered.insert(index);
+					hasProgressed = true;
+				}
+			}
+			index++;
+		}
+
+		if (!hasProgressed) {
+			// No progress made => There must be a circular dependency
+			return;
+		}
 	}
 }
 }    // namespace Builders

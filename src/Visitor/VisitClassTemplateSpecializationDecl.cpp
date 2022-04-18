@@ -3,6 +3,7 @@
 #include "Builders/functionBuilder.hpp"
 #include "Builders/typeBuilder.hpp"
 #include "IRProxy/IRData.hpp"
+#include "Visitor/Helpers/addId.hpp"
 #include "Visitor/Helpers/parseFunction.hpp"
 #include "Visitor/ParserVisitor.hpp"
 #include <fmt/format.h>
@@ -66,7 +67,8 @@ namespace Visitor {
 
 bool ParserVisitor::VisitClassTemplateSpecializationDecl(
     clang::ClassTemplateSpecializationDecl* classDecl) {
-	if (isInSystemHeader(classDecl)) {
+	if (isInSystemHeader(classDecl) ||
+	    !classDecl->isThisDeclarationADefinition()) {
 		// Continue the AST search
 		return true;
 	}
@@ -98,6 +100,8 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 	    Builders::buildStructure(classDecl, IRProxy::Structure::Struct);
 	parsedStruct.m_path.back().first += templateParameters;
 
+	Helpers::addIdToClass(parsedStruct, m_irData);
+
 	spdlog::debug(R"(Parsing template instantiated class/struct: "{}")",
 	              parsedStruct.m_fullyQualifiedName);
 
@@ -120,6 +124,8 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 			if (auto maybeField =
 			        Builders::buildField(memberVariable, memberType)) {
 				auto [access, variable] = maybeField.value();
+				Helpers::addIdToVariable(variable, m_irData);
+
 				using IRProxy::AccessModifier;
 				switch (access) {
 					case AccessModifier::Public:
@@ -148,11 +154,13 @@ bool ParserVisitor::VisitClassTemplateSpecializationDecl(
 			        method, [&helper](auto type) {
 				        return getTemplatedType(helper, type);
 			        })) {
-				adjustWithTemplateParameters(parsedFunc.value(), parsedStruct);
+				auto& f = parsedFunc.value();
+				adjustWithTemplateParameters(f, parsedStruct);
 				if (llvm::isa<clang::CXXConstructorDecl>(method)) {
-					adjustConstructorName(parsedFunc.value(), parsedStruct);
+					adjustConstructorName(f, parsedStruct);
 				}
-				m_irData.m_functions.push_back(parsedFunc.value());
+				Helpers::addIdToFunction(f, m_irData);
+				m_irData.m_functions.push_back(f);
 			} else {
 				m_parsedSuccessfully = false;
 				// Stop parsing

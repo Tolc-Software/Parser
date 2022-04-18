@@ -10,7 +10,9 @@
 namespace Visitor {
 
 bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
-	if (isInSystemHeader(classDecl)) {
+	// Also filters out forward declarations
+	if (isInSystemHeader(classDecl) ||
+	    !classDecl->isThisDeclarationADefinition()) {
 		// Continue the AST search
 		return true;
 	}

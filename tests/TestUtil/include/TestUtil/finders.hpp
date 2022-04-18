@@ -11,8 +11,9 @@ namespace TestUtil {
 
 enum class AccessModifier { Public, Private, Protected };
 
-IR::StructData* getStructDataBasedOnAccess(IR::Struct& s,
-                                           TestUtil::AccessModifier access) {
+IR::StructData const*
+getStructDataBasedOnAccess(IR::Struct const& s,
+                           TestUtil::AccessModifier access) {
 	using TestUtil::AccessModifier;
 	switch (access) {
 		case AccessModifier::Public: return &s.m_public;
@@ -35,6 +36,21 @@ IR::Variable& findVariable(IR::Namespace& parent, std::string const& name) {
 
 IR::Enum& findEnum(IR::Namespace& parent, std::string const& name) {
 	auto& enums = parent.m_enums;
+	REQUIRE(enums.size() >= 1);
+	auto v = std::find_if(enums.begin(), enums.end(), [&name](auto const& n) {
+		return n.m_name == name;
+	});
+
+	REQUIRE(v != enums.end());
+	return *v;
+}
+
+IR::Enum const& findEnum(IR::Struct const& parent,
+                   std::string const& name,
+                   TestUtil::AccessModifier access) {
+	auto data = getStructDataBasedOnAccess(parent, access);
+	REQUIRE(data != nullptr);
+	auto& enums = data->m_enums;
 	REQUIRE(enums.size() >= 1);
 	auto v = std::find_if(enums.begin(), enums.end(), [&name](auto const& n) {
 		return n.m_name == name;
@@ -79,7 +95,7 @@ IR::Variable& findArgument(IR::Function& f, std::string const& name) {
 	return *argument;
 }
 
-IR::Function& findFunction(IR::Struct& parent,
+IR::Function const& findFunction(IR::Struct& parent,
                            std::string const& name,
                            TestUtil::AccessModifier access) {
 	auto data = getStructDataBasedOnAccess(parent, access);
@@ -95,7 +111,7 @@ IR::Function& findFunction(IR::Struct& parent,
 	return *function;
 }
 
-IR::Variable& findMember(IR::Struct& parent,
+IR::Variable const& findMember(IR::Struct& parent,
                          std::string const& name,
                          TestUtil::AccessModifier access) {
 	auto data = getStructDataBasedOnAccess(parent, access);

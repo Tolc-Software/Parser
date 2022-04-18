@@ -58,6 +58,7 @@ IR::Function createFunction(std::string_view name,
                             IRProxy::Function const& proxyF) {
 	IR::Function f;
 	f.m_name = name;
+	f.m_id = proxyF.m_id;
 
 	// Representation is the fully qualified name
 	f.m_representation = proxyF.m_fullyQualifiedName;

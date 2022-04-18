@@ -46,6 +46,7 @@ ParserVisitor::~ParserVisitor() {
 		// IR built -> Can proceed to build meta data
 		Builders::buildDependency(
 		    m_parsedNamespaces, m_irData.m_idMap, m_irData.m_dependencyMap);
+		Builders::createDefinitionOrder(m_metaData, m_irData.m_dependencyMap);
 	}
 }
 
