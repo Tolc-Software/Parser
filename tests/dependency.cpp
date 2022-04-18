@@ -2,6 +2,21 @@
 #include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
 
+TEST_CASE("Two functions with struct dependency", "[dependency]") {
+	auto [globalNS, meta] = TestUtil::parseStringWithMeta(R"(
+struct Data {};
+
+Data f();
+Data g();
+)");
+	REQUIRE(meta.m_definitionOrder.size() == 3);
+	auto const& data = TestUtil::findStruct(globalNS, "Data");
+
+	// f,g requires Data to be defined before
+	// Don't care which order they come in
+	REQUIRE(meta.m_definitionOrder[0] == data.m_id);
+}
+
 TEST_CASE("Function with enum dependency, forward declaration",
           "[dependency]") {
 	auto [globalNS, meta] = TestUtil::parseStringWithMeta(R"(
