@@ -82,6 +82,7 @@ configure_file(src/Helpers/commandLineArgs.cpp.in
 add_llvm_library(
   Parser
   src/Builders/commonBuilder.cpp
+  src/Builders/dependencybuilder.cpp
   src/Builders/enumBuilder.cpp
   src/Builders/fieldBuilder.cpp
   src/Builders/functionBuilder.cpp
@@ -105,6 +106,7 @@ add_llvm_library(
   src/Parser/Parse.cpp
   src/Parser/Windows/systemIncludeHelper.cpp
   src/Template/cache.cpp
+  src/Visitor/Helpers/addId.cpp
   src/Visitor/Helpers/getDocumentation.cpp
   src/Visitor/Helpers/parseFunction.cpp
   src/Visitor/ParserVisitor.cpp

@@ -10,8 +10,12 @@ namespace Parser {
 * - Every top level value should be commented.
 */
 struct MetaData {
-	// {Object: {Objects which depend on key}}
-	// {id: {ids}}
-	std::vector<std::vector<size_t>> m_dependencyMap {};
+	// Contains the order that objects need to be defined in
+	// For instance:
+	//   struct A {}
+	// Need to be defined before:
+	//   A a;
+	// {id}
+	std::vector<size_t> m_definitionOrder {};
 };
 }    // namespace Parser

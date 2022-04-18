@@ -1,6 +1,7 @@
 #include "Builders/commonBuilder.hpp"
 #include "Helpers/getStructData.hpp"
 #include "IRProxy/IRData.hpp"
+#include "Visitor/Helpers/addId.hpp"
 #include "Visitor/Helpers/getDocumentation.hpp"
 #include "Visitor/ParserVisitor.hpp"
 #include <spdlog/spdlog.h>
@@ -44,6 +45,8 @@ bool ParserVisitor::VisitCXXRecordDecl(clang::CXXRecordDecl* classDecl) {
 
 	parsedStruct.m_modifier =
 	    Builders::convertToIRAccess(classDecl->getAccess());
+
+	Helpers::addIdToClass(parsedStruct, m_irData);
 
 	// Inheritence
 	for (auto const& base : classDecl->bases()) {

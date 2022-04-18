@@ -1,5 +1,6 @@
 #include "Builders/commonBuilder.hpp"
 #include "Builders/typeBuilder.hpp"
+#include "Visitor/Helpers/addId.hpp"
 #include "Visitor/Helpers/parseFunction.hpp"
 #include "Visitor/ParserVisitor.hpp"
 #include <clang/AST/PrettyPrinter.h>
@@ -45,8 +46,10 @@ bool ParserVisitor::VisitFunctionTemplateDecl(
 
 	for (auto specialization : functionDecl->specializations()) {
 		if (auto parsedFunc = Visitor::Helpers::parseFunction(specialization)) {
-			adjustWithTemplateParams(parsedFunc.value(), specialization);
-			m_irData.m_functions.push_back(parsedFunc.value());
+			auto& f = parsedFunc.value();
+			adjustWithTemplateParams(f, specialization);
+			Helpers::addIdToFunction(f, m_irData);
+			m_irData.m_functions.push_back(f);
 		} else {
 			m_parsedSuccessfully = false;
 			// Stop parsing

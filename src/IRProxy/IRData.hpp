@@ -49,6 +49,9 @@ struct Struct {
 	// Empty if not a template
 	std::vector<IR::Type> m_templateArguments;
 
+	// Unique for this object
+	size_t m_id;
+
 	// public, private, protected
 	// For nested structs
 	std::optional<IRProxy::AccessModifier> m_modifier;
@@ -86,6 +89,9 @@ struct Function {
 
 	IR::Type m_returnType;
 
+	// Unique for this object
+	size_t m_id;
+
 	bool m_isStatic;
 
 	bool m_isConstructor;
@@ -107,6 +113,9 @@ struct Enum {
 
 	// public, private, protected
 	std::optional<IRProxy::AccessModifier> m_modifier;
+
+	// Unique for this object
+	size_t m_id;
 
 	// Unscoped values of the enum
 	std::vector<std::string> m_values;
@@ -160,5 +169,11 @@ struct IRData {
 
 	// {Fully qualified name of the owning namespace: variable}
 	std::map<std::string, std::vector<IR::Variable>> m_globalVariables;
+
+	// {id: [dependent ids]}
+	std::vector<std::vector<size_t>> m_dependencyMap;
+	// Only contains Enums and User defined structs
+	// {Representation: id}
+	std::map<std::string, size_t> m_idMap;
 };
 }    // namespace IRProxy

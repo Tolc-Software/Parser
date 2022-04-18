@@ -1,4 +1,5 @@
 #include "Visitor/ParserVisitor.hpp"
+#include "Builders/dependencybuilder.hpp"
 #include "Builders/enumBuilder.hpp"
 #include "Builders/functionBuilder.hpp"
 #include "Builders/namespaceBuilder.hpp"
@@ -41,6 +42,10 @@ ParserVisitor::~ParserVisitor() {
 
 		// Add the enums to the namespaces
 		Builders::buildEnums(m_irData.m_enums, m_parsedNamespaces);
+
+		// IR built -> Can proceed to build meta data
+		Builders::buildDependency(
+		    m_parsedNamespaces, m_irData.m_idMap, m_irData.m_dependencyMap);
 	}
 }
 
