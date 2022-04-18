@@ -15,8 +15,8 @@
 #include <vector>
 
 namespace Parser {
-std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename,
-                                       Parser::Config const& config) {
+std::optional<std::pair<IR::Namespace, Parser::MetaData>>
+parseFile(std::filesystem::path const& filename, Parser::Config const& config) {
 	// Create the db for flags
 	std::string fromDirectory = ".";
 
@@ -35,13 +35,13 @@ std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename,
 	                               .get()) == 0;
 
 	if (astCreated && parsedSuccessfully) {
-		return parsedIR;
+		return std::make_pair(parsedIR, metaData);
 	}
 	return std::nullopt;
 }
 
-std::optional<IR::Namespace> parseString(std::string const& code,
-                                         Parser::Config const& config) {
+std::optional<std::pair<IR::Namespace, Parser::MetaData>>
+parseString(std::string const& code, Parser::Config const& config) {
 	bool parsedSuccessfully = true;
 	IR::Namespace parsedIR;
 	Parser::MetaData metaData;
@@ -53,7 +53,7 @@ std::optional<IR::Namespace> parseString(std::string const& code,
 	    Helpers::getCommandLineArgs(config.m_systemIncludes));
 
 	if (astCreated && parsedSuccessfully) {
-		return parsedIR;
+		return std::make_pair(parsedIR, metaData);
 	}
 	return std::nullopt;
 }

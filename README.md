@@ -34,14 +34,14 @@ And you should get all the necessary components of the library.
 #include <iostream>
 
 int main() {
-    // Get a IR::Namespace representing the global namespace
-    auto globalNamespace = Parser::parseString(R"(
+    auto parsedData = Parser::parseString(R"(
 int f() {
     return 5;
 }
     )");
 
-    if (globalNamespace) {
+    if (parsedData) {
+        auto& [globalNamespace, metaData] = parsedData.value();
         // Will return "f"
         std::cout << globalNamespace.m_functions[0].m_name << '\n';
     }

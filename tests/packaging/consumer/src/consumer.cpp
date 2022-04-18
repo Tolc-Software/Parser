@@ -2,10 +2,9 @@
 #include <Parser/Parse.hpp>
 
 int main() {
-	auto globalNamespace = Parser::parseString("void f();");
-
-	if (globalNamespace) {
-		auto& functions = globalNamespace->m_functions;
+	if (auto parsed = Parser::parseString("void f();")) {
+		auto& [globalNamespace, metaData] = parsed.value();
+		auto& functions = globalNamespace.m_functions;
 		if (functions.size() == 1 && functions[0].m_name == "f") {
 			// Success!
 			return 0;

@@ -14,17 +14,19 @@ IR::Namespace
 parseString(std::string const& code,
             spdlog::level::level_enum logLevel = spdlog::level::warn) {
 	spdlog::set_level(logLevel);
-	auto ns = Parser::parseString(code);
-	REQUIRE(ns.has_value());
-	return ns.has_value() ? ns.value() : IR::Namespace();
+	auto maybeNs = Parser::parseString(code);
+	REQUIRE(maybeNs.has_value());
+	auto [ns, meta] = maybeNs.value();
+	return ns;
 }
 
 IR::Namespace
 parseFile(std::filesystem::path const& filepath,
           spdlog::level::level_enum logLevel = spdlog::level::warn) {
 	spdlog::set_level(logLevel);
-	auto ns = Parser::parseFile(filepath);
-	REQUIRE(ns.has_value());
-	return ns.has_value() ? ns.value() : IR::Namespace();
+	auto maybeNs = Parser::parseFile(filepath);
+	REQUIRE(maybeNs.has_value());
+	auto [ns, meta] = maybeNs.value();
+	return ns;
 }
 }    // namespace TestUtil
