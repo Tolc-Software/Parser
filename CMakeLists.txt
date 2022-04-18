@@ -35,7 +35,7 @@ include(${modules}/Sanitizers.cmake)
 FetchContent_Declare(
   IRSpecification
   GIT_REPOSITORY https://github.com/Tolc-Software/IntermediateRepresentation.git
-  GIT_TAG v0.14.0)
+  GIT_TAG ids)
 FetchContent_MakeAvailable(IRSpecification)
 
 FetchContent_Declare(
@@ -89,6 +89,7 @@ add_llvm_library(
   src/Builders/structBuilder.cpp
   src/Builders/typeBuilder.cpp
   src/Consumer/ParserConsumer.cpp
+  src/Factory/ParserFrontendActionFactory.cpp
   src/Frontend/ParserFrontendAction.cpp
   src/Helpers/Type/Matchers/base.cpp
   src/Helpers/Type/Matchers/container.cpp

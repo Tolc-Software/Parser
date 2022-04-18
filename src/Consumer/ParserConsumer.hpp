@@ -1,8 +1,9 @@
 #pragma once
 
-#include "IR/ir.hpp"
+#include "Parser/MetaData.hpp"
 #include "Visitor/ParserVisitor.hpp"
-#include "clang/AST/ASTConsumer.h"
+#include <IR/ir.hpp>
+#include <clang/AST/ASTConsumer.h>
 
 namespace Consumer {
 
@@ -10,8 +11,9 @@ class ParserConsumer : public clang::ASTConsumer {
 public:
 	explicit ParserConsumer(clang::ASTContext* context,
 	                        IR::Namespace& parsedNamespaces,
+	                        Parser::MetaData& metaData,
 	                        bool& parsedSuccessfully)
-	    : m_visitor(context, parsedNamespaces, parsedSuccessfully) {}
+	    : m_visitor(context, parsedNamespaces, metaData, parsedSuccessfully) {}
 
 	virtual void HandleTranslationUnit(clang::ASTContext& context);
 

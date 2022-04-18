@@ -3,6 +3,7 @@
 #include "Builders/functionBuilder.hpp"
 #include "Builders/namespaceBuilder.hpp"
 #include "Builders/structBuilder.hpp"
+#include "Parser/MetaData.hpp"
 #include <clang/AST/Decl.h>
 #include <clang/AST/DeclTemplate.h>
 #include <clang/AST/Type.h>
@@ -13,9 +14,10 @@
 namespace Visitor {
 ParserVisitor::ParserVisitor(clang::ASTContext* context,
                              IR::Namespace& parsedNamespaces,
+                             Parser::MetaData& metaData,
                              bool& parsedSuccessfully)
     : m_context(context), m_parsedNamespaces(parsedNamespaces),
-      m_parsedSuccessfully(parsedSuccessfully) {}
+      m_metaData(metaData), m_parsedSuccessfully(parsedSuccessfully) {}
 
 ParserVisitor::~ParserVisitor() {
 	if (m_parsedSuccessfully) {
