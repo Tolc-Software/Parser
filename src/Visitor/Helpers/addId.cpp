@@ -6,10 +6,6 @@ namespace Visitor::Helpers {
 void addIdToFunction(IRProxy::Function& f, IRProxy::IRData& data) {
 	f.m_id = data.m_dependencyMap.size();
 	data.m_dependencyMap.push_back({});
-	for (auto& arg : f.m_arguments) {
-		arg.m_id = data.m_dependencyMap.size();
-		data.m_dependencyMap.push_back({});
-	}
 }
 
 void addIdToClass(IRProxy::Struct& s, IRProxy::IRData& data) {

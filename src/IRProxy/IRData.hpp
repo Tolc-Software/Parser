@@ -3,6 +3,7 @@
 #include <IR/ir.hpp>
 #include <deque>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -72,8 +73,8 @@ struct Function {
 	// Ex:
 	//     Ns::cl::fun => {(Ns, Structure::Namespace), (cl, Structure::Struct), (cl, Structure::Function)}
 	std::deque<std::pair<std::string, Structure>> m_path;
-	// The arguments to the function
-	std::vector<IR::Variable> m_arguments;
+
+	std::vector<IR::Argument> m_arguments;
 
 	// Empty if not a template
 	std::vector<IR::Type> m_templateArguments;
@@ -171,7 +172,7 @@ struct IRData {
 	std::map<std::string, std::vector<IR::Variable>> m_globalVariables;
 
 	// {id: [dependent ids]}
-	std::vector<std::vector<size_t>> m_dependencyMap;
+	std::vector<std::set<size_t>> m_dependencyMap;
 	// Only contains Enums and User defined structs
 	// {Representation: id}
 	std::map<std::string, size_t> m_idMap;

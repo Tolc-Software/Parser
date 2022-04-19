@@ -46,8 +46,8 @@ IR::Enum& findEnum(IR::Namespace& parent, std::string const& name) {
 }
 
 IR::Enum const& findEnum(IR::Struct const& parent,
-                   std::string const& name,
-                   TestUtil::AccessModifier access) {
+                         std::string const& name,
+                         TestUtil::AccessModifier access) {
 	auto data = getStructDataBasedOnAccess(parent, access);
 	REQUIRE(data != nullptr);
 	auto& enums = data->m_enums;
@@ -83,7 +83,7 @@ IR::Function& findFunction(IR::Namespace& parent, std::string const& name) {
 	return *function;
 }
 
-IR::Variable& findArgument(IR::Function& f, std::string const& name) {
+IR::Argument& findArgument(IR::Function& f, std::string const& name) {
 	auto& arguments = f.m_arguments;
 	REQUIRE(arguments.size() >= 1);
 	auto argument =
@@ -96,8 +96,8 @@ IR::Variable& findArgument(IR::Function& f, std::string const& name) {
 }
 
 IR::Function const& findFunction(IR::Struct& parent,
-                           std::string const& name,
-                           TestUtil::AccessModifier access) {
+                                 std::string const& name,
+                                 TestUtil::AccessModifier access) {
 	auto data = getStructDataBasedOnAccess(parent, access);
 	REQUIRE(data != nullptr);
 	auto& functions = data->m_functions;
@@ -112,8 +112,8 @@ IR::Function const& findFunction(IR::Struct& parent,
 }
 
 IR::Variable const& findMember(IR::Struct& parent,
-                         std::string const& name,
-                         TestUtil::AccessModifier access) {
+                               std::string const& name,
+                               TestUtil::AccessModifier access) {
 	auto data = getStructDataBasedOnAccess(parent, access);
 	REQUIRE(data != nullptr);
 	auto& members = data->m_memberVariables;

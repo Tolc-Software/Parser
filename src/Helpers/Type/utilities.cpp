@@ -4,7 +4,6 @@
 #include <IR/ir.hpp>
 #include <clang/AST/Type.h>
 #include <optional>
-#include <spdlog/spdlog.h>
 #include <string_view>
 
 namespace Helpers::Type {

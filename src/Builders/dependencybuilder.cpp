@@ -1,5 +1,4 @@
 #include "Builders/dependencybuilder.hpp"
-#include "Parser/MetaData.hpp"
 #include <IR/ir.hpp>
 #include <iostream>
 #include <map>
@@ -13,9 +12,12 @@ namespace {
 
 void copyDependenciesFromTo(size_t from,
                             size_t to,
-                            std::vector<std::vector<size_t>>& dependencies) {
+                            std::vector<std::set<size_t>>& dependencies) {
 	for (auto dep : dependencies[from]) {
-		dependencies[to].push_back(dep);
+		// Don't depend on yourself
+		if (dep != to) {
+			dependencies[to].insert(dep);
+		}
 	}
 }
 
@@ -43,28 +45,48 @@ getDependencyFromType(IR::Type const& type,
 
 void addVariableDependencies(IR::Variable const& variable,
                              std::map<std::string, size_t> const& idMap,
-                             std::vector<std::vector<size_t>>& dependencies) {
+                             std::vector<std::set<size_t>>& dependencies) {
 	if (auto dep = getDependencyFromType(variable.m_type, idMap)) {
-		dependencies[variable.m_id].push_back(dep.value());
+		dependencies[variable.m_id].insert(dep.value());
+	}
+}
+
+void addArgumentDependencies(IR::Argument const& arg,
+                             size_t functionId,
+                             std::map<std::string, size_t> const& idMap,
+                             std::vector<std::set<size_t>>& dependencies) {
+	if (auto dep = getDependencyFromType(arg.m_type, idMap)) {
+		dependencies[functionId].insert(dep.value());
+	}
+}
+
+void addTemplateDependencies(size_t parentId,
+                             std::vector<IR::Type> const& templateArgs,
+                             std::map<std::string, size_t> const& idMap,
+                             std::vector<std::set<size_t>>& dependencies) {
+	for (auto const& arg : templateArgs) {
+		if (auto dep = getDependencyFromType(arg, idMap)) {
+			dependencies[parentId].insert(dep.value());
+		}
 	}
 }
 
 void addFunctionArgumentDependencies(
     IR::Function const& f,
     std::map<std::string, size_t> const& idMap,
-    std::vector<std::vector<size_t>>& dependencies) {
+    std::vector<std::set<size_t>>& dependencies) {
 	for (auto const& arg : f.m_arguments) {
-		addVariableDependencies(arg, idMap, dependencies);
-		// The arguments dependencies are the functions as well
-		copyDependenciesFromTo(arg.m_id, f.m_id, dependencies);
+		addArgumentDependencies(arg, f.m_id, idMap, dependencies);
 	}
+
+	addTemplateDependencies(f.m_id, f.m_templateArguments, idMap, dependencies);
 }
 
 void addFunctionDependencies(IR::Function const& f,
                              std::map<std::string, size_t> const& idMap,
-                             std::vector<std::vector<size_t>>& dependencies) {
+                             std::vector<std::set<size_t>>& dependencies) {
 	if (auto dep = getDependencyFromType(f.m_returnType, idMap)) {
-		dependencies[f.m_id].push_back(dep.value());
+		dependencies[f.m_id].insert(dep.value());
 	}
 
 	addFunctionArgumentDependencies(f, idMap, dependencies);
@@ -73,28 +95,51 @@ void addFunctionDependencies(IR::Function const& f,
 void addStructDataDependencies(IR::StructData const& data,
                                size_t parentId,
                                std::map<std::string, size_t> const& idMap,
-                               std::vector<std::vector<size_t>>& dependencies) {
+                               std::vector<std::set<size_t>>& dependencies) {
 	for (auto const& c : data.m_constructors) {
 		addFunctionArgumentDependencies(c, idMap, dependencies);
 		// The constructors dependencies are the structs as well
 		copyDependenciesFromTo(c.m_id, parentId, dependencies);
+		// All of these depend on the struct being defined
+		dependencies[c.m_id].insert(parentId);
 	}
 
 	for (auto const& d : data.m_destructors) {
 		addFunctionArgumentDependencies(d, idMap, dependencies);
 		// The destructors dependencies are the structs as well
 		copyDependenciesFromTo(d.m_id, parentId, dependencies);
+		// All of these depend on the struct being defined
+		dependencies[d.m_id].insert(parentId);
 	}
 
 	for (auto const& f : data.m_functions) {
 		addFunctionDependencies(f, idMap, dependencies);
 		// The member functions dependencies are the structs as well
 		copyDependenciesFromTo(f.m_id, parentId, dependencies);
+		// All of these depend on the struct being defined
+		dependencies[f.m_id].insert(parentId);
 	}
 
 	for (auto const& e : data.m_enums) {
 		// The nested enum depends on the class
-		dependencies[e.m_id].push_back(parentId);
+		dependencies[e.m_id].insert(parentId);
+		// All of these depend on the struct being defined
+		dependencies[e.m_id].insert(parentId);
+	}
+
+	for (auto const& variable : data.m_memberVariables) {
+		addVariableDependencies(variable, idMap, dependencies);
+		copyDependenciesFromTo(variable.m_id, parentId, dependencies);
+		// All of these depend on the struct being defined
+		dependencies[variable.m_id].insert(parentId);
+	}
+
+	for (auto const& op : data.m_operators) {
+		addFunctionArgumentDependencies(op.second, idMap, dependencies);
+		// The destructors dependencies are the structs as well
+		copyDependenciesFromTo(op.second.m_id, parentId, dependencies);
+		// All of these depend on the struct being defined
+		dependencies[op.second.m_id].insert(parentId);
 	}
 
 	for (auto const& i : data.m_inherited) {
@@ -104,37 +149,22 @@ void addStructDataDependencies(IR::StructData const& data,
 		}
 	}
 
-	for (auto const& variable : data.m_memberVariables) {
-		addVariableDependencies(variable, idMap, dependencies);
-		copyDependenciesFromTo(variable.m_id, parentId, dependencies);
-	}
-
-	for (auto const& op : data.m_operators) {
-		addFunctionArgumentDependencies(op.second, idMap, dependencies);
-		// The destructors dependencies are the structs as well
-		copyDependenciesFromTo(op.second.m_id, parentId, dependencies);
-	}
-
 	// TODO: Nested structs might create more dependencies
 }
 
 void addStructDependencies(IR::Struct const& s,
                            std::map<std::string, size_t> const& idMap,
-                           std::vector<std::vector<size_t>>& dependencies) {
+                           std::vector<std::set<size_t>>& dependencies) {
 	addStructDataDependencies(s.m_public, s.m_id, idMap, dependencies);
 	addStructDataDependencies(s.m_private, s.m_id, idMap, dependencies);
 	addStructDataDependencies(s.m_protected, s.m_id, idMap, dependencies);
 
-	for (auto const& arg : s.m_templateArguments) {
-		if (auto dep = getDependencyFromType(arg, idMap)) {
-			dependencies[s.m_id].push_back(dep.value());
-		}
-	}
+	addTemplateDependencies(s.m_id, s.m_templateArguments, idMap, dependencies);
 }
 
 void addNamespaceDependencies(IR::Namespace const& ns,
                               std::map<std::string, size_t> const& idMap,
-                              std::vector<std::vector<size_t>>& dependencies) {
+                              std::vector<std::set<size_t>>& dependencies) {
 	for (auto const& variable : ns.m_variables) {
 		addVariableDependencies(variable, idMap, dependencies);
 	}
@@ -151,7 +181,7 @@ void addNamespaceDependencies(IR::Namespace const& ns,
 
 void buildDependency(IR::Namespace const& ns,
                      std::map<std::string, size_t> const& idMap,
-                     std::vector<std::vector<size_t>>& dependencies) {
+                     std::vector<std::set<size_t>>& dependencies) {
 	std::queue<IR::Namespace const*> nsToProcess;
 	nsToProcess.push(&ns);
 
@@ -169,13 +199,13 @@ void buildDependency(IR::Namespace const& ns,
 	}
 }
 
-void createDefinitionOrder(Parser::MetaData& metaData,
-                           std::vector<std::vector<size_t>>& dependencyMap) {
+bool createDefinitionOrder(std::vector<std::set<size_t>> const& dependencyMap,
+                           std::vector<size_t>& definitionOrder) {
 	// The ones already put into the ordered list of objects to define
 	std::set<size_t> alreadyOrdered;
 
 	bool hasProgressed = true;
-	while (metaData.m_definitionOrder.size() != dependencyMap.size()) {
+	while (definitionOrder.size() != dependencyMap.size()) {
 		// Has this round put us closer to a solution?
 		hasProgressed = false;
 
@@ -186,7 +216,7 @@ void createDefinitionOrder(Parser::MetaData& metaData,
 				if (auto hasAdded = alreadyOrdered.insert(index);
 				    hasAdded.second) {
 					// Never added before => Add it
-					metaData.m_definitionOrder.push_back(index);
+					definitionOrder.push_back(index);
 					hasProgressed = true;
 				}
 			} else {
@@ -202,7 +232,7 @@ void createDefinitionOrder(Parser::MetaData& metaData,
 				}
 				if (canAdd) {
 					// No children => we can add it
-					metaData.m_definitionOrder.push_back(index);
+					definitionOrder.push_back(index);
 					alreadyOrdered.insert(index);
 					hasProgressed = true;
 				}
@@ -212,8 +242,9 @@ void createDefinitionOrder(Parser::MetaData& metaData,
 
 		if (!hasProgressed) {
 			// No progress made => There must be a circular dependency
-			return;
+			return false;
 		}
 	}
+	return true;
 }
 }    // namespace Builders

@@ -2,6 +2,54 @@
 #include "TestUtil/parse.hpp"
 #include <catch2/catch.hpp>
 
+TEST_CASE("One function depends on two structs", "[dependency]") {
+	auto [globalNS, meta] = TestUtil::parseStringWithMeta(R"(
+struct Data0 {};
+struct Data1 {};
+
+struct Consumer {
+	Consumer(Data0 d0, Data1 d1);
+};
+)");
+	REQUIRE(meta.m_definitionOrder.size() == 4);
+	auto const& data0 = TestUtil::findStruct(globalNS, "Data0");
+	auto const& data1 = TestUtil::findStruct(globalNS, "Data1");
+	auto const& consumer = TestUtil::findStruct(globalNS, "Consumer");
+	REQUIRE(consumer.m_public.m_constructors.size() == 1);
+	auto const& consumerConstructor = consumer.m_public.m_constructors.back();
+
+	// Data0 comes first in the file
+	// Consumer requires both Data0 and Data1 to be defined
+	REQUIRE(meta.m_definitionOrder[0] == data0.m_id);
+	REQUIRE(meta.m_definitionOrder[1] == data1.m_id);
+	REQUIRE(meta.m_definitionOrder[2] == consumer.m_id);
+	REQUIRE(meta.m_definitionOrder[3] == consumerConstructor.m_id);
+}
+
+TEST_CASE("Linear dependency", "[dependency]") {
+	auto [globalNS, meta] = TestUtil::parseStringWithMeta(R"(
+struct Data {};
+
+struct Consumer {
+	Consumer(Data d);
+};
+
+void f(Consumer);
+)");
+	REQUIRE(meta.m_definitionOrder.size() == 4);
+	auto const& data = TestUtil::findStruct(globalNS, "Data");
+	auto const& consumer = TestUtil::findStruct(globalNS, "Consumer");
+	REQUIRE(consumer.m_public.m_constructors.size() == 1);
+	auto const& consumerConstructor = consumer.m_public.m_constructors.back();
+	auto const& f = TestUtil::findFunction(globalNS, "f");
+
+	// f requires Consumer which requires Data
+	REQUIRE(meta.m_definitionOrder[0] == data.m_id);
+	REQUIRE(meta.m_definitionOrder[1] == consumer.m_id);
+	REQUIRE(meta.m_definitionOrder[2] == consumerConstructor.m_id);
+	REQUIRE(meta.m_definitionOrder[3] == f.m_id);
+}
+
 TEST_CASE("Two functions with struct dependency", "[dependency]") {
 	auto [globalNS, meta] = TestUtil::parseStringWithMeta(R"(
 struct Data {};
@@ -78,7 +126,7 @@ MyLib::Data::Inner f();
 	REQUIRE(meta.m_definitionOrder[2] == f.m_id);
 }
 
-TEST_CASE("Function with struct dependency", "[dependency]") {
+TEST_CASE("Function requires namespaced struct", "[dependency]") {
 	auto [globalNS, meta] = TestUtil::parseStringWithMeta(R"(
 
 namespace MyLib {
@@ -97,7 +145,7 @@ MyLib::Data f();
 	REQUIRE(meta.m_definitionOrder[1] == f.m_id);
 }
 
-TEST_CASE("Dependency between enum types are predetermined", "[dependency]") {
+TEST_CASE("Function requires namespaced enum", "[dependency]") {
 	auto [globalNS, meta] = TestUtil::parseStringWithMeta(R"(
 
 namespace MyLib {

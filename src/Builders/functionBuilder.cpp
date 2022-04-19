@@ -206,7 +206,7 @@ buildFunction(clang::FunctionDecl* functionDecl,
 	for (auto& p : functionDecl->parameters()) {
 		if (auto argType = Builders::buildType(
 		        getPotentiallyTemplatedType(p->getType()), policy)) {
-			IR::Variable arg;
+			IR::Argument arg;
 			arg.m_name = p->getName();
 			arg.m_type = argType.value();
 			parsedFunc.m_arguments.push_back(arg);
