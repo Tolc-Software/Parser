@@ -2,7 +2,6 @@
 #include "TestUtil/types.hpp"
 #include <catch2/catch.hpp>
 #include <fmt/format.h>
-#include <spdlog/spdlog.h>
 #include <variant>
 
 namespace {
@@ -14,7 +13,7 @@ void requireTypeIsFunction(T type) {
 	REQUIRE(funcType->m_representation != "");
 }
 
-IR::Variable getFunctionArgument(IR::Namespace const& globalNS) {
+IR::Argument getFunctionArgument(IR::Namespace const& globalNS) {
 	REQUIRE(globalNS.m_functions.size() == 1);
 	auto& f = globalNS.m_functions.back();
 	REQUIRE(f.m_arguments.size() == 1);
@@ -83,4 +82,3 @@ void f(std::function<void()> arg);
 
 	requireTypeIsFunction(type);
 }
-

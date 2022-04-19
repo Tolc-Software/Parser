@@ -9,7 +9,6 @@
 #include <clang/AST/Type.h>
 #include <llvm/Support/Casting.h>
 #include <queue>
-#include <spdlog/spdlog.h>
 #include <variant>
 #include <vector>
 
@@ -127,7 +126,6 @@ std::optional<IR::Type> buildOneLevelIRType(clang::QualType type,
 	bool hasConst = Helpers::Type::isConst(type);
 	type = type.getUnqualifiedType();
 
-	spdlog::debug(R"(Trying to build IR type from "{}")", representation);
 	// NOTE: Here we are not including the policy since we want the actual type,
 	//       and not what the user wrote
 	if (auto maybeIrType = Helpers::Type::getIRType(type.getAsString())) {

@@ -1,5 +1,6 @@
 #include "Builders/commonBuilder.hpp"
 #include "IRProxy/IRData.hpp"
+#include "Visitor/Helpers/addId.hpp"
 #include "Visitor/Helpers/getDocumentation.hpp"
 #include "Visitor/ParserVisitor.hpp"
 #include <spdlog/spdlog.h>
@@ -7,7 +8,8 @@
 namespace Visitor {
 
 bool ParserVisitor::VisitEnumDecl(clang::EnumDecl* enumDecl) {
-	if (isInSystemHeader(enumDecl)) {
+	if (isInSystemHeader(enumDecl) ||
+	    !enumDecl->isThisDeclarationADefinition()) {
 		// Continue the AST search
 		return true;
 	}
@@ -34,8 +36,10 @@ bool ParserVisitor::VisitEnumDecl(clang::EnumDecl* enumDecl) {
 	// Check for access modifiers (public, private, ...)
 	parsedEnum.m_modifier = Builders::convertToIRAccess(enumDecl->getAccess());
 
+	Helpers::addIdToEnum(parsedEnum, m_irData);
+
 	m_irData.m_enums.push_back(parsedEnum);
 	// Continue the AST search
 	return true;
 }
-}
+}    // namespace Visitor

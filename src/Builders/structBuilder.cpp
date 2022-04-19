@@ -32,6 +32,7 @@ IR::Struct createStruct(IRProxy::Struct& s) {
 
 	IR::Struct newStruct;
 	newStruct.m_name = name;
+	newStruct.m_id = s.m_id;
 	// Representation is the fully qualified name
 	newStruct.m_representation = s.m_fullyQualifiedName;
 	newStruct.m_documentation = s.m_documentation;

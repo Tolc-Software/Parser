@@ -58,6 +58,7 @@ IR::Function createFunction(std::string_view name,
                             IRProxy::Function const& proxyF) {
 	IR::Function f;
 	f.m_name = name;
+	f.m_id = proxyF.m_id;
 
 	// Representation is the fully qualified name
 	f.m_representation = proxyF.m_fullyQualifiedName;
@@ -180,10 +181,9 @@ buildFunction(clang::FunctionDecl* functionDecl,
 
 	parsedFunc.m_operator = std::nullopt;
 	auto& simpleName = parsedFunc.m_path.back().first;
-	auto constexpr afterOperator = 8;
-	if (simpleName.starts_with("operator") &&
-	    simpleName.size() > afterOperator) {
-		auto opType = simpleName.substr(afterOperator);
+	std::string_view constexpr op = "operator";
+	if (simpleName.starts_with(op) && simpleName.size() > op.size()) {
+		auto opType = simpleName.substr(op.size());
 		if (auto maybeOperator = getOperator(opType)) {
 			parsedFunc.m_operator = maybeOperator.value();
 		} else {
@@ -206,7 +206,7 @@ buildFunction(clang::FunctionDecl* functionDecl,
 	for (auto& p : functionDecl->parameters()) {
 		if (auto argType = Builders::buildType(
 		        getPotentiallyTemplatedType(p->getType()), policy)) {
-			IR::Variable arg;
+			IR::Argument arg;
 			arg.m_name = p->getName();
 			arg.m_type = argType.value();
 			parsedFunc.m_arguments.push_back(arg);

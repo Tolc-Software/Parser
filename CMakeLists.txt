@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(
   Parser
-  VERSION 0.4.1
+  VERSION 0.5.0
   LANGUAGES CXX)
 
 configure_file(docs/ReleaseNotes/version.in
@@ -35,7 +35,7 @@ include(${modules}/Sanitizers.cmake)
 FetchContent_Declare(
   IRSpecification
   GIT_REPOSITORY https://github.com/Tolc-Software/IntermediateRepresentation.git
-  GIT_TAG v0.14.0)
+  GIT_TAG v0.15.0)
 FetchContent_MakeAvailable(IRSpecification)
 
 FetchContent_Declare(
@@ -82,6 +82,7 @@ configure_file(src/Helpers/commandLineArgs.cpp.in
 add_llvm_library(
   Parser
   src/Builders/commonBuilder.cpp
+  src/Builders/dependencybuilder.cpp
   src/Builders/enumBuilder.cpp
   src/Builders/fieldBuilder.cpp
   src/Builders/functionBuilder.cpp
@@ -89,6 +90,7 @@ add_llvm_library(
   src/Builders/structBuilder.cpp
   src/Builders/typeBuilder.cpp
   src/Consumer/ParserConsumer.cpp
+  src/Factory/ParserFrontendActionFactory.cpp
   src/Frontend/ParserFrontendAction.cpp
   src/Helpers/Type/Matchers/base.cpp
   src/Helpers/Type/Matchers/container.cpp
@@ -104,6 +106,7 @@ add_llvm_library(
   src/Parser/Parse.cpp
   src/Parser/Windows/systemIncludeHelper.cpp
   src/Template/cache.cpp
+  src/Visitor/Helpers/addId.cpp
   src/Visitor/Helpers/getDocumentation.cpp
   src/Visitor/Helpers/parseFunction.cpp
   src/Visitor/ParserVisitor.cpp

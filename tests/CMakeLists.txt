@@ -34,6 +34,7 @@ foreach(
   complex.cpp
   constructorsDestructors.cpp
   dataStructs.cpp
+  dependency.cpp
   deques.cpp
   docsClass.cpp
   docsEnums.cpp

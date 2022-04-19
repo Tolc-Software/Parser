@@ -4,6 +4,7 @@
 #include "Helpers/Type/utilities.hpp"
 #include "Helpers/Utils/split.hpp"
 #include "IRProxy/IRData.hpp"
+#include "Visitor/Helpers/addId.hpp"
 #include "Visitor/Helpers/getDocumentation.hpp"
 #include "Visitor/ParserVisitor.hpp"
 #include <clang/AST/Decl.h>
@@ -14,6 +15,7 @@ namespace Visitor {
 
 std::optional<IR::Variable>
 buildVar(clang::VarDecl* field,
+         IRProxy::IRData& data,
          std::optional<clang::QualType> templateSpecialization = std::nullopt) {
 	IR::Variable variable;
 	variable.m_name = field->getName();
@@ -30,6 +32,8 @@ buildVar(clang::VarDecl* field,
 	} else {
 		return std::nullopt;
 	}
+
+	Helpers::addIdToVariable(variable, data);
 
 	return variable;
 }
@@ -49,7 +53,7 @@ bool ParserVisitor::VisitVarDecl(clang::VarDecl* varDecl) {
 	spdlog::debug(R"(Parsing member variable: "{}")",
 	              varDecl->getQualifiedNameAsString());
 
-	if (auto maybeVariable = buildVar(varDecl)) {
+	if (auto maybeVariable = buildVar(varDecl, m_irData)) {
 		IR::Variable variable = maybeVariable.value();
 
 		switch (varDecl->getStorageClass()) {
@@ -80,8 +84,10 @@ bool ParserVisitor::VisitVarDecl(clang::VarDecl* varDecl) {
 				return false;
 			}
 			// FieldDecl are for non-static members
-			m_irData.m_memberVariables[parentName].push_back(
-			    {variable, modifier});
+			IRProxy::MemberVariable m;
+			m.m_variable = variable;
+			m.m_modifier = modifier;
+			m_irData.m_memberVariables[parentName].push_back(m);
 		} else {
 			m_irData.m_globalVariables[parentName].push_back(variable);
 		}
