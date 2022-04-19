@@ -210,7 +210,7 @@ bool createDefinitionOrder(std::vector<std::set<size_t>> const& dependencyMap,
 		hasProgressed = false;
 
 		size_t index = 0;
-		for (auto dependencies : dependencyMap) {
+		for (auto const& dependencies : dependencyMap) {
 			if (dependencies.empty()) {
 				// No dependencies => we can add it
 				if (auto hasAdded = alreadyOrdered.insert(index);
