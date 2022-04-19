@@ -8,11 +8,47 @@
 #include <clang/AST/Decl.h>
 #include <clang/AST/DeclTemplate.h>
 #include <clang/AST/Type.h>
+#include <fmt/format.h>
 #include <llvm/Support/Casting.h>
 #include <set>
+#include <spdlog/spdlog.h>
 #include <string>
 
 namespace Visitor {
+
+namespace {
+void reportDependencyError(std::map<std::string, size_t> const& idMap,
+                           std::vector<std::set<size_t>> const& dependencyMap,
+                           std::vector<size_t> const& definitionOrder) {
+	// Did not successfully add all of the dependencies to definitionOrder
+	// Lets see which types were unsuccessful.
+	// No need to care for speed, we are failing
+
+	// The ids which have not been ordered
+	std::vector<size_t> missingIds;
+	for (size_t i = 0; i < dependencyMap.size(); i++) {
+		if (std::find(definitionOrder.begin(), definitionOrder.end(), i) ==
+		    definitionOrder.end()) {
+			missingIds.push_back(i);
+		}
+	}
+
+	// Names of the types not oredered
+	std::vector<std::string> missingTypes;
+	for (auto id : missingIds) {
+		for (auto const& [typeName, i] : idMap) {
+			if (id == i) {
+				missingTypes.push_back(typeName);
+			}
+		}
+	}
+
+	spdlog::error(
+	    "Unable to parse the dependencies between the following types: ({}).\nIs there a circular dependency?",
+	    fmt::join(missingTypes, ", "));
+}
+}    // namespace
+
 ParserVisitor::ParserVisitor(clang::ASTContext* context,
                              IR::Namespace& parsedNamespaces,
                              Parser::MetaData& metaData,
@@ -51,6 +87,9 @@ ParserVisitor::~ParserVisitor() {
 
 		if (!m_parsedSuccessfully) {
 			// Find out what went wrong
+			reportDependencyError(m_irData.m_idMap,
+			                      m_irData.m_dependencyMap,
+			                      m_metaData.m_definitionOrder);
 		}
 	}
 }
