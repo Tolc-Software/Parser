@@ -65,23 +65,6 @@ Data g();
 	REQUIRE(meta.m_definitionOrder[0] == data.m_id);
 }
 
-TEST_CASE("Function with enum dependency, forward declaration",
-          "[dependency]") {
-	auto [globalNS, meta] = TestUtil::parseStringWithMeta(R"(
-enum Data;
-Data* f();
-
-enum Data { D0 };
-)");
-	REQUIRE(meta.m_definitionOrder.size() == 2);
-	auto const& data = TestUtil::findEnum(globalNS, "Data");
-
-	auto const& f = TestUtil::findFunction(globalNS, "f");
-	// f requires Data to be defined before
-	REQUIRE(meta.m_definitionOrder[0] == data.m_id);
-	REQUIRE(meta.m_definitionOrder[1] == f.m_id);
-}
-
 TEST_CASE("Function with struct dependency, forward declaration",
           "[dependency]") {
 	auto [globalNS, meta] = TestUtil::parseStringWithMeta(R"(
