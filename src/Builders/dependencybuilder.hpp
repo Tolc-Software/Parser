@@ -2,6 +2,7 @@
 
 #include <IR/ir.hpp>
 #include <map>
+#include <optional>
 #include <set>
 #include <vector>
 
@@ -17,8 +18,7 @@ void buildDependency(IR::Namespace const& ns,
 /*
 * From dependencies, create the order in which the objects can be defined
 * This is not unique.
-* Returns true on success
 */
-bool createDefinitionOrder(std::vector<std::set<size_t>> const& dependencies,
-                           std::vector<size_t>& definitionOrder);
+std::optional<std::vector<size_t>>
+createDefinitionOrder(std::vector<std::set<size_t>> const& dependencies);
 }    // namespace Builders

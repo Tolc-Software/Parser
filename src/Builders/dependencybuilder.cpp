@@ -1,7 +1,7 @@
 #include "Builders/dependencybuilder.hpp"
 #include <IR/ir.hpp>
-#include <iostream>
 #include <map>
+#include <optional>
 #include <queue>
 #include <set>
 #include <vector>
@@ -199,10 +199,11 @@ void buildDependency(IR::Namespace const& ns,
 	}
 }
 
-bool createDefinitionOrder(std::vector<std::set<size_t>> const& dependencyMap,
-                           std::vector<size_t>& definitionOrder) {
+std::optional<std::vector<size_t>>
+createDefinitionOrder(std::vector<std::set<size_t>> const& dependencyMap) {
 	// The ones already put into the ordered list of objects to define
 	std::set<size_t> alreadyOrdered;
+	std::vector<size_t> definitionOrder;
 
 	bool hasProgressed = true;
 	while (definitionOrder.size() != dependencyMap.size()) {
@@ -242,9 +243,9 @@ bool createDefinitionOrder(std::vector<std::set<size_t>> const& dependencyMap,
 
 		if (!hasProgressed) {
 			// No progress made => There must be a circular dependency
-			return false;
+			return std::nullopt;
 		}
 	}
-	return true;
+	return definitionOrder;
 }
 }    // namespace Builders

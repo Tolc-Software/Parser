@@ -82,10 +82,12 @@ ParserVisitor::~ParserVisitor() {
 		// IR built -> Can proceed to build meta data
 		Builders::buildDependency(
 		    m_parsedNamespaces, m_irData.m_idMap, m_irData.m_dependencyMap);
-		m_parsedSuccessfully = Builders::createDefinitionOrder(
-		    m_irData.m_dependencyMap, m_metaData.m_definitionOrder);
+		if (auto maybeOrder =
+		        Builders::createDefinitionOrder(m_irData.m_dependencyMap)) {
+			m_metaData.m_definitionOrder = maybeOrder.value();
+		} else {
+			m_parsedSuccessfully = false;
 
-		if (!m_parsedSuccessfully) {
 			// Find out what went wrong
 			reportDependencyError(m_irData.m_idMap,
 			                      m_irData.m_dependencyMap,
