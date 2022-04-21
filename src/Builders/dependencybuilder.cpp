@@ -1,5 +1,6 @@
 #include "Builders/dependencybuilder.hpp"
 #include <IR/ir.hpp>
+#include <algorithm>
 #include <map>
 #include <optional>
 #include <queue>
@@ -202,43 +203,36 @@ void buildDependency(IR::Namespace const& ns,
 std::optional<std::vector<size_t>>
 createDefinitionOrder(std::vector<std::set<size_t>> const& dependencyMap) {
 	// The ones already put into the ordered list of objects to define
-	std::set<size_t> alreadyOrdered;
-	std::vector<size_t> definitionOrder;
+	std::set<size_t> defined;
+	std::vector<size_t> order;
 
-	bool hasProgressed = true;
-	while (definitionOrder.size() != dependencyMap.size()) {
+	while (order.size() != dependencyMap.size()) {
 		// Has this round put us closer to a solution?
-		hasProgressed = false;
+		bool hasProgressed = false;
 
-		size_t index = 0;
+		size_t id = 0;
 		for (auto const& dependencies : dependencyMap) {
 			if (dependencies.empty()) {
 				// No dependencies => we can add it
-				if (auto hasAdded = alreadyOrdered.insert(index);
-				    hasAdded.second) {
+				if (auto [_it, hasAdded] = defined.insert(id); hasAdded) {
 					// Never added before => Add it
-					definitionOrder.push_back(index);
+					order.push_back(id);
 					hasProgressed = true;
 				}
 			} else {
-				// Has dependencies => Have we defined all of them before?
-				bool canAdd = true;
-				for (auto dependency : dependencies) {
-					if (alreadyOrdered.find(dependency) ==
-					    alreadyOrdered.end()) {
-						// Found a dependency not previously defined => Stop for loop
-						canAdd = false;
-						break;
-					}
-				}
-				if (canAdd) {
-					// No children => we can add it
-					definitionOrder.push_back(index);
-					alreadyOrdered.insert(index);
+				if (std::all_of(dependencies.begin(),
+				                dependencies.end(),
+				                [&defined](auto dependency) {
+					                return defined.contains(dependency);
+				                })) {
+					// All of the dependencies are defined
+					// => we can add it
+					order.push_back(id);
+					defined.insert(id);
 					hasProgressed = true;
 				}
 			}
-			index++;
+			id++;
 		}
 
 		if (!hasProgressed) {
@@ -246,6 +240,6 @@ createDefinitionOrder(std::vector<std::set<size_t>> const& dependencyMap) {
 			return std::nullopt;
 		}
 	}
-	return definitionOrder;
+	return order;
 }
 }    // namespace Builders
