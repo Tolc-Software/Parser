@@ -7,6 +7,8 @@
 #include <set>
 #include <vector>
 
+#include <fmt/format.h>
+
 namespace Builders {
 
 namespace {
@@ -178,6 +180,53 @@ void addNamespaceDependencies(IR::Namespace const& ns,
 		addStructDependencies(s, idMap, dependencies);
 	}
 }
+// Helper class to have a queue that knows its items
+struct DependencyQueue {
+	bool empty() {
+		return ids.empty();
+	}
+
+	size_t front() {
+		return ids.front();
+	}
+
+	void push(size_t id) {
+		ids.push(id);
+		inQueue.insert(id);
+	}
+
+	void pop(size_t id) {
+		ids.pop();
+		inQueue.erase(id);
+	}
+
+	bool contains(size_t id) {
+		return inQueue.contains(id);
+	}
+
+	std::queue<size_t> ids;
+	std::set<size_t> inQueue;
+};
+
+std::pair<DependencyQueue, std::vector<std::vector<size_t>>>
+initializeDependencyData(std::vector<std::set<size_t>> const& dependencyMap) {
+	// [id: {dependent on id}]
+	std::vector<std::vector<size_t>> reversed(dependencyMap.size(),
+	                                          std::vector<size_t>());
+	DependencyQueue noDependencies;
+	size_t id = 0;
+	for (auto const& dependencies : dependencyMap) {
+		for (auto const& dependency : dependencies) {
+			reversed[dependency].push_back(id);
+		}
+		if (dependencies.empty()) {
+			noDependencies.push(id);
+		}
+		id++;
+	}
+	return {noDependencies, reversed};
+}
+
 }    // namespace
 
 void buildDependency(IR::Namespace const& ns,
@@ -200,45 +249,73 @@ void buildDependency(IR::Namespace const& ns,
 	}
 }
 
+void addPotentiallySolvedToQueue(std::vector<size_t> const& potentiallySolved,
+                                 std::set<size_t> const& definedPreviously,
+                                 DependencyQueue& ids) {
+	// The now potentially solved ids
+	for (auto const& maybeSolved : potentiallySolved) {
+		if (!definedPreviously.contains(maybeSolved) &&
+		    !ids.contains(maybeSolved)) {
+			ids.push(maybeSolved);
+		}
+	}
+}
+
 std::optional<std::vector<size_t>>
 createDefinitionOrder(std::vector<std::set<size_t>> const& dependencyMap) {
 	// The ones already put into the ordered list of objects to define
 	std::set<size_t> defined;
 	std::vector<size_t> order;
 
-	while (order.size() != dependencyMap.size()) {
+	// Start with the ids that have no dependencies
+	auto [idsToProcess, reversedDependencyMap] =
+	    initializeDependencyData(dependencyMap);
+
+	while (!idsToProcess.empty()) {
 		// Has this round put us closer to a solution?
 		bool hasProgressed = false;
 
-		size_t id = 0;
-		for (auto const& dependencies : dependencyMap) {
-			if (dependencies.empty()) {
-				// No dependencies => we can add it
-				if (auto [_it, hasAdded] = defined.insert(id); hasAdded) {
-					// Never added before => Add it
-					order.push_back(id);
-					hasProgressed = true;
-				}
-			} else {
-				if (std::all_of(dependencies.begin(),
-				                dependencies.end(),
-				                [&defined](auto dependency) {
-					                return defined.contains(dependency);
-				                })) {
-					// All of the dependencies are defined
-					// => we can add it
-					order.push_back(id);
-					defined.insert(id);
-					hasProgressed = true;
-				}
+		size_t id = idsToProcess.front();
+		auto const& dependencies = dependencyMap[id];
+
+		if (dependencies.empty() && defined.insert(id).second) {
+			// No dependencies
+			// Never added before => Add it
+			order.push_back(id);
+			hasProgressed = true;
+
+			// The ones who had id as a dependency
+			addPotentiallySolvedToQueue(
+			    reversedDependencyMap[id], defined, idsToProcess);
+		} else {
+			if (std::all_of(dependencies.begin(),
+			                dependencies.end(),
+			                [&defined](auto dependency) {
+				                return defined.contains(dependency);
+			                })) {
+				defined.insert(id);
+
+				// All of the dependencies are defined
+				// => we can add it
+				order.push_back(id);
+				hasProgressed = true;
+
+				// The ones who had id as a dependency
+				addPotentiallySolvedToQueue(
+				    reversedDependencyMap[id], defined, idsToProcess);
 			}
-			id++;
 		}
+		idsToProcess.pop(id);
 
 		if (!hasProgressed) {
 			// No progress made => There must be a circular dependency
 			return std::nullopt;
 		}
+	}
+
+	// Could have been no objects with no dependencies
+	if (order.size() != dependencyMap.size()) {
+		return std::nullopt;
 	}
 	return order;
 }
