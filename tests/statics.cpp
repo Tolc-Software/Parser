@@ -24,7 +24,7 @@ static int i;
 	auto globalNS = TestUtil::parseString(code);
 	auto& i = TestUtil::findVariable(globalNS, "i");
 
-	REQUIRE(i.m_type.m_isStatic);
+	REQUIRE(i.m_isStatic);
 }
 
 TEST_CASE("Static global function", "[statics]") {
@@ -63,5 +63,5 @@ struct MyClass
 	auto& i =
 	    TestUtil::findMember(myClass, "i", TestUtil::AccessModifier::Public);
 
-	REQUIRE(i.m_type.m_isStatic);
+	REQUIRE(i.m_isStatic);
 }

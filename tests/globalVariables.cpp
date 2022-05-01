@@ -18,21 +18,21 @@ namespace Nested {
 	auto globalNS = TestUtil::parseString(code);
 	auto& i = TestUtil::findVariable(globalNS, "i");
 	TestUtil::compare(i.m_type, IR::BaseType::Int);
-	REQUIRE(!i.m_type.m_isStatic);
+	REQUIRE(!i.m_isStatic);
 
 	auto& nested = TestUtil::findNamespace(globalNS, "Nested");
 
 	auto& nestedI = TestUtil::findVariable(nested, "i");
 	TestUtil::compare(nestedI.m_type, IR::BaseType::Int);
-	REQUIRE(!nestedI.m_type.m_isStatic);
+	REQUIRE(!nestedI.m_isStatic);
 
 	auto& f = TestUtil::findVariable(nested, "f");
 	TestUtil::compare(f.m_type, IR::BaseType::Int);
-	REQUIRE(!f.m_type.m_isStatic);
+	REQUIRE(!f.m_isStatic);
 
 	auto& evenFurther = TestUtil::findNamespace(nested, "EvenFurther");
 
 	auto& k = TestUtil::findVariable(evenFurther, "k");
 	TestUtil::compare(k.m_type, IR::BaseType::Int);
-	REQUIRE(k.m_type.m_isStatic);
+	REQUIRE(k.m_isStatic);
 }

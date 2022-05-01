@@ -5,6 +5,34 @@
 #include <fmt/format.h>
 #include <variant>
 
+TEST_CASE("Vectors with qualifiers", "[vector]") {
+	auto code = R"(
+#include <vector>
+
+void f(std::vector<double> const& v);
+void g(std::vector<double> const* w);
+)";
+	CAPTURE(code);
+	auto globalNS = TestUtil::parseString(code);
+	auto f = TestUtil::findFunction(globalNS, "f");
+	REQUIRE(f.m_arguments.size() == 1);
+	auto v = f.m_arguments.back();
+	REQUIRE(v.m_name == "v");
+	auto vec = TestUtil::getContainer(v.m_type);
+	REQUIRE(vec);
+	REQUIRE(vec->m_container == IR::ContainerType::Vector);
+	REQUIRE(vec->m_containedTypes.size() > 1);
+
+	auto g = TestUtil::findFunction(globalNS, "g");
+	REQUIRE(g.m_arguments.size() == 1);
+	auto w = g.m_arguments.back();
+	REQUIRE(w.m_name == "w");
+	auto wec = TestUtil::getContainer(w.m_type);
+	REQUIRE(wec);
+	REQUIRE(wec->m_container == IR::ContainerType::Vector);
+	REQUIRE(wec->m_containedTypes.size() > 1);
+}
+
 TEST_CASE("Nested vectors", "[vector]") {
 	auto code = R"(
 #include <vector>

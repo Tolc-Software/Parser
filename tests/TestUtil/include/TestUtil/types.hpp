@@ -5,8 +5,16 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <variant>
 
 namespace TestUtil {
+
+IR::Type::Container const* getContainer(IR::Type const& type) {
+	if (auto container = std::get_if<IR::Type::Container>(&type.m_type)) {
+		return container;
+	}
+	return nullptr;
+}
 
 std::vector<TestUtil::AccessModifier> getAccessModifiers() {
 	using TestUtil::AccessModifier;

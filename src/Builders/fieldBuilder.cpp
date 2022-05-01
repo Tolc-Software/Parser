@@ -27,7 +27,7 @@ buildField(clang::FieldDecl* field,
 	                                    policy)) {
 		variable.m_type = type.value();
 		// Static members are of type VarDecl
-		variable.m_type.m_isStatic = false;
+		variable.m_isStatic = false;
 
 		variable.m_documentation = Visitor::Helpers::getDocumentation(field);
 	} else {

@@ -58,14 +58,14 @@ bool ParserVisitor::VisitVarDecl(clang::VarDecl* varDecl) {
 
 		switch (varDecl->getStorageClass()) {
 			case (clang::StorageClass::SC_Static):
-				variable.m_type.m_isStatic = true;
+				variable.m_isStatic = true;
 				break;
 			case (clang::StorageClass::SC_None):
 			case (clang::StorageClass::SC_Extern):
 			case (clang::StorageClass::SC_PrivateExtern):
 			case (clang::StorageClass::SC_Auto):
 			case (clang::StorageClass::SC_Register):
-				variable.m_type.m_isStatic = false;
+				variable.m_isStatic = false;
 				break;
 		}
 

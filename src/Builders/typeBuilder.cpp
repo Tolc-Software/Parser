@@ -165,7 +165,6 @@ IR::Type buildIRTypeFromIntegral(Integral const& integral) {
 	type.m_numPointers = 0;
 	type.m_isReference = false;
 	type.m_isConst = false;
-	type.m_isStatic = false;
 	type.m_type = IR::Type::Integral();
 
 	return type;
@@ -181,9 +180,12 @@ ProxyType buildProxyType(IR::Type& irType,
 	p.m_type = &irType;
 	// Check if we need to go even further
 	if (auto type = std::get_if<clang::QualType>(&typeOrIntegral)) {
-		if (isTemplateSpecialization(irType) &&
-		    isTemplateSpecialization(*type)) {
-			for (auto templateArg : getTemplateArgs(*type)) {
+		auto unQualifiedType = type->getUnqualifiedType();
+		unQualifiedType = unQualifiedType.getNonReferenceType();
+		unQualifiedType = Helpers::Type::getTypeWithPointersRemoved(unQualifiedType);
+		if (isTemplateSpecialization(irType) ||
+		    isTemplateSpecialization(unQualifiedType)) {
+			for (auto templateArg : getTemplateArgs(unQualifiedType)) {
 				if (auto qualType =
 				        std::get_if<clang::QualType>(&templateArg)) {
 					if (auto irTemplateArg =

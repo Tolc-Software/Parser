@@ -32,13 +32,13 @@ namespace MyLib {
 	auto& simpleMember = TestUtil::findStruct(globalNS, "SimpleMember");
 	auto& myString = TestUtil::findMember(
 	    simpleMember, "myString", TestUtil::AccessModifier::Public);
-	REQUIRE(!myString.m_type.m_isStatic);
+	REQUIRE(!myString.m_isStatic);
 	REQUIRE(!myString.m_type.m_isConst);
 
 	auto& constMember = TestUtil::findStruct(globalNS, "ConstMember");
 	auto& i = TestUtil::findMember(
 	    constMember, "i", TestUtil::AccessModifier::Public);
-	REQUIRE(!i.m_type.m_isStatic);
+	REQUIRE(!i.m_isStatic);
 	REQUIRE(i.m_type.m_isConst);
 
 	auto& privateMember = TestUtil::findStruct(globalNS, "PrivateMember");
@@ -46,16 +46,16 @@ namespace MyLib {
 	    privateMember, "str0", TestUtil::AccessModifier::Private);
 	auto& str1 = TestUtil::findMember(
 	    privateMember, "str1", TestUtil::AccessModifier::Private);
-	REQUIRE(!str0.m_type.m_isStatic);
+	REQUIRE(!str0.m_isStatic);
 	REQUIRE(!str0.m_type.m_isConst);
-	REQUIRE(str1.m_type.m_isStatic);
+	REQUIRE(str1.m_isStatic);
 	REQUIRE(!str1.m_type.m_isConst);
 
 	auto& myLib = TestUtil::findNamespace(globalNS, "MyLib");
 	auto& nested = TestUtil::findStruct(myLib, "Nested");
 	auto& d =
 	    TestUtil::findMember(nested, "d", TestUtil::AccessModifier::Public);
-	REQUIRE(!d.m_type.m_isStatic);
+	REQUIRE(!d.m_isStatic);
 	REQUIRE(!d.m_type.m_isConst);
 }
 
