@@ -34,14 +34,15 @@ And you should get all the necessary components of the library.
 #include <iostream>
 
 int main() {
-    auto parsedData = Parser::parseString(R"(
+    // Returns a std::optional<IR::Namespace>
+    auto maybeParsed = Parser::parseString(R"(
 int f() {
     return 5;
 }
     )");
 
-    if (parsedData) {
-        auto& [globalNamespace, metaData] = parsedData.value();
+    if (maybeParsed) {
+        auto& globalNamespace = maybeParsed.value();
         // Will return "f"
         std::cout << globalNamespace.m_functions[0].m_name << '\n';
     }

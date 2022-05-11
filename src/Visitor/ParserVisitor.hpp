@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IRProxy/IRData.hpp"
-#include "Parser/MetaData.hpp"
 #include "Template/cache.hpp"
 #include <IR/ir.hpp>
 #include <clang/AST/RecursiveASTVisitor.h>
@@ -13,7 +12,6 @@ class ParserVisitor : public clang::RecursiveASTVisitor<ParserVisitor> {
 public:
 	explicit ParserVisitor(clang::ASTContext* context,
 	                       IR::Namespace& parsedNamespaces,
-	                       Parser::MetaData& metaData,
 	                       bool& parsedSuccessfully);
 
 	// Will populate the m_parsedNamespaces
@@ -57,10 +55,6 @@ private:
 	// The final IR AST
 	// This will get filled in the destructor of the visitor
 	IR::Namespace& m_parsedNamespaces;
-
-	// Data about the parsed code
-	// Will be returned to the final user
-	Parser::MetaData& m_metaData;
 
 	// Set to false if any visitor found an unrecoverable error
 	bool& m_parsedSuccessfully;

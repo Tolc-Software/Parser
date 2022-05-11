@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(
   Parser
-  VERSION 0.5.5
+  VERSION 0.5.6
   LANGUAGES CXX)
 
 configure_file(docs/ReleaseNotes/version.in
@@ -82,7 +82,6 @@ configure_file(src/Helpers/commandLineArgs.cpp.in
 add_llvm_library(
   Parser
   src/Builders/commonBuilder.cpp
-  src/Builders/dependencybuilder.cpp
   src/Builders/enumBuilder.cpp
   src/Builders/fieldBuilder.cpp
   src/Builders/functionBuilder.cpp

@@ -1,6 +1,5 @@
 #include "Factory/ParserFrontendActionFactory.hpp"
 #include "Frontend/ParserFrontendAction.hpp"
-#include "Parser/MetaData.hpp"
 #include <IR/ir.hpp>
 #include <clang/Tooling/Tooling.h>
 #include <memory>
@@ -10,31 +9,26 @@ namespace Factory {
 // Creates a Frontend::ParserFrontendAction
 // that can be used with ClangTool to parse files
 std::unique_ptr<clang::tooling::FrontendActionFactory>
-newParserFrontendActionFactory(IR::Namespace& ns,
-                               Parser::MetaData meta,
-                               bool& parsed) {
+newParserFrontendActionFactory(IR::Namespace& ns, bool& parsed) {
 	class ParserFrontendActionFactory
 	    : public clang::tooling::FrontendActionFactory {
 	public:
 		ParserFrontendActionFactory(IR::Namespace& parsedNamespaces,
-		                            Parser::MetaData& metaData,
 		                            bool& parsedSuccessfully)
-		    : m_parsedNamespaces(parsedNamespaces), m_metaData(metaData),
+		    : m_parsedNamespaces(parsedNamespaces),
 		      m_parsedSuccessfully(parsedSuccessfully) {}
 		// Gets filled with namespaces
 		IR::Namespace& m_parsedNamespaces;
-		// Metadata about the parsed code
-		Parser::MetaData& m_metaData;
 		// Error checking
 		bool& m_parsedSuccessfully;
 
 		std::unique_ptr<clang::FrontendAction> create() override {
 			return std::make_unique<Frontend::ParserFrontendAction>(
-			    m_parsedNamespaces, m_metaData, m_parsedSuccessfully);
+			    m_parsedNamespaces, m_parsedSuccessfully);
 		}
 	};
 
 	return std::unique_ptr<clang::tooling::FrontendActionFactory>(
-	    new ParserFrontendActionFactory(ns, meta, parsed));
+	    new ParserFrontendActionFactory(ns, parsed));
 }
 }    // namespace Factory

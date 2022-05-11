@@ -2,7 +2,6 @@
 
 #include "IR/ir.hpp"
 #include "Parser/Config.hpp"
-#include "Parser/MetaData.hpp"
 #include <filesystem>
 #include <string>
 
@@ -13,9 +12,8 @@ namespace Parser {
 * @param: std::filesystem::path const& filename
 *
 * @return: IR::Namespace - The global namespace
-*          Parser::Metadata - Data about the parsed code
 */
-std::optional<std::pair<IR::Namespace, Parser::MetaData>>
+std::optional<IR::Namespace>
 parseFile(std::filesystem::path const& filename,
           Parser::Config const& config = Parser::Config());
 
@@ -25,9 +23,8 @@ parseFile(std::filesystem::path const& filename,
 * @param: std::string const& code
 *
 * @return: IR::Namespace - The global namespace
-*          Parser::Metadata - Data about the parsed code
 */
-std::optional<std::pair<IR::Namespace, Parser::MetaData>>
+std::optional<IR::Namespace>
 parseString(std::string const& code,
             Parser::Config const& config = Parser::Config());
-}
+}    // namespace Parser

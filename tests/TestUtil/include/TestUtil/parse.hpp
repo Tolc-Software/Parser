@@ -16,16 +16,6 @@ parseString(std::string const& code,
 	spdlog::set_level(logLevel);
 	auto maybeNs = Parser::parseString(code);
 	REQUIRE(maybeNs.has_value());
-	auto [ns, meta] = maybeNs.value();
-	return ns;
-}
-
-std::pair<IR::Namespace, Parser::MetaData>
-parseStringWithMeta(std::string const& code,
-                    spdlog::level::level_enum logLevel = spdlog::level::warn) {
-	spdlog::set_level(logLevel);
-	auto maybeNs = Parser::parseString(code);
-	REQUIRE(maybeNs.has_value());
 	return maybeNs.value();
 }
 
@@ -35,7 +25,6 @@ parseFile(std::filesystem::path const& filepath,
 	spdlog::set_level(logLevel);
 	auto maybeNs = Parser::parseFile(filepath);
 	REQUIRE(maybeNs.has_value());
-	auto [ns, meta] = maybeNs.value();
-	return ns;
+	return maybeNs.value();
 }
 }    // namespace TestUtil
