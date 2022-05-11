@@ -3,7 +3,7 @@
 
 int main() {
 	if (auto parsed = Parser::parseString("void f();")) {
-		auto& [globalNamespace, metaData] = parsed.value();
+		auto& globalNamespace = parsed.value();
 		auto& functions = globalNamespace.m_functions;
 		if (functions.size() == 1 && functions[0].m_name == "f") {
 			// Success!
