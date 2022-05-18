@@ -42,7 +42,7 @@ getTemplateArgs(clang::CXXRecordDecl const* classDecl) {
 					// Extract 3 from std::array<int, 3>
 					// The 10 means it should be represented as base 10
 					templateArgs.push_back(
-					    Integral {arg.getAsIntegral().toString(10)});
+					    Integral {std::to_string(arg.getAsIntegral().getExtValue())});
 					break;
 				}
 				case clang::TemplateArgument::Null:

@@ -1,4 +1,5 @@
 #include "Helpers/commandLineArgs.hpp"
+#include "Parser/Config.hpp"
 #include <catch2/catch.hpp>
 #include <filesystem>
 
@@ -20,7 +21,9 @@ TEST_CASE("getCommandLineArgs returns a custom system include path",
 	using path = std::filesystem::path;
 	std::string myPath = (path("my") / path("custom") / path("path")).string();
 	std::string systemInclude = "-isystem";
-	auto args = Helpers::getCommandLineArgs({systemInclude + myPath});
+	Parser::Config c;
+	c.m_systemIncludes = {systemInclude + myPath};
+	auto args = Helpers::getCommandLineArgs(c);
 	REQUIRE(!args.empty());
 	for (auto arg : args) {
 		CAPTURE(arg);
@@ -30,4 +33,20 @@ TEST_CASE("getCommandLineArgs returns a custom system include path",
 			REQUIRE(include == myPath);
 		}
 	}
+}
+
+TEST_CASE("Sets the correct standard",
+          "[commandLineArgs]") {
+	Parser::Config c;
+	c.m_cppVersion = 20;
+	auto args = Helpers::getCommandLineArgs(c);
+	REQUIRE(!args.empty());
+	bool foundStandard = false;
+	for (auto arg : args) {
+		CAPTURE(arg);
+		if (arg == "-std=c++20") {
+			foundStandard = true;		
+		}
+	}
+	REQUIRE(foundStandard);
 }
