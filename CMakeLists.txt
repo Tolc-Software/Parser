@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.17)
 
 # Temporary workaround for clang 14
 # https://github.com/llvm/llvm-project/issues/53950

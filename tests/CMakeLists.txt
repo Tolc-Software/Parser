@@ -100,6 +100,10 @@ foreach(
     fmt::fmt
     TestUtil)
 
+  add_warnings(TARGET ${testName})
+  add_options(TARGET ${testName})
+
+
   target_include_directories(${testName} SYSTEM
                              PRIVATE ${llvm_entry_INCLUDE_DIR})
 
