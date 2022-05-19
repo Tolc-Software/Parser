@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Parser/Config.hpp"
 #include <string>
 #include <vector>
 
@@ -13,6 +14,6 @@ namespace Helpers {
 * The systemIncludes should be on the format {"-isystem/path/one", "-isystem/path/two"}
 */
 std::vector<std::string>
-getCommandLineArgs(std::vector<std::string> const& systemIncludes = {});
+getCommandLineArgs(Parser::Config const& config);
 
 }    // namespace Helpers

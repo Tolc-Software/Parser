@@ -105,8 +105,7 @@ TEST_CASE("Member variable within class with modifier", "[fields]") {
 		    ": double myDouble; };");
 
 		auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-		auto& myDouble =
-		    TestUtil::findMember(myClass, "myDouble", accessModifier);
+		TestUtil::findMember(myClass, "myDouble", accessModifier);
 	}
 }
 

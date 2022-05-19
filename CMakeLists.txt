@@ -1,9 +1,17 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.17)
+
+# Temporary workaround for clang 14
+# https://github.com/llvm/llvm-project/issues/53950
+if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+  set(parser_languages CXX)
+else()
+  set(parser_languages C CXX)
+endif()
 
 project(
   Parser
-  VERSION 0.5.6
-  LANGUAGES CXX)
+  VERSION 0.6.0
+  LANGUAGES ${parser_languages})
 
 configure_file(docs/ReleaseNotes/version.in
                ${CMAKE_CURRENT_LIST_DIR}/docs/ReleaseNotes/version @ONLY)
@@ -57,7 +65,7 @@ find_conan_packages(
 include(${modules}/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
 # llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
-set(llvm_entry_version 12.0.0)
+set(llvm_entry_version 14.0.0)
 setup_llvm(NAME "LLVM_ENTRY" VERSION ${llvm_entry_version})
 
 # Macro to get downloaded Clang and llvm packages

@@ -12,5 +12,8 @@ namespace Parser {
 struct Config {
 	// Absolute paths to system headers
 	std::vector<std::string> m_systemIncludes {};
+
+	// The C++ version of the inner libtooling parser
+	int8_t m_cppVersion = 17;
 };
 }

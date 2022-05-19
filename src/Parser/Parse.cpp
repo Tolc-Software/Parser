@@ -20,7 +20,7 @@ std::optional<IR::Namespace> parseFile(std::filesystem::path const& filename,
 	std::string fromDirectory = ".";
 
 	clang::tooling::FixedCompilationDatabase compDb(
-	    fromDirectory, Helpers::getCommandLineArgs(config.m_systemIncludes));
+	    fromDirectory, Helpers::getCommandLineArgs(config));
 
 	std::vector<std::string> filesToProcess = {filename.string()};
 	clang::tooling::ClangTool tool(compDb, filesToProcess);
@@ -47,7 +47,7 @@ std::optional<IR::Namespace> parseString(std::string const& code,
 	    std::make_unique<Frontend::ParserFrontendAction>(parsedIR,
 	                                                     parsedSuccessfully),
 	    code,
-	    Helpers::getCommandLineArgs(config.m_systemIncludes));
+	    Helpers::getCommandLineArgs(config));
 
 	if (astCreated && parsedSuccessfully) {
 		return parsedIR;
