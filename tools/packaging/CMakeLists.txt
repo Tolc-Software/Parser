@@ -14,9 +14,10 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/Parser
 # NOTE: Why are private libraries needed?
 #       https://cmake.org/pipermail/cmake/2016-August/064054.html
 install(FILES
-  ${modules}/LLVMUtilities.cmake
   ${modules}/ConanHelpers.cmake
-  ${modules}/IncludePathHelpers.cmake
+  ${CMAKE_SOURCE_DIR}/cmake/packaging/LLVMUtilities.cmake
+  ${CMAKE_SOURCE_DIR}/cmake/packaging/IncludePathHelpers.cmake
+  ${CMAKE_SOURCE_DIR}/cmake/packaging/copyLLVMIncludes.cmake
   ${CMAKE_SOURCE_DIR}/tools/conan_profiles/${CMAKE_SYSTEM_NAME}/clang.in
           DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Parser)
 

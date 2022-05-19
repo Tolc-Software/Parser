@@ -2,6 +2,9 @@ include(CMakeFindDependencyMacro)
 find_dependency(IR)
 
 include("${CMAKE_CURRENT_LIST_DIR}/LLVMUtilities.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/IncludePathHelpers.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/copyLLVMIncludes.cmake")
+
 # Download if necessary and get the clang libs Defines
 # llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
 set(PARSER_LLVM_VERSION @llvm_entry_version@)
