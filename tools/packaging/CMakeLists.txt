@@ -36,9 +36,11 @@ if(NOT MSVC)
   install(DIRECTORY
     "${llvm_entry_SOURCE_DIR}/include/c++/v1"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/include/c++)
-  install(DIRECTORY
-    "${llvm_entry_SOURCE_DIR}/include/x86_64-unknown-linux-gnu/c++/v1/"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/include/x86_64-unknown-linux-gnu/c++/v1/)
+  if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Linux)
+    install(DIRECTORY
+      "${llvm_entry_SOURCE_DIR}/include/x86_64-unknown-linux-gnu/c++/v1/"
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/Parser/include/x86_64-unknown-linux-gnu/c++/v1/)
+  endif()
 endif()
 install(DIRECTORY
   "${llvm_entry_SOURCE_DIR}/lib/clang/${llvm_entry_version}/include"
