@@ -1,12 +1,13 @@
 #include "TestUtil/finders.hpp"
 #include "TestUtil/parse.hpp"
-#include "TestUtil/types.hpp"
-#include <catch2/catch.hpp>
+
+#include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
+
 #include <variant>
 
 TEST_CASE("std::pair", "[pairs]") {
-	auto code = R"(
+  auto code = R"(
 #include <string>
 
 class MyClass {
@@ -19,14 +20,14 @@ public:
 };
 
 )";
-	CAPTURE(code);
-	auto globalNS = TestUtil::parseString(code);
-	auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
-	auto& m_t =
-	    TestUtil::findMember(myClass, "m_s", TestUtil::AccessModifier::Public);
-	REQUIRE(m_t.m_type.m_isConst == false);
-	auto pairType = std::get_if<IR::Type::Container>(&m_t.m_type.m_type);
-	REQUIRE(pairType != nullptr);
+  CAPTURE(code);
+  auto globalNS = TestUtil::parseString(code);
+  auto& myClass = TestUtil::findStruct(globalNS, "MyClass");
+  auto& m_t =
+      TestUtil::findMember(myClass, "m_s", TestUtil::AccessModifier::Public);
+  REQUIRE(m_t.m_type.m_isConst == false);
+  auto pairType = std::get_if<IR::Type::Container>(&m_t.m_type.m_type);
+  REQUIRE(pairType != nullptr);
 
-	REQUIRE(pairType->m_containedTypes.size() == 2);
+  REQUIRE(pairType->m_containedTypes.size() == 2);
 }

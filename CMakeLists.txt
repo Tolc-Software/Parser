@@ -16,30 +16,22 @@ project(
 configure_file(docs/ReleaseNotes/version.in
                ${CMAKE_CURRENT_LIST_DIR}/docs/ReleaseNotes/version @ONLY)
 
-include(FetchContent)
-FetchContent_Declare(
-  cmake_modules
-  GIT_REPOSITORY https://github.com/Tolc-Software/cmake-modules.git
-  GIT_TAG main)
-FetchContent_MakeAvailable(cmake_modules)
-# Basis of all shared CMake modules
-set(modules ${cmake_modules_SOURCE_DIR}/cmake)
-
-include(${modules}/Doxygen.cmake)
+include(./cmake/Doxygen.cmake)
 enable_doxygen()
 
 # Set ccache, ipo, etc.
-include(${modules}/ProjectSettings.cmake)
+include(./cmake/ProjectSettings.cmake)
 
 # Define add_{warnings,options}
-include(${modules}/WarningsAndOptions.cmake)
+include(./cmake/WarningsAndOptions.cmake)
 
 # allow for static analysis options
-include(${modules}/StaticAnalyzers.cmake)
+include(./cmake/StaticAnalyzers.cmake)
 
 # Define enable_sanitizers
-include(${modules}/Sanitizers.cmake)
+include(./cmake/Sanitizers.cmake)
 
+include(FetchContent)
 FetchContent_Declare(
   IRSpecification
   GIT_REPOSITORY https://github.com/Tolc-Software/IntermediateRepresentation.git
@@ -48,24 +40,18 @@ FetchContent_MakeAvailable(IRSpecification)
 
 FetchContent_Declare(
   ctre_content
-  GIT_REPOSITORY https://github.com/hanickadot/compile-time-regular-expressions.git
+  GIT_REPOSITORY
+    https://github.com/hanickadot/compile-time-regular-expressions.git
   GIT_TAG v3.4.1)
-FetchContent_Populate(ctre_content)
+FetchContent_MakeAvailable(ctre_content)
 
-# Define run_conan
-include(${modules}/ConanHelpers.cmake)
-# Create the profile from variables known during configure
-setup_conan_profile(VARIABLE parser_conan_profile)
-# This helps with packaging
-set(CONAN_REQUIRES_PACKAGES spdlog/1.9.2 fmt/8.1.1)
-find_conan_packages(
-  REQUIRES ${CONAN_REQUIRES_PACKAGES} PROFILE
-  ${parser_conan_profile})
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
 
-include(${modules}/LLVMUtilities.cmake)
+include(./cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
-# llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables
-set(llvm_entry_version 14.0.0)
+# llvm_entry_{SOURCE_DIR,INCLUDE_DIR} variables LLVM-19.1.0-macOS-ARM64.tar.xz
+set(llvm_entry_version 19.1.0)
 setup_llvm(NAME "LLVM_ENTRY" VERSION ${llvm_entry_version})
 
 # Macro to get downloaded Clang and llvm packages
@@ -74,11 +60,11 @@ get_clang_and_llvm(PATH ${llvm_entry_SOURCE_DIR})
 include(AddLLVM)
 
 # Defines get_system_include and format_includes
-include(${modules}/IncludePathHelpers.cmake)
+include(./cmake/IncludePathHelpers.cmake)
 
-# Set the include path for the system library in the variable
-# We are using the standard library shipped
-# with the downloaded llvm for include paths in the parsing
+# Set the include path for the system library in the variable We are using the
+# standard library shipped with the downloaded llvm for include paths in the
+# parsing
 get_system_include(VARIABLE platform_include LLVM_DIRECTORY
                    ${llvm_entry_SOURCE_DIR} LLVM_VERSION ${llvm_entry_version})
 
@@ -139,7 +125,8 @@ enable_sanitizers(Parser)
 
 # Ignore warnings from {clang,ctre} as if they were system headers.
 target_include_directories(Parser SYSTEM PRIVATE ${llvm_entry_INCLUDE_DIR})
-target_include_directories(Parser SYSTEM PRIVATE ${ctre_content_SOURCE_DIR}/single-header)
+target_include_directories(Parser SYSTEM
+                           PRIVATE ${ctre_content_SOURCE_DIR}/single-header)
 target_include_directories(Parser PRIVATE src)
 target_include_directories(
   Parser PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
@@ -153,18 +140,18 @@ add_library(Tolc::Parser ALIAS Parser)
 
 # Only build tests and benchmarks if building this project directly
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-  option(ENABLE_TESTING "Build the testing tree" OFF)
+  option(ENABLE_TESTING "Build the testing tree" ON)
   if(ENABLE_TESTING)
     enable_testing()
     add_subdirectory(tests)
   endif()
 
-  option(ENABLE_BENCHMARKS "Build the benchmarks" OFF)
+  option(ENABLE_BENCHMARKS "Build the benchmarks" ON)
   if(ENABLE_BENCHMARKS)
     # TODO: Add benchmarks
   endif()
 
-  option(ENABLE_PACKAGING "Enables install and packaging via CPack" OFF)
+  option(ENABLE_PACKAGING "Enables install and packaging via CPack" ON)
   if(ENABLE_PACKAGING)
     add_subdirectory(tools/packaging)
     if(ENABLE_TESTING)

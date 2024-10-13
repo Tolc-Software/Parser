@@ -1,16 +1,16 @@
 include_guard()
 
 # Defines create_catch2_test and get_catch2
-include(${modules}/Catch2Helpers.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/Catch2Helpers.cmake)
 
-get_catch2(VERSION v2.13.8)
+find_package(Catch2 REQUIRED)
 
 # Everything put in TestUtil/include is available
 add_library(TestUtil INTERFACE)
 target_include_directories(TestUtil INTERFACE TestUtil/include)
 
 if(ENABLE_COVERAGE)
-  include(${modules}/CodeCoverage.cmake)
+  include(${CMAKE_SOURCE_DIR}/cmake/CodeCoverage.cmake)
 
   # Use coverage of parser
   target_code_coverage(Parser)
@@ -20,7 +20,6 @@ endif()
 
 foreach(
   test
-
   Helpers/Type/Matchers/container.cpp
   Helpers/Type/matchers.cpp
   Helpers/Utils/split.cpp
@@ -78,37 +77,25 @@ foreach(
   userDefined.cpp
   valarrays.cpp
   variant.cpp
-  vectors.cpp
+  vectors.cpp)
 
-  )
-
-  # Ex: PybindProxy/moduleFile.cpp -> moduleFile
+  # Ex: tests/moduleFile.cpp -> moduleFile
   get_filename_component(testName ${test} NAME_WLE)
 
-  create_catch2_test(
-    TARGET
-    ${testName}
-    SOURCES
-    ${test}
-    INCLUDE
-    ${PROJECT_SOURCE_DIR}/src
-    LINK_LIBRARIES
-    clangTooling
-    clangBasic
-    clangASTMatchers
-    Parser
-    fmt::fmt
-    TestUtil)
+  add_executable(${testName} ${test})
+  target_link_libraries(${testName} PRIVATE Catch2::Catch2WithMain Parser
+                                            fmt::fmt spdlog::spdlog TestUtil)
 
+  target_include_directories(${testName} PRIVATE ${PROJECT_SOURCE_DIR}/src
+                                                 ${llvm_entry_INCLUDE_DIR})
+  set_target_properties(${testName} PROPERTIES CXX_STANDARD_REQUIRED ON
+                                               CXX_EXTENSIONS OFF)
+
+  add_test(NAME ${testName} COMMAND ${testName})
   add_warnings(TARGET ${testName})
   add_options(TARGET ${testName})
-
-
-  target_include_directories(${testName} SYSTEM
-                             PRIVATE ${llvm_entry_INCLUDE_DIR})
 
   set(ENABLE_SANITIZER_ADDRESS TRUE)
   set(ENABLE_SANITIZER_MEMORY TRUE)
   enable_sanitizers(${testName})
 endforeach()
-

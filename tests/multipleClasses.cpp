@@ -1,9 +1,10 @@
 #include "TestUtil/finders.hpp"
 #include "TestUtil/parse.hpp"
-#include <catch2/catch.hpp>
+
+#include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("Test case from frontend.py", "[classes]") {
-	auto code = R"(
+  auto code = R"(
 #include <string>
 
 namespace MyLib {
@@ -37,30 +38,30 @@ class WithPrivateFunction {
 	}
 };
 )";
-	CAPTURE(code);
-	auto globalNS = TestUtil::parseString(code);
-	REQUIRE(globalNS.m_namespaces.size() == 1);
-	auto& myLib = globalNS.m_namespaces.back();
-	REQUIRE(myLib.m_structs.size() == 1);
-	auto& nested = myLib.m_structs.back();
-	REQUIRE(nested.m_name == "Nested");
+  CAPTURE(code);
+  auto globalNS = TestUtil::parseString(code);
+  REQUIRE(globalNS.m_namespaces.size() == 1);
+  auto& myLib = globalNS.m_namespaces.back();
+  REQUIRE(myLib.m_structs.size() == 1);
+  auto& nested = myLib.m_structs.back();
+  REQUIRE(nested.m_name == "Nested");
 
-	auto mwithConstructor =
-	    TestUtil::findWithName("WithConstructor", globalNS.m_structs);
-	REQUIRE(mwithConstructor.has_value());
-	auto withConstructor = mwithConstructor.value();
-	REQUIRE(withConstructor.m_public.m_functions.size() == 1);
-	REQUIRE(withConstructor.m_public.m_constructors.size() == 1);
+  auto mwithConstructor =
+      TestUtil::findWithName("WithConstructor", globalNS.m_structs);
+  REQUIRE(mwithConstructor.has_value());
+  auto withConstructor = mwithConstructor.value();
+  REQUIRE(withConstructor.m_public.m_functions.size() == 1);
+  REQUIRE(withConstructor.m_public.m_constructors.size() == 1);
 
-	auto mwithFunction =
-	    TestUtil::findWithName("WithFunction", globalNS.m_structs);
-	REQUIRE(mwithConstructor.has_value());
-	auto withFunction = mwithFunction.value();
-	REQUIRE(withFunction.m_public.m_functions.size() == 1);
+  auto mwithFunction =
+      TestUtil::findWithName("WithFunction", globalNS.m_structs);
+  REQUIRE(mwithConstructor.has_value());
+  auto withFunction = mwithFunction.value();
+  REQUIRE(withFunction.m_public.m_functions.size() == 1);
 
-	auto mwithPrivateFunction =
-	    TestUtil::findWithName("WithPrivateFunction", globalNS.m_structs);
-	REQUIRE(mwithConstructor.has_value());
-	auto withPrivateFunction = mwithPrivateFunction.value();
-	REQUIRE(withPrivateFunction.m_private.m_functions.size() == 1);
+  auto mwithPrivateFunction =
+      TestUtil::findWithName("WithPrivateFunction", globalNS.m_structs);
+  REQUIRE(mwithConstructor.has_value());
+  auto withPrivateFunction = mwithPrivateFunction.value();
+  REQUIRE(withPrivateFunction.m_private.m_functions.size() == 1);
 }

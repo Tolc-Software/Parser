@@ -1,18 +1,19 @@
 #include "TestUtil/parse.hpp"
-#include <catch2/catch.hpp>
+
+#include <catch2/catch_test_macros.hpp>
 #include <fmt/format.h>
+
 #include <string>
 
 TEST_CASE(
     "Simple data class with one container of strings - should have an implicitly created default constructor if no other constructor is available",
     "[dataStructs]") {
-	for (bool hasUserDefinedConstructor : {true, false}) {
-		std::string constructor =
-		    hasUserDefinedConstructor ? "MyClass(std::string);" : "";
-		for (std::string container :
-		     {"vector", "list", "set", "unordered_set"}) {
-			for (std::string accessor : {"public", "private", "protected"}) {
-				auto code = fmt::format(R"(
+  for (bool hasUserDefinedConstructor : {true, false}) {
+    std::string constructor =
+        hasUserDefinedConstructor ? "MyClass(std::string);" : "";
+    for (std::string container : {"vector", "list", "set", "unordered_set"}) {
+      for (std::string accessor : {"public", "private", "protected"}) {
+        auto code = fmt::format(R"(
 #include <string>
 #include <{container}>
 
@@ -22,24 +23,24 @@ struct MyClass {{
 	std::{container}<std::string> s;
 }};
 )",
-				                        fmt::arg("container", container),
-				                        fmt::arg("constructor", constructor),
-				                        fmt::arg("accessor", accessor));
-				CAPTURE(code);
-				auto globalNS = TestUtil::parseString(code);
-				REQUIRE(globalNS.m_structs.size() == 1);
-				auto& myStruct = globalNS.m_structs.back();
-				REQUIRE(myStruct.m_hasImplicitDefaultConstructor ==
-				        !hasUserDefinedConstructor);
-			}
-		}
-	}
+                                fmt::arg("container", container),
+                                fmt::arg("constructor", constructor),
+                                fmt::arg("accessor", accessor));
+        CAPTURE(code);
+        auto globalNS = TestUtil::parseString(code);
+        REQUIRE(globalNS.m_structs.size() == 1);
+        auto& myStruct = globalNS.m_structs.back();
+        REQUIRE(myStruct.m_hasImplicitDefaultConstructor ==
+                !hasUserDefinedConstructor);
+      }
+    }
+  }
 }
 
 TEST_CASE(
     "Class with constructor should not have implicitly created default constructor",
     "[dataStructs]") {
-	auto code = R"(
+  auto code = R"(
 #include <string>
 
 class MyClass {
@@ -62,10 +63,10 @@ private:
 	MyClass m_myClass;
 };
 )";
-	CAPTURE(code);
-	auto globalNS = TestUtil::parseString(code);
-	REQUIRE(globalNS.m_structs.size() == 2);
-	for (auto const& s : globalNS.m_structs) {
-		REQUIRE(s.m_hasImplicitDefaultConstructor == false);
-	}
+  CAPTURE(code);
+  auto globalNS = TestUtil::parseString(code);
+  REQUIRE(globalNS.m_structs.size() == 2);
+  for (auto const& s : globalNS.m_structs) {
+    REQUIRE(s.m_hasImplicitDefaultConstructor == false);
+  }
 }

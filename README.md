@@ -4,6 +4,23 @@
 
 Parser is the library for converting a header file of `C++` to the intermediate representation declared in the library [`IR::IR`](https://github.com/Tolc-Software/IntermediateRepresentation).
 
+## Building
+
+Use a recent LLVM `clang`.
+
+Generate:
+
+```sh
+cmake -B build -S . -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=cmake/conan_provider.cmake
+```
+
+Build:
+
+```sh
+cmake --build build
+```
+
+
 ## Installation ##
 
 Use `FetchContent` in your `CMakeLists.txt` as follows:
