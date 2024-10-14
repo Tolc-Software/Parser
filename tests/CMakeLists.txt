@@ -1,8 +1,5 @@
 include_guard()
 
-# Defines create_catch2_test and get_catch2
-include(${CMAKE_SOURCE_DIR}/cmake/Catch2Helpers.cmake)
-
 find_package(Catch2 REQUIRED)
 
 # Everything put in TestUtil/include is available

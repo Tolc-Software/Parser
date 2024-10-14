@@ -38,15 +38,9 @@ FetchContent_Declare(
   GIT_TAG v0.15.1)
 FetchContent_MakeAvailable(IRSpecification)
 
-FetchContent_Declare(
-  ctre_content
-  GIT_REPOSITORY
-    https://github.com/hanickadot/compile-time-regular-expressions.git
-  GIT_TAG v3.4.1)
-FetchContent_MakeAvailable(ctre_content)
-
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(ctre REQUIRED)
 
 include(./cmake/LLVMUtilities.cmake)
 # Download if necessary and get the clang libs Defines
@@ -115,7 +109,8 @@ add_llvm_library(
 target_link_libraries(
   Parser
   PUBLIC IR::IR
-  PRIVATE clangASTMatchers clangBasic clangTooling spdlog::spdlog fmt::fmt)
+  PRIVATE clangASTMatchers clangBasic clangTooling spdlog::spdlog fmt::fmt
+          ctre::ctre)
 
 add_warnings(TARGET Parser)
 add_options(TARGET Parser)
@@ -123,10 +118,8 @@ add_options(TARGET Parser)
 # Set sanitizer options on Parser if options defined
 enable_sanitizers(Parser)
 
-# Ignore warnings from {clang,ctre} as if they were system headers.
+# Ignore warnings from {clang} as if they were system headers.
 target_include_directories(Parser SYSTEM PRIVATE ${llvm_entry_INCLUDE_DIR})
-target_include_directories(Parser SYSTEM
-                           PRIVATE ${ctre_content_SOURCE_DIR}/single-header)
 target_include_directories(Parser PRIVATE src)
 target_include_directories(
   Parser PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
